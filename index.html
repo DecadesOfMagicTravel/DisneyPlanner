@@ -1,850 +1,368 @@
-<!DOCTYPE html>
-<html dir="ltr" lang="en" class="theme light" style="--tb: 210px;">
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-  <title>Parkwise — WDWPlanner</title>
-  <style title="preload-css">
-    @font-face {
-      font-family: Canva Sans;
-      font-style: normal;
-      font-display: swap;
-      font-weight: 400 700;
-      src: url(https://static.canva.com/web/images/a9b8e7902ec1ab885d382156f33738e5.woff2) format("woff2"), url(https://static.canva.com/web/images/013277426f0d555d96c7a75503df5754.woff) format("woff");
-      unicode-range: U+B1-B3,U+B9,U+BC-BE,U+394,U+3A9,U+3BC,U+3C0,U+2044,U+2070,U+2074-2089,U+2126,U+212E,U+2153-2154,U+215B-215E,U+2202,U+2206,U+220F,U+2211-2212,U+2215,U+2219,U+221A,U+221E,U+222B,U+2248,U+2260,U+2264-2265,U+25CA;
-    }
-    @font-face {
-      font-family: Canva Sans;
-      font-style: normal;
-      font-display: swap;
-      font-weight: 400 700;
-      src: url(https://static.canva.com/web/images/d97a6ffa507b670a5b1664f98fc1183d.woff2) format("woff2"), url(https://static.canva.com/web/images/1de7434d86166b0614ff3d61cda11a54.woff) format("woff");
-      unicode-range: U+A1,U+AA-AB,U+AF,U+B8,U+BA-BB,U+BF,U+C0-D6,U+D8-F6,U+F8-148,U+14A-17E,U+192,U+1B5-1B6,U+1FC-1FD,U+218-21B,U+237,U+2C6-2C7,U+2C9,U+2D8-2DD,U+1E80-1E85,U+1E9E,U+1EF2-1EF3,U+2030,U+2039-203A,U+20AC,U+20BA,U+2113;
-    }
-    @font-face {
-      font-family: Canva Sans;
-      font-style: normal;
-      font-display: swap;
-      font-weight: 400 700;
-      src: url(https://static.canva.com/web/images/cff149ee1e9d2be50ac77bcd86769d05.woff2) format("woff2"), url(https://static.canva.com/web/images/f93a5165fac252ecfd593929c4e6146f.woff) format("woff");
-      unicode-range: U+20-7E,U+A0,U+A2-A9,U+AC-AE,U+B0,U+B4-B7,U+D7,U+F7,U+300-304,U+306-308,U+30A-30C,U+312,U+326-328,U+2013-2014,U+2018-201A,U+201C-201E,U+2020-2022,U+2026,U+2117,U+2120,U+2122,U+2190-2199,U+FB01-FB02,U+FEFF,U+FFFC-FFFD;
-    }
+<html style="--tb: 210px;"><head><title>Parkwise</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&amp;family=DM+Sans:wght@400;500;600&amp;display=swap">
+<style>
+/* Layout concept: a sticky budget bar over four working tabs (budget, dining, ride ranking, day plan); drag cards onto slots, or tap to pick then tap to place. */
+:root{
+  --bg:#F1F4FA; --surface:#FFFFFF; --surface2:#E8EDF7; --line:#D3DBEA;
+  --ink:#15213F; --muted:#56637F;
+  --brand:#2447A8; --on-brand:#FFFFFF;
+  --accent:#A85A06; --accent-soft:#FCE9D2;
+  --good:#13774B; --good-soft:#D9F1E5;
+  --bad:#B8322A; --bad-soft:#FADFDC;
+  --drop:#DCE6FF;
+  --f-display:'Bricolage Grotesque','DM Sans',system-ui,sans-serif;
+  --f-body:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1630; --surface:#172246; --surface2:#1F2D59; --line:#2D3C6C;
+    --ink:#E9EEFB; --muted:#A3AFCF;
+    --brand:#8DA8FF; --on-brand:#0E1630;
+    --accent:#F2A650; --accent-soft:#3B2C16;
+    --good:#4CC38A; --good-soft:#163A2C;
+    --bad:#FF8577; --bad-soft:#44201D;
+    --drop:#243C7C; color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1630; --surface:#172246; --surface2:#1F2D59; --line:#2D3C6C;
+  --ink:#E9EEFB; --muted:#A3AFCF;
+  --brand:#8DA8FF; --on-brand:#0E1630;
+  --accent:#F2A650; --accent-soft:#3B2C16;
+  --good:#4CC38A; --good-soft:#163A2C;
+  --bad:#FF8577; --bad-soft:#44201D;
+  --drop:#243C7C; color-scheme:dark;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--f-body); font-size:15px; line-height:1.45;
+  padding-block:0 56px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.15;text-wrap:balance}
+h2{font-size:1.35rem;font-weight:700}
+h3{font-size:1.02rem;font-weight:600}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+input,select{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:7px 9px;min-width:0;max-width:100%}
+input[type=number]{width:92px;font-variant-numeric:tabular-nums}
+input[type=time]{width:112px}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.muted,.hint{color:var(--muted)}
+.hint{font-size:.85rem}
+.wrap{max-width:1180px;margin:0 auto}
 
-    html { --safe-area-inset-top: 0px; height: 100%; }
-    @supports (height: env(safe-area-inset-top)) {
-      html { --safe-area-inset-top: env(safe-area-inset-top); }
-    }
-    @supports (height: 100dvh) { :root {} }
+/* top bar */
+.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding-top:12px;border-bottom:1px solid var(--line);margin-bottom:20px}
+.top-row{max-width:1180px;margin:0 auto;display:flex;gap:16px 28px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding-bottom:10px}
+.brand{display:flex;gap:10px;align-items:center;color:var(--brand);min-width:0}
+.wordmark{font-family:var(--f-display);font-weight:700;font-size:1.25rem;color:var(--ink);display:block;line-height:1}
+.tripname{border:0;background:transparent;padding:2px 0;color:var(--muted);font-size:.88rem;width:min(260px,60vw);border-radius:4px}
+.tripname:hover{background:var(--surface2)}
+.sum{display:flex;gap:6px 22px;align-items:center;flex-wrap:wrap;min-width:0}
+.sum-main{display:flex;flex-direction:column}
+.sum-main .k{font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.sum-main strong{font-family:var(--f-display);font-size:1.6rem;font-variant-numeric:tabular-nums;line-height:1.1}
+.sum-bar{width:220px;max-width:100%}
+.sum-bar .st{font-size:.82rem;margin-top:4px;display:block}
+.sum-split{display:flex;gap:14px;font-size:.82rem;color:var(--muted);font-variant-numeric:tabular-nums;flex-wrap:wrap}
+.sum-split b{color:var(--ink);font-weight:600}
+.tabs{max-width:1180px;margin:0 auto;display:flex;gap:4px;overflow-x:auto}
+.tab{background:none;border:0;border-bottom:3px solid transparent;padding:9px 14px;font-weight:600;color:var(--muted);white-space:nowrap}
+.tab[aria-selected=true]{color:var(--ink);border-bottom-color:var(--brand)}
+.tab:hover{color:var(--ink)}
 
-    :root, .light {
-      --bg: #f3f4f7;
-      --surface: #ffffff;
-      --surface2: #f8f9fb;
-      --line: #39466024;
-      --border-subtle: #4a2e7e26;
-      --ink: #0e1318;
-      --muted: #56637f;
-      --brand: #7d2ae8;
-      --brand-accent: #00c4cc;
-      --on-brand: #ffffff;
-      --accent: #a85a06;
-      --accent-soft: #fce9d2;
-      --good: #13774b;
-      --good-soft: #d9f1e5;
-      --bad: #b8322a;
-      --bad-soft: #fadcda;
-      --drop: #efe7fd;
-      --f-display: "Canva Sans", system-ui, -apple-system, sans-serif;
-      --f-body: "Canva Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-      --gradient-bar: linear-gradient(90deg, #00c4cc, #7d2ae8);
-    }
+main{max-width:1180px;margin:0 auto}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px}
+.card + .card{margin-top:16px}
+.sec-h{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,360px),1fr));gap:16px;margin-top:16px;align-items:start}
+.grid2 > .card{margin-top:0}
+.split{display:grid;grid-template-columns:minmax(0,370px) minmax(0,1fr);gap:20px;align-items:start}
+@media (max-width:820px){.split{grid-template-columns:minmax(0,1fr)}}
 
-    @media (prefers-color-scheme: dark) {
-      :root:not([data-theme="light"]) {
-        --bg: #0f1015;
-        --surface: #1d1f26;
-        --surface2: #252832;
-        --line: #ffffff26;
-        --border-subtle: #ffffff12;
-        --ink: #e9eefb;
-        --muted: #a3afcf;
-        --brand: #9a5cff;
-        --brand-accent: #00c4cc;
-        --on-brand: #ffffff;
-        --accent: #f2a650;
-        --accent-soft: #3b2c16;
-        --good: #4cc38a;
-        --good-soft: #163a2c;
-        --bad: #ff8577;
-        --bad-soft: #44201d;
-        --drop: #2a1f47;
-        color-scheme: dark;
-      }
-    }
+.btn{background:var(--brand);color:var(--on-brand);border:0;border-radius:8px;padding:8px 14px;font-weight:600}
+.btn.ghost{background:var(--surface2);color:var(--ink)}
+.btn.sm{padding:5px 10px;font-size:.85rem}
+.btn:disabled,.x:disabled{opacity:.4;cursor:not-allowed}
+.x{background:none;border:0;color:var(--muted);font-size:1.15rem;line-height:1;padding:4px 8px;border-radius:6px}
+.x:hover{background:var(--surface2);color:var(--ink)}
+.link{background:none;border:0;color:var(--brand);padding:0;font-size:.85rem;text-decoration:underline}
+.pill{display:inline-block;font-size:.72rem;font-weight:600;padding:2px 8px;border-radius:99px;background:var(--surface2);color:var(--muted);white-space:nowrap}
+.pill.t-ts,.pill.t-char{background:var(--accent-soft);color:var(--accent)}
+.pill.t-qs{background:var(--surface2)}
+.pill.t-snack{background:var(--good-soft);color:var(--good)}
+.pill.b-free{background:var(--good-soft);color:var(--good)}
+.pill.b-child{background:var(--accent-soft);color:var(--accent)}
+.pill.b-adult{background:var(--surface2);color:var(--ink)}
+.pill.th-3{background:var(--bad-soft);color:var(--bad)}
+.pill.th-2{background:var(--accent-soft);color:var(--accent)}
+.pill.th-1{background:var(--good-soft);color:var(--good)}
+.money-in{display:inline-flex;align-items:center;gap:4px;color:var(--muted)}
 
-    :root[data-theme="dark"] {
-      --bg: #0f1015;
-      --surface: #1d1f26;
-      --surface2: #252832;
-      --line: #ffffff26;
-      --border-subtle: #ffffff12;
-      --ink: #e9eefb;
-      --muted: #a3afcf;
-      --brand: #9a5cff;
-      --brand-accent: #00c4cc;
-      --on-brand: #ffffff;
-      --accent: #f2a650;
-      --accent-soft: #3b2c16;
-      --good: #4cc38a;
-      --good-soft: #163a2c;
-      --bad: #ff8577;
-      --bad-soft: #44201d;
-      --drop: #2a1f47;
-      color-scheme: dark;
-    }
+.bar{height:8px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.bar > i{display:block;height:100%;background:var(--brand);border-radius:99px}
+.bar.over > i{background:var(--bad)}
+.good{color:var(--good)} .bad{color:var(--bad)}
+.status{font-weight:600;font-size:.88rem}
 
-    * { box-sizing: border-box; }
-    body, html {
-      -webkit-user-select: none;
-      user-select: none;
-      overscroll-behavior: none;
-      width: 100%;
-      height: 100%;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      touch-action: manipulation;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: var(--f-body);
-      font-size: 15px;
-      line-height: 1.45;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0 0 auto;
-      height: var(--safe-area-inset-top);
-      background: var(--bg);
-      z-index: 30;
-    }
-    body.preload-embedded-canva-ai .topbar { display: none; }
+/* budget rows */
+.brow{padding:14px 0;border-top:1px solid var(--line);display:grid;gap:8px}
+.brow:first-of-type{border-top:0;padding-top:0}
+.brow-h{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center}
+.brow-n{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.big{font-family:var(--f-display);font-size:1.7rem;font-variant-numeric:tabular-nums}
+.tgt{display:inline-flex;gap:8px;align-items:center;color:var(--muted);font-size:.88rem}
 
-    h1, h2, h3 { font-family: var(--f-display); margin: 0; line-height: 1.15; text-wrap: balance; }
-    h1 { font-size: 1.8rem; font-weight: 700; margin: 0 0 4px; }
-    h2 { font-size: 1.35rem; font-weight: 700; }
-    h3 { font-size: 1.02rem; font-weight: 600; }
-    p { margin: 0; }
-    button { font: inherit; color: inherit; cursor: pointer; }
-    input, select, textarea {
-      font: inherit;
-      color: var(--ink);
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 8px;
-      padding: 7px 9px;
-      min-width: 0;
-      max-width: 100%;
-    }
-    textarea { padding: 9px; width: 100%; }
-    input[type=number] { width: 92px; font-variant-numeric: tabular-nums; }
-    input[type=time] { width: 112px; }
-    :focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
-    .muted, .hint { color: var(--muted); }
-    .hint { font-size: .85rem; }
-    .wrap { max-width: 1180px; margin: 0 auto; }
+/* forms */
+.prow{display:flex;gap:8px;align-items:center;flex-wrap:wrap;padding:6px 0}
+.prow input[type=text]{flex:1 1 120px}
+.age{display:inline-flex;gap:6px;align-items:center;color:var(--muted);font-size:.88rem}
+.age input{width:64px}
+.fgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px}
+.fld{display:grid;gap:4px;font-size:.88rem;color:var(--muted)}
+.fld small{font-size:.78rem}
+.fld input[type=number]{width:100%}
+.check{display:flex;gap:8px;align-items:center;font-size:.9rem;margin-top:12px}
+.drow{display:grid;grid-template-columns:auto repeat(auto-fit,minmax(130px,1fr)) auto;gap:10px 14px;align-items:end;padding:12px 0;border-top:1px solid var(--line)}
+.drow:first-of-type{border-top:0}
+.drow .dn{font-family:var(--f-display);font-weight:700;padding-bottom:7px;min-width:48px}
+.drow select{width:100%}
+.drow input[type=number]{width:100%}
+.drow label{display:grid;gap:3px;font-size:.8rem;color:var(--muted)}
+.scroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-variant-numeric:tabular-nums;min-width:560px}
+th,td{text-align:right;padding:8px 10px;border-top:1px solid var(--line)}
+th{font-size:.75rem;letter-spacing:.05em;text-transform:uppercase;color:var(--muted);border-top:0;font-weight:600}
+th:first-child,td:first-child,th:nth-child(2),td:nth-child(2){text-align:left}
+tfoot td{font-weight:700;border-top:2px solid var(--line)}
 
-    /* Top bar in Canva editor shell style */
-    .topbar {
-      position: sticky;
-      top: var(--safe-area-inset-top);
-      z-index: 20;
-      flex: none;
-      background: var(--surface);
-      padding-top: calc(10px + max(4px, var(--safe-area-inset-top)));
-      border-bottom: 1px solid var(--line);
-      padding-left: max(16px, env(safe-area-inset-left, 0px));
-      padding-right: max(16px, env(safe-area-inset-right, 0px));
-    }
-    .classic .topbar {
-      background-image: var(--gradient-bar);
-      border-bottom-color: #ffffff26;
-    }
-    .top-row {
-      max-width: 1180px;
-      margin: 0 auto;
-      display: flex;
-      gap: 16px 28px;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      padding-bottom: 10px;
-    }
-    .brand { display: flex; gap: 10px; align-items: center; color: var(--brand); min-width: 0; }
-    .wordmark { font-family: var(--f-display); font-weight: 700; font-size: 1.25rem; color: var(--ink); display: block; line-height: 1; }
-    .tripname { border: 0; background: transparent; padding: 2px 6px; color: var(--muted); font-size: .88rem; width: min(260px, 60vw); border-radius: 6px; }
-    .tripname:hover { background: var(--surface2); }
+/* dining */
+.chips{display:flex;gap:6px;flex-wrap:wrap;margin:10px 0}
+.chip{background:var(--surface2);border:0;border-radius:99px;padding:5px 11px;font-size:.84rem;font-weight:500}
+.chip.on{background:var(--brand);color:var(--on-brand)}
+.catalog{display:grid;gap:8px;max-height:calc(100vh - var(--tb,150px) - 150px);overflow:auto;padding:2px 4px 2px 2px;min-height:120px}
+@media (max-width:820px){.catalog{max-height:55vh}}
+.sticky{position:sticky;top:calc(var(--tb,150px) + env(safe-area-inset-top,0px) + 14px)}
+@media (max-width:820px){.sticky{position:static}}
+.rcard{background:var(--surface2);border-radius:10px;padding:10px 12px;cursor:grab;display:grid;gap:4px;border:2px solid transparent}
+.rcard.picked{border-color:var(--brand);background:var(--drop)}
+.rcard.dragging{opacity:.5}
+.rc-top{display:flex;justify-content:space-between;gap:8px;align-items:flex-start}
+.rc-top strong{font-weight:600}
+.rc-meta{font-size:.84rem;color:var(--muted)}
+.rc-meta b{color:var(--ink)}
+.rc-note{font-size:.8rem;color:var(--muted)}
+.pill.t-show{background:var(--accent-soft);color:var(--accent)}
+.pill.est{background:transparent;color:var(--muted);border:1px dashed var(--muted)}
+.pill.chk{background:var(--bad-soft);color:var(--bad)}
+.add-rest{margin-top:12px;border-top:1px solid var(--line);padding-top:10px}
+.add-rest summary{cursor:pointer;font-weight:600;color:var(--brand)}
+.add-rest .fgrid{margin-top:10px}
+.add-rest input[type=text],.add-rest select{width:100%}
+.edit{background:var(--surface);border:1px dashed var(--line);border-radius:8px;padding:8px 10px;margin-top:4px;display:flex;gap:12px;flex-wrap:wrap;align-items:center;font-size:.85rem}
+.banner{background:var(--drop);border-radius:10px;padding:10px 12px;display:flex;justify-content:space-between;gap:10px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.dcard{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.dcard + .dcard{margin-top:14px}
+.dc-h{display:flex;justify-content:space-between;gap:8px 16px;align-items:baseline;flex-wrap:wrap;margin-bottom:12px}
+.dc-h .place{color:var(--muted);font-weight:500;margin-left:8px;font-family:var(--f-body);font-size:.9rem}
+.slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr));gap:10px}
+.slot{border:2px dashed var(--line);border-radius:10px;padding:10px;min-height:110px;display:grid;align-content:start;gap:6px}
+.slot.armed{border-color:var(--brand);cursor:pointer}
+.slot.over{background:var(--drop);border-color:var(--brand)}
+.slot-h{display:flex;justify-content:space-between;align-items:center;font-size:.76rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);font-weight:600}
+.slot .empty{color:var(--muted);font-size:.85rem}
+.placed{background:var(--surface2);border-radius:8px;padding:9px 10px;cursor:grab;display:grid;gap:3px}
+.placed strong{font-weight:600}
+.placed .tot{font-family:var(--f-display);font-size:1.25rem;font-variant-numeric:tabular-nums}
+.placed .pp{font-size:.8rem;color:var(--muted);display:grid;gap:1px}
 
-    .sum { display: flex; gap: 6px 22px; align-items: center; flex-wrap: wrap; min-width: 0; }
-    .sum-main { display: flex; flex-direction: column; }
-    .sum-main .k { font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-    .sum-main strong { font-family: var(--f-display); font-size: 1.6rem; font-variant-numeric: tabular-nums; line-height: 1.1; }
-    .sum-bar { width: 220px; max-width: 100%; }
-    .sum-bar .st { font-size: .82rem; margin-top: 4px; display: block; }
-    .sum-split { display: flex; gap: 14px; font-size: .82rem; color: var(--muted); font-variant-numeric: tabular-nums; flex-wrap: wrap; }
-    .sum-split b { color: var(--ink); font-weight: 600; }
-    .sum-tools { display: flex; gap: 10px 14px; align-items: center; flex-wrap: wrap; }
-    .sum-tools p { flex: 1 1 260px; }
+/* rides + plan */
+.list{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.ri{display:flex;gap:10px;align-items:center;background:var(--surface2);border-radius:10px;padding:9px 10px;cursor:grab;flex-wrap:wrap;border:2px solid transparent}
+.ri.over{border-color:var(--brand);background:var(--drop)}
+.ri.dragging{opacity:.5}
+.ri .rno{font-family:var(--f-display);font-weight:700;width:26px;text-align:center;color:var(--brand);font-size:1.1rem}
+.ri-main{flex:1 1 160px;min-width:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.ri-main strong{font-weight:600}
+.ri-ctl{display:flex;gap:2px}
+.ri select{padding:5px 7px;font-size:.85rem}
+.endzone{border:2px dashed var(--line);border-radius:10px;padding:12px;text-align:center;color:var(--muted);font-size:.85rem;margin-top:8px}
+.endzone.over{background:var(--drop);border-color:var(--brand)}
+.addrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+.addrow input[type=text]{flex:1 1 160px}
+.dtabs{display:flex;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:14px}
+.dtab{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 14px;text-align:left;white-space:nowrap;font-weight:600;display:grid}
+.dtab small{font-weight:400;color:var(--muted);font-size:.78rem}
+.dtab.on{background:var(--brand);color:var(--on-brand);border-color:var(--brand)}
+.dtab.on small{color:var(--on-brand);opacity:.85}
+.timeline{list-style:none;margin:0;padding:10px;display:grid;gap:8px;border:2px dashed var(--line);border-radius:12px;min-height:160px;align-content:start}
+.timeline.over{background:var(--drop);border-color:var(--brand)}
+.tl{display:flex;gap:10px;align-items:center;background:var(--surface2);border-radius:10px;padding:8px 10px;flex-wrap:wrap}
+.tl-body{flex:1 1 140px;min-width:0;display:grid}
+.tl-body strong{font-weight:600}
+.tl-body span{font-size:.82rem;color:var(--muted)}
+.badge{font-size:.7rem;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:3px 8px;border-radius:6px;background:var(--surface);color:var(--muted);min-width:58px;text-align:center}
+.badge.ride{background:var(--brand);color:var(--on-brand)}
+.badge.meal{background:var(--accent-soft);color:var(--accent)}
+.badge.show{background:var(--good-soft);color:var(--good)}
+.note{background:var(--accent-soft);color:var(--accent);padding:8px 12px;border-radius:8px;font-size:.88rem;margin-bottom:12px}
+.tag{font-size:.72rem;background:var(--good-soft);color:var(--good);padding:2px 7px;border-radius:99px;font-weight:600}
+.foot{max-width:1180px;margin:32px auto 0;color:var(--muted);font-size:.82rem;display:grid;gap:10px}
+.foot-btns{display:flex;gap:8px;flex-wrap:wrap}
+h1{font-size:1.8rem;font-weight:700;margin:0 0 4px}
+textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px;width:100%}
+.intro ol{margin:8px 0 14px;padding-left:20px;display:grid;gap:4px}
+.sum-tools{display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap}
+.sum-tools p{flex:1 1 260px}
+.sheet{display:grid;gap:24px}
+.sheet h2{font-size:1.15rem;margin-bottom:8px}
+.sheet table{min-width:0}
+.sheet ol{margin:4px 0 0;padding-left:22px;display:grid;gap:2px}
+.btable th:nth-child(2),.btable td:nth-child(2){text-align:right}
+.etable th,.etable td{text-align:left;vertical-align:top}
+.etable td:first-child{white-space:nowrap;width:1%}
+.sday .costs{margin-bottom:8px}
+/* lightning lane guide */
+.llopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
+.llopt{background:var(--surface2);border-radius:12px;padding:14px;display:grid;gap:8px;align-content:start}
+.llopt h3{font-size:1.1rem}
+.llopt .price{font-family:var(--f-display);font-size:1.2rem;font-variant-numeric:tabular-nums}
+.llopt ul,.llsteps{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.9rem}
+.llopt .best{font-size:.84rem;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
+.llopt .best b{color:var(--ink)}
+.llsteps{gap:8px}
+.llcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px;margin-top:14px;align-items:start}
+.llcol{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px;align-content:start}
+.llcol-h{display:grid;gap:2px}
+.llcol-h small{color:var(--muted);font-size:.8rem}
+.llcol.c-single{border-top:4px solid var(--accent)}
+.llcol.c-t1{border-top:4px solid var(--brand)}
+.llcol.c-t2,.llcol.c-all{border-top:4px solid var(--good)}
+.llitem{display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:var(--surface2);border-radius:8px;padding:7px 10px;font-size:.9rem}
+.llitem span.nm{flex:1 1 140px;min-width:0;font-weight:500}
+.llitem small{flex-basis:100%;color:var(--muted);font-size:.78rem}
+.pill.p-single{background:var(--accent-soft);color:var(--accent)}
+.pill.p-t1{background:var(--drop);color:var(--brand)}
+.pill.p-t2,.pill.p-all{background:var(--good-soft);color:var(--good)}
+.llcheck td:nth-child(3),.llcheck th:nth-child(3),.llcheck td:nth-child(4),.llcheck th:nth-child(4){text-align:left}
+@media print{
+  :root:root:root{--bg:#fff;--surface:#fff;--surface2:#f1f1f1;--line:#bdbdbd;--ink:#000;--muted:#444;--brand:#000;--on-brand:#fff;--accent:#000;--accent-soft:#eee;--good:#000;--good-soft:#eee;--bad:#000;--bad-soft:#eee;--drop:#eee}
+  body{background:#fff;color:#000;padding:0;font-size:11pt}
+  body::before{display:none}
+  .topbar,.foot,.no-print{display:none!important}
+  main{max-width:none}
+  .card{border:0;padding:0;border-radius:0}
+  .sday{break-inside:avoid}
+  @page{margin:14mm}
+}
+@media (prefers-reduced-motion:no-preference){.bar > i{transition:width .3s ease}}
+</style>
 
-    .tabs { max-width: 1180px; margin: 0 auto; display: flex; gap: 4px; overflow-x: auto; }
-    .tab { background: none; border: 0; border-bottom: 3px solid transparent; padding: 9px 14px; font-weight: 600; color: var(--muted); white-space: nowrap; }
-    .tab[aria-selected=true] { color: var(--ink); border-bottom-color: var(--brand); }
-    .tab:hover { color: var(--ink); }
-
-    /* Scrollable workspace area inside locked shell */
-    .workspace {
-      flex: 1 1 auto;
-      overflow-y: auto;
-      padding: 20px max(16px, env(safe-area-inset-left, 0px)) 56px max(16px, env(safe-area-inset-right, 0px));
-    }
-    main { max-width: 1180px; margin: 0 auto; }
-    .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
-    .card + .card { margin-top: 16px; }
-    .sec-h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
-    .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); gap: 16px; margin-top: 16px; align-items: start; }
-    .grid2 > .card { margin-top: 0; }
-    .split { display: grid; grid-template-columns: minmax(0, 370px) minmax(0, 1fr); gap: 20px; align-items: start; }
-    @media (max-width: 820px) { .split { grid-template-columns: minmax(0, 1fr); } }
-
-    .btn { background: var(--brand); color: var(--on-brand); border: 0; border-radius: 8px; padding: 8px 14px; font-weight: 600; }
-    .btn.ghost { background: var(--surface2); color: var(--ink); border: 1px solid var(--line); }
-    .btn.sm { padding: 5px 10px; font-size: .85rem; }
-    .btn:disabled, .x:disabled { opacity: .4; cursor: not-allowed; }
-    .x { background: none; border: 0; color: var(--muted); font-size: 1.15rem; line-height: 1; padding: 4px 8px; border-radius: 6px; }
-    .x:hover { background: var(--surface2); color: var(--ink); }
-    .link { background: none; border: 0; color: var(--brand); padding: 0; font-size: .85rem; text-decoration: underline; }
-    .pill { display: inline-block; font-size: .72rem; font-weight: 600; padding: 2px 8px; border-radius: 99px; background: var(--surface2); color: var(--muted); white-space: nowrap; }
-    .pill.t-ts, .pill.t-char, .pill.t-show { background: var(--accent-soft); color: var(--accent); }
-    .pill.t-qs { background: var(--surface2); }
-    .pill.t-snack { background: var(--good-soft); color: var(--good); }
-    .pill.b-free { background: var(--good-soft); color: var(--good); }
-    .pill.b-child { background: var(--accent-soft); color: var(--accent); }
-    .pill.b-adult { background: var(--surface2); color: var(--ink); }
-    .pill.th-3 { background: var(--bad-soft); color: var(--bad); }
-    .pill.th-2 { background: var(--accent-soft); color: var(--accent); }
-    .pill.th-1 { background: var(--good-soft); color: var(--good); }
-    .pill.est { background: transparent; color: var(--muted); border: 1px dashed var(--muted); }
-    .pill.chk { background: var(--bad-soft); color: var(--bad); }
-    .money-in { display: inline-flex; align-items: center; gap: 4px; color: var(--muted); }
-
-    .bar { height: 8px; border-radius: 99px; background: var(--surface2); overflow: hidden; border: 1px solid var(--border-subtle); }
-    .bar > i { display: block; height: 100%; background: var(--brand); border-radius: 99px; }
-    .bar.over > i { background: var(--bad); }
-    .good { color: var(--good); }
-    .bad { color: var(--bad); }
-    .status { font-weight: 600; font-size: .88rem; }
-
-    /* Budget rows */
-    .brow { padding: 14px 0; border-top: 1px solid var(--line); display: grid; gap: 8px; }
-    .brow:first-of-type { border-top: 0; padding-top: 0; }
-    .brow-h { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: center; }
-    .brow-n { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
-    .big { font-family: var(--f-display); font-size: 1.7rem; font-variant-numeric: tabular-nums; }
-    .tgt { display: inline-flex; gap: 8px; align-items: center; color: var(--muted); font-size: .88rem; }
-
-    /* Forms & tables */
-    .prow { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; padding: 6px 0; }
-    .prow input[type=text] { flex: 1 1 120px; }
-    .age { display: inline-flex; gap: 6px; align-items: center; color: var(--muted); font-size: .88rem; }
-    .age input { width: 64px; }
-    .fgrid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
-    .fld { display: grid; gap: 4px; font-size: .88rem; color: var(--muted); }
-    .fld small { font-size: .78rem; }
-    .fld input[type=number] { width: 100%; }
-    .check { display: flex; gap: 8px; align-items: center; font-size: .9rem; margin-top: 12px; }
-    .drow { display: grid; grid-template-columns: auto repeat(auto-fit, minmax(130px, 1fr)) auto; gap: 10px 14px; align-items: end; padding: 12px 0; border-top: 1px solid var(--line); }
-    .drow:first-of-type { border-top: 0; }
-    .drow .dn { font-family: var(--f-display); font-weight: 700; padding-bottom: 7px; min-width: 48px; }
-    .drow select, .drow input[type=number] { width: 100%; }
-    .drow label { display: grid; gap: 3px; font-size: .8rem; color: var(--muted); }
-    .scroll { overflow-x: auto; }
-    table { border-collapse: collapse; width: 100%; font-variant-numeric: tabular-nums; min-width: 560px; }
-    th, td { text-align: right; padding: 8px 10px; border-top: 1px solid var(--line); }
-    th { font-size: .75rem; letter-spacing: .05em; text-transform: uppercase; color: var(--muted); border-top: 0; font-weight: 600; }
-    th:first-child, td:first-child, th:nth-child(2), td:nth-child(2) { text-align: left; }
-    tfoot td { font-weight: 700; border-top: 2px solid var(--line); }
-
-    /* Dining */
-    .chips { display: flex; gap: 6px; flex-wrap: wrap; margin: 10px 0; }
-    .chip { background: var(--surface2); border: 1px solid var(--line); border-radius: 99px; padding: 5px 11px; font-size: .84rem; font-weight: 500; }
-    .chip.on { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
-    .catalog { display: grid; gap: 8px; max-height: calc(100vh - var(--tb, 150px) - 150px); overflow: auto; padding: 2px 4px 2px 2px; min-height: 120px; }
-    @media (max-width: 820px) { .catalog { max-height: 55vh; } }
-    .sticky { position: sticky; top: 0; }
-    @media (max-width: 820px) { .sticky { position: static; } }
-    .rcard { background: var(--surface2); border-radius: 10px; padding: 10px 12px; cursor: grab; display: grid; gap: 4px; border: 2px solid transparent; }
-    .rcard.picked { border-color: var(--brand); background: var(--drop); }
-    .rcard.dragging { opacity: .5; }
-    .rc-top { display: flex; justify-content: space-between; gap: 8px; align-items: flex-start; }
-    .rc-top strong { font-weight: 600; }
-    .rc-meta { font-size: .84rem; color: var(--muted); }
-    .rc-meta b { color: var(--ink); }
-    .rc-note { font-size: .8rem; color: var(--muted); }
-    .add-rest { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
-    .add-rest summary { cursor: pointer; font-weight: 600; color: var(--brand); }
-    .add-rest .fgrid { margin-top: 10px; }
-    .add-rest input[type=text], .add-rest select { width: 100%; }
-    .edit { background: var(--surface); border: 1px dashed var(--line); border-radius: 8px; padding: 8px 10px; margin-top: 4px; display: flex; gap: 12px; flex-wrap: wrap; align-items: center; font-size: .85rem; }
-    .banner { background: var(--drop); border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; gap: 10px; align-items: center; margin-bottom: 12px; flex-wrap: wrap; }
-    .dcard { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
-    .dcard + .dcard { margin-top: 14px; }
-    .dc-h { display: flex; justify-content: space-between; gap: 8px 16px; align-items: baseline; flex-wrap: wrap; margin-bottom: 12px; }
-    .dc-h .place { color: var(--muted); font-weight: 500; margin-left: 8px; font-size: .9rem; }
-    .slots { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 230px), 1fr)); gap: 10px; }
-    .slot { border: 2px dashed var(--line); border-radius: 10px; padding: 10px; min-height: 110px; display: grid; align-content: start; gap: 6px; }
-    .slot.armed { border-color: var(--brand); cursor: pointer; }
-    .slot.over { background: var(--drop); border-color: var(--brand); }
-    .slot-h { display: flex; justify-content: space-between; align-items: center; font-size: .76rem; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); font-weight: 600; }
-    .slot .empty { color: var(--muted); font-size: .85rem; }
-    .placed { background: var(--surface2); border-radius: 8px; padding: 9px 10px; cursor: grab; display: grid; gap: 3px; }
-    .placed strong { font-weight: 600; }
-    .placed .tot { font-family: var(--f-display); font-size: 1.25rem; font-variant-numeric: tabular-nums; }
-    .placed .pp { font-size: .8rem; color: var(--muted); display: grid; gap: 1px; }
-
-    /* Rides, plan, LL & summary */
-    .list { display: grid; gap: 8px; margin: 0; padding: 0; list-style: none; }
-    .ri { display: flex; gap: 10px; align-items: center; background: var(--surface2); border-radius: 10px; padding: 9px 10px; cursor: grab; flex-wrap: wrap; border: 2px solid transparent; }
-    .ri.over { border-color: var(--brand); background: var(--drop); }
-    .ri.dragging { opacity: .5; }
-    .ri .rno { font-family: var(--f-display); font-weight: 700; width: 26px; text-align: center; color: var(--brand); font-size: 1.1rem; }
-    .ri-main { flex: 1 1 160px; min-width: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-    .ri-main strong { font-weight: 600; }
-    .ri-ctl { display: flex; gap: 2px; }
-    .ri select { padding: 5px 7px; font-size: .85rem; }
-    .endzone { border: 2px dashed var(--line); border-radius: 10px; padding: 12px; text-align: center; color: var(--muted); font-size: .85rem; margin-top: 8px; }
-    .endzone.over { background: var(--drop); border-color: var(--brand); }
-    .addrow { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
-    .addrow input[type=text] { flex: 1 1 160px; }
-    .dtabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; margin-bottom: 14px; }
-    .dtab { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 7px 14px; text-align: left; white-space: nowrap; font-weight: 600; display: grid; }
-    .dtab small { font-weight: 400; color: var(--muted); font-size: .78rem; }
-    .dtab.on { background: var(--brand); color: var(--on-brand); border-color: var(--brand); }
-    .dtab.on small { color: var(--on-brand); opacity: .85; }
-    .timeline { list-style: none; margin: 0; padding: 10px; display: grid; gap: 8px; border: 2px dashed var(--line); border-radius: 12px; min-height: 160px; align-content: start; }
-    .timeline.over { background: var(--drop); border-color: var(--brand); }
-    .tl { display: flex; gap: 10px; align-items: center; background: var(--surface2); border-radius: 10px; padding: 8px 10px; flex-wrap: wrap; }
-    .tl-body { flex: 1 1 140px; min-width: 0; display: grid; }
-    .tl-body strong { font-weight: 600; }
-    .tl-body span { font-size: .82rem; color: var(--muted); }
-    .badge { font-size: .7rem; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; padding: 3px 8px; border-radius: 6px; background: var(--surface); color: var(--muted); min-width: 58px; text-align: center; }
-    .badge.ride { background: var(--brand); color: var(--on-brand); }
-    .badge.meal { background: var(--accent-soft); color: var(--accent); }
-    .badge.show { background: var(--good-soft); color: var(--good); }
-    .note { background: var(--accent-soft); color: var(--accent); padding: 8px 12px; border-radius: 8px; font-size: .88rem; margin-bottom: 12px; }
-    .tag { font-size: .72rem; background: var(--good-soft); color: var(--good); padding: 2px 7px; border-radius: 99px; font-weight: 600; }
-    .intro ol { margin: 8px 0 14px; padding-left: 20px; display: grid; gap: 4px; }
-    .sheet { display: grid; gap: 24px; }
-    .sheet h2 { font-size: 1.15rem; margin-bottom: 8px; }
-    .sheet table { min-width: 0; }
-    .sheet ol { margin: 4px 0 0; padding-left: 22px; display: grid; gap: 2px; }
-    .btable th:nth-child(2), .btable td:nth-child(2) { text-align: right; }
-    .etable th, .etable td { text-align: left; vertical-align: top; }
-    .etable td:first-child { white-space: nowrap; width: 1%; }
-    .sday .costs { margin-bottom: 8px; }
-
-    .llopts { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 12px; }
-    .llopt { background: var(--surface2); border-radius: 12px; padding: 14px; display: grid; gap: 8px; align-content: start; border: 1px solid var(--line); }
-    .llopt h3 { font-size: 1.1rem; }
-    .llopt .price { font-family: var(--f-display); font-size: 1.2rem; font-variant-numeric: tabular-nums; }
-    .llopt ul, .llsteps { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: .9rem; }
-    .llopt .best { font-size: .84rem; color: var(--muted); border-top: 1px solid var(--line); padding-top: 8px; }
-    .llopt .best b { color: var(--ink); }
-    .llsteps { gap: 8px; }
-    .llcols { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 250px), 1fr)); gap: 14px; margin-top: 14px; align-items: start; }
-    .llcol { border: 1px solid var(--line); border-radius: 12px; padding: 12px; display: grid; gap: 8px; align-content: start; }
-    .llcol-h { display: grid; gap: 2px; }
-    .llcol-h small { color: var(--muted); font-size: .8rem; }
-    .llcol.c-single { border-top: 4px solid var(--accent); }
-    .llcol.c-t1 { border-top: 4px solid var(--brand); }
-    .llcol.c-t2, .llcol.c-all { border-top: 4px solid var(--good); }
-    .llitem { display: flex; gap: 6px; align-items: center; flex-wrap: wrap; background: var(--surface2); border-radius: 8px; padding: 7px 10px; font-size: .9rem; }
-    .llitem span.nm { flex: 1 1 140px; min-width: 0; font-weight: 500; }
-    .llitem small { flex-basis: 100%; color: var(--muted); font-size: .78rem; }
-    .pill.p-single { background: var(--accent-soft); color: var(--accent); }
-    .pill.p-t1 { background: var(--drop); color: var(--brand); }
-    .pill.p-t2, .pill.p-all { background: var(--good-soft); color: var(--good); }
-    .llcheck td:nth-child(3), .llcheck th:nth-child(3), .llcheck td:nth-child(4), .llcheck th:nth-child(4) { text-align: left; }
-
-    .foot { margin: 32px auto 0; color: var(--muted); font-size: .82rem; display: grid; gap: 10px; }
-    .foot-btns { display: flex; gap: 8px; flex-wrap: wrap; }
-
-    @media print {
-      :root:root:root { --bg: #fff; --surface: #fff; --surface2: #f1f1f1; --line: #bdbdbd; --ink: #000; --muted: #444; --brand: #000; --on-brand: #fff; --accent: #000; --accent-soft: #eee; --good: #000; --good-soft: #eee; --bad: #000; --bad-soft: #eee; --drop: #eee; }
-      body, html { overflow: visible; height: auto; -webkit-user-select: auto; user-select: auto; }
-      .workspace { overflow: visible; padding: 0; }
-      body { background: #fff; color: #000; padding: 0; font-size: 11pt; }
-      body::before, .topbar, .foot, .no-print { display: none !important; }
-      main { max-width: none; }
-      .card { border: 0; padding: 0; border-radius: 0; }
-      .sday { break-inside: avoid; }
-      @page { margin: 14mm; }
-    }
-    @media (prefers-reduced-motion: no-preference) {
-      .bar > i { transition: width .3s ease; }
-    }
-  </style>
-</head>
-<body>
-  <header class="topbar" id="top">
-    <div class="top-row">
-      <div class="brand">
-        <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="currentColor"></path></svg>
-        <div>
-          <span class="wordmark">Parkwise</span>
-          <input id="tripName" class="tripname" data-f="trip" aria-label="Trip name" maxlength="60" placeholder="Name your trip...">
-        </div>
-      </div>
-      <div class="sum" id="sum">
-        <div class="sum-main"><span class="k">Estimated total</span><strong id="sumTotal">$155</strong></div>
-        <div class="sum-bar">
-          <div class="bar" id="sumBar"><i style="width:0%"></i></div>
-          <span class="st muted" id="sumStatus">Set budgets in Trip &amp; budget</span>
-        </div>
-        <div class="sum-split">
-          <span>Tickets <b id="sumTix">$155</b></span>
-          <span>Lightning Lane <b id="sumLL">$0</b></span>
-          <span>Dining <b id="sumDining">$0</b></span>
-        </div>
-      </div>
+</head><body><header class="topbar" id="top">
+  <div class="top-row">
+    <div class="brand">
+      <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="currentColor"></path></svg>
+      <div><span class="wordmark">Parkwise</span><input id="tripName" class="tripname" data-f="trip" aria-label="Trip name" maxlength="60"></div>
     </div>
-    <nav class="tabs" id="tabs" aria-label="Planner sections">
-      <button class="tab" role="tab" aria-selected="true" data-act="tab" data-id="trip">Trip &amp; budget</button>
-      <button class="tab" role="tab" aria-selected="false" data-act="tab" data-id="dining">Dining</button>
-      <button class="tab" role="tab" aria-selected="false" data-act="tab" data-id="rides">Ride priorities</button>
-      <button class="tab" role="tab" aria-selected="false" data-act="tab" data-id="ll">Lightning Lane</button>
-      <button class="tab" role="tab" aria-selected="false" data-act="tab" data-id="plan">Day plan</button>
-      <button class="tab" role="tab" aria-selected="false" data-act="tab" data-id="summary">Summary</button>
-    </nav>
-  </header>
-
-  <div class="workspace">
-    <main id="view"></main>
-    <footer class="foot" id="foot">
-      <p>Unofficial planner, not affiliated with The Walt Disney Company. Prices are starting estimates, attractions, menus, and pricing are subject to change. <strong>For an accurate estimate and plan, contact <a href="mailto:DecadesOfMagicTravel@Gmail.com">DecadesOfMagicTravel@Gmail.com</a></strong></p>
-      <div class="foot-btns">
-        <button class="btn ghost sm" data-act="reset-sample">Load sample trip</button>
-        <button class="btn ghost sm" data-act="reset-blank">Start a blank plan</button>
-      </div>
-    </footer>
+    <div class="sum" id="sum"><div class="sum-main"><span class="k">Estimated total</span><strong>$155</strong></div><div class="sum-bar"><div class="bar"><i style="width:0%"></i></div><span class="st muted">Set budgets in Trip &amp; budget</span></div><div class="sum-split"><span>Tickets <b>$155</b></span><span>Lightning Lane <b>$0</b></span><span>Dining <b>$0</b></span></div></div>
   </div>
+  <nav class="tabs" id="tabs" aria-label="Planner sections"><button class="tab" role="tab" aria-selected="true" data-act="tab" data-id="trip">Trip &amp; budget</button><button class="tab" role="tab" aria-selected="false" data-act="tab" data-id="dining">Dining</button><button class="tab" role="tab" aria-selected="false" data-act="tab" data-id="rides">Ride priorities</button><button class="tab" role="tab" aria-selected="false" data-act="tab" data-id="ll">Lightning Lane</button><button class="tab" role="tab" aria-selected="false" data-act="tab" data-id="plan">Day plan</button><button class="tab" role="tab" aria-selected="false" data-act="tab" data-id="summary">Summary</button></nav>
+</header>
+<main id="view"><section class="card intro no-print"><h2>Plan your Disney World trip</h2><ol><li>Add who is going and their ages below.</li><li>Choose how many days you have and where you will be each day.</li><li>Drag restaurants onto meals in Dining, rank rides, then plan each day.</li></ol><div class="prow"><button class="btn ghost sm" data-act="sample-now">See a sample trip</button><span class="hint">Replaces this blank plan with an example you can edit.</span></div></section><section class="card"><div class="sec-h"><h2>Budget</h2><p class="hint">Estimates update as you change the party, days and dining.</p></div><div class="brow"><div class="brow-h"><div><h3>Tickets</h3><p class="hint">1 park day × $155 per day</p></div><label class="tgt">Budget <span class="money-in">$<input type="number" min="0" step="25" inputmode="decimal" value="0" data-f="budget" data-k="tickets"></span></label></div><div class="brow-n"><strong class="big">$155</strong><span class="status muted">No budget set</span></div><div class="bar"><i style="width:0%"></i></div></div><div class="brow"><div class="brow-h"><div><h3>Lightning Lane</h3><p class="hint">Multi Pass or Single Pass, ages 3 and up</p></div><label class="tgt">Budget <span class="money-in">$<input type="number" min="0" step="25" inputmode="decimal" value="0" data-f="budget" data-k="ll"></span></label></div><div class="brow-n"><strong class="big">$0</strong><span class="status muted">No budget set</span></div><div class="bar"><i style="width:0%"></i></div></div><div class="brow"><div class="brow-h"><div><h3>Dining</h3><p class="hint">Meals placed in Dining, with tax and tip</p></div><label class="tgt">Budget <span class="money-in">$<input type="number" min="0" step="25" inputmode="decimal" value="0" data-f="budget" data-k="dining"></span></label></div><div class="brow-n"><strong class="big">$0</strong><span class="status muted">No budget set</span></div><div class="bar"><i style="width:0%"></i></div></div></section><div class="grid2"><section class="card"><div class="sec-h"><h2>Who is going</h2></div><p class="hint" style="margin-bottom:8px">Age sets the price: under 3 is free, 3–9 pays the child price, 10 and up pays the adult price.</p><div class="prow"><input type="text" value="Traveler 1" data-f="party-name" data-i="0" aria-label="Traveler name" maxlength="30"><label class="age">Age <input type="number" min="0" max="99" value="35" data-f="party-age" data-i="0"></label><span class="pill b-adult">Adult 10+</span><button class="x" data-act="rm-person" data-i="0" aria-label="Remove Traveler 1" disabled="">×</button></div><div class="prow"><button class="btn ghost sm" data-act="add-person">Add traveler</button><span class="hint">1 adult, 0 childs, 0 under 3</span></div></section><section class="card"><div class="sec-h"><h2>Prices</h2></div><div class="fgrid"><label class="fld"><span>Adult ticket, per park day</span><span class="money-in">$<input type="number" min="0" step="1" value="155" data-f="tix-adult"></span></label><label class="fld"><span>Child ticket (3–9), per park day</span><span class="money-in">$<input type="number" min="0" step="1" value="150" data-f="tix-child"></span></label><label class="fld"><span>Sales tax</span><span class="money-in"><input type="number" min="0" max="20" step="0.1" value="6.5" data-f="taxRate">%</span></label><label class="fld"><span>Tip on table service</span><span class="money-in"><input type="number" min="0" max="40" step="1" value="18" data-f="tipRate">%</span></label><label class="fld"><span>Meal cost, each child under 3</span><span class="money-in">$<input type="number" min="0" step="1" value="0" data-f="toddler"></span></label></div><label class="check"><input type="checkbox" data-f="tix-hopper"> Add Park Hopper</label><p class="hint" style="margin-top:10px">Longer stays lower the per-day ticket price, so enter your average per day from your quote.</p></section></div><section class="card"><div class="sec-h"><h2>Days</h2><button class="btn sm" data-act="add-day">Add day</button></div><div class="drow"><span class="dn">Day 1</span><label>Where<select data-f="day-place" data-d="7dkny9"><option selected="">Magic Kingdom</option><option>EPCOT</option><option>Hollywood Studios</option><option>Animal Kingdom</option><option>Disney Springs</option><option>Resort day</option></select></label><label>Lightning Lane<select data-f="day-ll" data-d="7dkny9"><option value="none" selected="">None</option><option value="multi">Multi Pass</option><option value="single">Single Pass</option></select></label><button class="x" data-act="rm-day" data-d="7dkny9" aria-label="Remove day 1" disabled="">×</button></div></section><section class="card"><div class="sec-h"><h2>Cost by day</h2></div><div class="scroll"><table><thead><tr><th>Day</th><th>Where</th><th>Tickets</th><th>Lightning Lane</th><th>Dining</th><th>Total</th></tr></thead><tbody><tr><td>Day 1</td><td>Magic Kingdom</td><td>$155</td><td>$0</td><td>$0</td><td>$155</td></tr></tbody><tfoot><tr><td colspan="2">Trip total</td><td>$155</td><td>$0</td><td>$0</td><td>$155</td></tr></tfoot></table></div></section></main>
+<footer class="foot" id="foot"><p>Unofficial planner, not affiliated with The Walt Disney Company. Prices are starting estimates, attractions, menus, and pricing are subject to change. <strong>For an accurate estimate and plan, contact <a href="mailto:DecadesOfMagicTravel@Gmail.com">DecadesOfMagicTravel@Gmail.com</a></strong></p><div class="foot-btns"><button class="btn ghost sm" data-act="reset-sample">Load sample trip</button><button class="btn ghost sm" data-act="reset-blank">Start a blank plan</button></div></footer>
 
-  <script>
-  (function(){
-  'use strict';
-  var KEY='parkwise-v1';
-  var MEALS=['breakfast','lunch','dinner','snack'];
-  var MEAL_LABEL={breakfast:'Breakfast',lunch:'Lunch',dinner:'Dinner',snack:'Snack'};
-  var MEAL_TIME={breakfast:'08:30',lunch:'12:30',dinner:'18:30',snack:'15:30'};
-  var PARKS=['Magic Kingdom','EPCOT','Hollywood Studios','Animal Kingdom'];
-  var PLACES=PARKS.concat(['Disney Springs','Resort day']);
-  var LOCS=PARKS.concat(['Disney Springs','Resorts','Snacks']);
-  var TYPE_LABEL={qs:'Quick service',ts:'Table service',char:'Character meal',show:'Dinner show',snack:'Snack'};
-  var BAND_LABEL={free:'Under 3',child:'Child 3–9',adult:'Adult 10+'};
-  var THRILL={1:'Gentle',2:'Moderate',3:'Intense'};
-  var PLAN_LABEL={standby:'Standby',multi:'Multi Pass',single:'Single Pass'};
-  var DEF_MULTI={'Magic Kingdom':32,'EPCOT':27,'Hollywood Studios':30,'Animal Kingdom':22};
-  var TABS=[['trip','Trip & budget'],['dining','Dining'],['rides','Ride priorities'],['ll','Lightning Lane'],['plan','Day plan'],['summary','Summary']];
+<script>
+(function(){
+'use strict';
+var KEY='parkwise-v1';
+var MEALS=['breakfast','lunch','dinner','snack'];
+var MEAL_LABEL={breakfast:'Breakfast',lunch:'Lunch',dinner:'Dinner',snack:'Snack'};
+var MEAL_TIME={breakfast:'08:30',lunch:'12:30',dinner:'18:30',snack:'15:30'};
+var PARKS=['Magic Kingdom','EPCOT','Hollywood Studios','Animal Kingdom'];
+var PLACES=PARKS.concat(['Disney Springs','Resort day']);
+var LOCS=PARKS.concat(['Disney Springs','Resorts','Snacks']);
+var TYPE_LABEL={qs:'Quick service',ts:'Table service',char:'Character meal',show:'Dinner show',snack:'Snack'};
+var BAND_LABEL={free:'Under 3',child:'Child 3–9',adult:'Adult 10+'};
+var THRILL={1:'Gentle',2:'Moderate',3:'Intense'};
+var PLAN_LABEL={standby:'Standby',multi:'Multi Pass',single:'Single Pass'};
+var DEF_MULTI={'Magic Kingdom':32,'EPCOT':27,'Hollywood Studios':30,'Animal Kingdom':22};
+var TABS=[['trip','Trip & budget'],['dining','Dining'],['rides','Ride priorities'],['ll','Lightning Lane'],['plan','Day plan'],['summary','Summary']];
+var ENTRY_LABEL={ride:'Ride',show:'Show',break:'Break',travel:'Travel',note:'Note',meal:'Meal'};
 
-  function q(s){return document.querySelector(s);}
-  function slug(s){return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
-  function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-  function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
-  function uid(){return Math.random().toString(36).slice(2,8);}
-  function pl(n,w){return n+' '+w+(n===1?'':'s');}
+function q(s){return document.querySelector(s);}
+function slug(s){return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
+function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
+function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
+function uid(){return Math.random().toString(36).slice(2,8);}
+function pl(n,w){return n+' '+w+(n===1?'':'s');}
+function toMin(s){var p=String(s||'09:00').split(':');return (+p[0]||0)*60+(+p[1]||0);}
+function fromMin(m){m=Math.max(0,Math.min(23*60+59,m));var h=Math.floor(m/60),mm=m%60;return (h<10?'0':'')+h+':'+(mm<10?'0':'')+mm;}
+function fmtTime(s){var m=toMin(s),h=Math.floor(m/60),mm=m%60,ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+(mm<10?'0':'')+mm+' '+ap;}
 
-  /* ---------- catalog (starting estimates; every price is editable) ---------- */
-  var R=[];
-  function addR(loc,rows){rows.forEach(function(r){var o=r[4]||{};R.push({id:slug(loc+' '+r[0]),name:r[0],loc:loc,type:r[1],adult:r[2],kid:r[3],e:!!o.e,c:!!o.c,inc:!!o.inc,n:o.n||''});});}
-  var E={e:1},EC={e:1,c:1};
-  addR('Magic Kingdom',[
-   ["Cinderella's Royal Table",'char',92,57,{n:'Lunch and dinner price. Breakfast is $79 adult, $49 child.'}],
-   ['The Crystal Palace','char',64,46,{n:'Lunch and dinner price. Breakfast is $57 adult, $37 child.'}],
-   ['Be Our Guest','ts',49,19,{e:1,n:'Dinner entrees run $35–55. Child price estimated.'}],
-   ['Liberty Tree Tavern','ts',45,18,{e:1,n:'Family-style meal. Verify the price.'}],
-   ["Tony's Town Square",'ts',38,14,E],
-   ['The Plaza Restaurant','ts',28,12,E],
-   ['Jungle Navigation Co. Skipper Canteen','ts',39,14,{e:1,n:'Based on a $35 noodle bowl plus a drink. Child price estimated.'}],
-   ['The Diamond Horseshoe','ts',32,14,EC],
-   ['Pecos Bill Tall Tale Inn','qs',17,9,E],['Columbia Harbour House','qs',16,9,E],["Cosmic Ray's Starlight Cafe",'qs',16,9,E],["Casey's Corner",'qs',14,8,E]]);
-  addR('EPCOT',[
-   ['Akershus Royal Banquet Hall','char',69,47,{n:'Princess meal, lunch and dinner price. Breakfast is $66 adult, $42 child.'}],
-   ["Chip 'n' Dale's Harvest Feast (Garden Grill)",'char',62,43,{n:'Lunch and dinner price. Breakfast is $49 adult, $34 child.'}],
-   ['Biergarten Restaurant','ts',51,28,{n:'Buffet, posted price.'}],
-   ['Space 220','ts',79,38,{e:1,n:'Dinner prix fixe is $79; lunch is $55. Child price estimated.'}],
-   ['Takumi-Tei','ts',150,60,{e:1,n:'Semi-omakase starts at $150. Child price estimated.'}],
-   ['Le Cellier Steakhouse','ts',62,24,{n:'Filet runs about $65, other entrees less.'}],
-   ['Coral Reef Restaurant','ts',40,15,E],['La Hacienda de San Angel','ts',40,15,E],['San Angel Inn','ts',33,13,E],
-   ['Chefs de France','ts',45,18,E],['Monsieur Paul','ts',85,30,E],['Nine Dragons','ts',33,13,E],
-   ['Rose & Crown Dining Room','ts',36,15,E],['Shiki-Sai: Sushi Izakaya','ts',33,13,E],['Spice Road Table','ts',33,13,E],
-   ['Teppan Edo','ts',45,22,E],['Tutto Italia','ts',45,16,E],['Via Napoli','ts',32,12,E],
-   ['La Crêperie de Paris','ts',22,10,{e:1,c:1,n:'Some lists show this as counter service.'}],
-   ['Restaurant Marrakesh','ts',40,15,EC],['Tokyo Dining','ts',38,15,EC],['Tutto Gusto Wine Cellar','ts',38,15,EC],
-   ['Sunshine Seasons','qs',17,9,E],['Connections Eatery','qs',16,9,E],['Regal Eagle Smokehouse','qs',17,9,E]]);
-  addR('Hollywood Studios',[
-   ['Hollywood & Vine','char',64,45,{n:'Character meal, lunch and dinner price. Breakfast is $49 adult, $34 child.'}],
-   ['Roundup Rodeo BBQ','ts',52,32,{n:'Fixed price, all you care to enjoy.'}],
-   ["50's Prime Time Cafe",'ts',33,13,E],['The Hollywood Brown Derby','ts',58,20,E],['Sci-Fi Dine-In Theater','ts',32,13,E],
-   ["Mama Melrose's Ristorante Italiano",'ts',32,13,{e:1,c:1,n:'Missing from several 2026 lists. It may be closed.'}],
-   ['Docking Bay 7 Food and Cargo','qs',16,9,E],['Backlot Express','qs',16,9,E],["Woody's Lunch Box",'qs',13,8,E],['Ronto Wraps','qs',13,8,E]]);
-  addR('Animal Kingdom',[
-   ["Tusker House (Donald's Dining Safari)",'char',64,43,{n:'Lunch and dinner price. Breakfast is $53 adult, $38 child.'}],
-   ['Tiffins','ts',58,20,{e:1,n:'Reported range is $45–70 per person.'}],
-   ['Yak & Yeti Restaurant','ts',34,13,E],['Rainforest Cafe','ts',32,13,E],
-   ["Satu'li Canteen",'qs',17,9,E],['Flame Tree Barbecue','qs',16,9,E],['Pizzafari','qs',13,8,E]]);
-  addR('Disney Springs',[
-   ['Paddlefish','ts',40,14,{n:'Priced from the Feb 2026 menu. Seafood boils excluded.'}],
-   ["Chef Art Smith's Homecomin'",'ts',36,13,E],['City Works Eatery and Pour House','ts',28,12,E],['EET by Maneet Chauhan','ts',33,13,E],
-   ["Enzo's Hideaway",'ts',38,14,E],['Frontera Cocina','ts',34,13,E],['House of Blues','ts',30,12,E],['Maria and Enzo\'s','ts',36,14,E],
-   ['Morimoto Asia','ts',40,15,E],['Paradiso 37','ts',30,12,E],['Planet Hollywood Observatory','ts',28,12,E],
-   ['Portobello','ts',36,14,EC],['Raglan Road','ts',34,13,E],['Rainforest Cafe (Disney Springs)','ts',32,13,E],
-   ['Splitsville Dining Room','ts',28,12,E],['STK Orlando','ts',70,25,E],['Summer House on the Lake','ts',36,14,E],
-   ['Terralina Crafted Italian','ts',34,13,E],['The BOATHOUSE','ts',48,15,E],['The Edison','ts',38,14,E],['T-REX Cafe','ts',30,12,E],
-   ['Jaleo by José Andrés','ts',40,16,E],['Wine Bar George','ts',38,14,E],
-   ['Earl of Sandwich','qs',12,8,E],['Blaze Pizza','qs',13,9,E]]);
-  addR('Resorts',[
-   ['Grand Floridian Cafe (Grand Floridian)','ts',32,14,{e:1,n:'Adult from the 2026 dinner menu. Child price estimated.'}],
-   ['Citricos (Grand Floridian)','ts',53,18,{n:'Based on a 2025 menu.'}],
-   ["Narcoossee's (Grand Floridian)",'ts',58,22,{e:1,n:'Adult from a 2025 menu. Child price estimated.'}],
-   ['1900 Park Fare (Grand Floridian)','char',69,45,{n:'Dinner price. Breakfast is $59 adult, $37 child.'}],
-   ["Victoria & Albert's (Grand Floridian)",'ts',300,300,{e:1,n:'Prix fixe signature dining. Price not verified, so replace it with your quote.'}],
-   ['Garden View Tea Room (Grand Floridian)','ts',45,30,{e:1,n:'Afternoon tea. Price not verified.'}],
-   ['Kona Cafe (Polynesian)','ts',35,14,E],["'Ohana (Polynesian)",'char',69,46,{n:'Dinner, all you care to enjoy. Breakfast is $58 adult, $36 child.'}],
-   ['Wailulu Bar & Grill (Polynesian)','ts',30,13,EC],
-   ['California Grill (Contemporary)','ts',99,45,{n:'Dinner prix fixe, posted price.'}],
-   ["Chef Mickey's (Contemporary)",'char',72,46,{n:'Dinner price. Breakfast is $62 adult, $41 child.'}],
-   ['Steakhouse 71 (Contemporary)','ts',45,16,E],['The Wave of American Flavors (Contemporary)','ts',36,14,EC],
-   ['Story Book Dining at Artist Point (Wilderness Lodge)','char',72,46,{n:'Dinner with Snow White and friends.'}],
-   ['Whispering Canyon Cafe (Wilderness Lodge)','ts',38,15,E]]);
-
-  function blankState(){
-    return {
-      tab:'trip',
-      trip:'',
-      budget:{tickets:0,ll:0,dining:0},
-      party:[{id:uid(),name:'Traveler 1',age:35}],
-      prices:{adult:155,child:150,tax:6.5,tip:18,toddler:0,hopper:false},
-      days:[{id:uid(),place:'Magic Kingdom',ll:'none',meals:{},plan:[]}],
-      customR:[],
-      rides:[],
-      llPrices:Object.assign({},DEF_MULTI)
-    };
-  }
-
-  function sampleState(){
-    var s=blankState();
-    s.trip='Family Magic Trip';
-    s.budget={tickets:2400,ll:600,dining:1800};
-    s.party=[
-      {id:uid(),name:'Alex',age:38},
-      {id:uid(),name:'Sam',age:36},
-      {id:uid(),name:'Leo',age:8},
-      {id:uid(),name:'Maya',age:2}
-    ];
-    s.days=[
-      {id:uid(),place:'Magic Kingdom',ll:'multi',meals:{lunch:R[8].id,dinner:R[1].id},plan:[]},
-      {id:uid(),place:'EPCOT',ll:'multi',meals:{lunch:R[24].id,dinner:R[13].id},plan:[]},
-      {id:uid(),place:'Hollywood Studios',ll:'multi',meals:{lunch:R[44].id},plan:[]},
-      {id:uid(),place:'Animal Kingdom',ll:'none',meals:{lunch:R[53].id},plan:[]}
-    ];
-    s.rides=[
-      {id:uid(),name:'TRON Lightcycle / Run',park:'Magic Kingdom',thrill:3,plan:'single'},
-      {id:uid(),name:'Haunted Mansion',park:'Magic Kingdom',thrill:1,plan:'multi'},
-      {id:uid(),name:'Guardians of the Galaxy: Cosmic Rewind',park:'EPCOT',thrill:3,plan:'single'},
-      {id:uid(),name:'Star Wars: Rise of the Resistance',park:'Hollywood Studios',thrill:3,plan:'single'},
-      {id:uid(),name:'Avatar Flight of Passage',park:'Animal Kingdom',thrill:3,plan:'single'}
-    ];
-    return s;
-  }
-
-  var state=(function(){
-    try{
-      var raw=localStorage.getItem(KEY);
-      if(raw) return Object.assign(blankState(), JSON.parse(raw));
-    }catch(e){}
-    return blankState();
-  })();
-
-  function save(){
-    try{localStorage.setItem(KEY, JSON.stringify(state));}catch(e){}
-  }
-
-  function partyCounts(){
-    var free=0,child=0,adult=0;
-    state.party.forEach(function(p){
-      var a=+p.age||0;
-      if(a<3) free++;
-      else if(a<=9) child++;
-      else adult++;
-    });
-    return {free:free,child:child,adult:adult};
-  }
-
-  function totals(){
-    var c=partyCounts();
-    var parkDays=state.days.filter(function(d){return PARKS.indexOf(d.place)!==-1;}).length;
-    var hop=state.prices.hopper?1.15:1;
-    var tickets=parkDays*hop*(c.adult*(+state.prices.adult||0)+c.child*(+state.prices.child||0));
-    var ll=0;
-    state.days.forEach(function(d){
-      if(d.ll==='multi'){
-        var rate=+(state.llPrices[d.place]||DEF_MULTI[d.place]||25);
-        ll+=rate*(c.adult+c.child);
-      }else if(d.ll==='single'){
-        ll+=18*(c.adult+c.child);
-      }
-    });
-    var dining=0;
-    var taxMult=1+(+state.prices.tax||0)/100;
-    var tipMult=1+(+state.prices.tip||0)/100;
-    var allR=R.concat(state.customR||[]);
-    state.days.forEach(function(d){
-      MEALS.forEach(function(m){
-        var rid=d.meals&&d.meals[m];
-        if(!rid) return;
-        var rest=allR.find(function(x){return x.id===rid;});
-        if(!rest) return;
-        var sub=c.adult*(+rest.adult||0)+c.child*(+rest.kid||0)+c.free*(+state.prices.toddler||0);
-        var mult=taxMult*((rest.type==='ts'||rest.type==='char')?tipMult:1);
-        dining+=sub*mult;
-      });
-    });
-    return {tickets:tickets,ll:ll,dining:dining,total:tickets+ll+dining,c:c,parkDays:parkDays};
-  }
-
-  function renderHeader(){
-    var t=totals();
-    q('#tripName').value=state.trip||'';
-    q('#sumTotal').textContent=money(t.total);
-    q('#sumTix').textContent=money(t.tickets);
-    q('#sumLL').textContent=money(t.ll);
-    q('#sumDining').textContent=money(t.dining);
-    var bTot=(+state.budget.tickets||0)+(+state.budget.ll||0)+(+state.budget.dining||0);
-    var bar=q('#sumBar');
-    var st=q('#sumStatus');
-    if(bTot>0){
-      var pct=Math.min(100,Math.round(t.total/bTot*100));
-      bar.querySelector('i').style.width=pct+'%';
-      bar.classList.toggle('over',t.total>bTot);
-      var diff=bTot-t.total;
-      st.className='st '+(diff>=0?'good':'bad');
-      st.textContent=diff>=0 ? money(diff)+' under '+money(bTot)+' budget' : money(-diff)+' over '+money(bTot)+' budget';
-    }else{
-      bar.querySelector('i').style.width='0%';
-      bar.classList.remove('over');
-      st.className='st muted';
-      st.textContent='Set budgets in Trip & budget';
-    }
-    document.querySelectorAll('#tabs .tab').forEach(function(el){
-      el.setAttribute('aria-selected',String(el.dataset.id===state.tab));
-    });
-  }
-
-  function renderTrip(){
-    var t=totals(),c=t.c;
-    var h='<section class="card intro no-print"><h2>Plan your Disney World trip</h2><ol><li>Add who is going and their ages below.</li><li>Choose how many days you have and where you will be each day.</li><li>Drag restaurants onto meals in Dining, rank rides, then plan each day.</li></ol><div class="prow"><button class="btn ghost sm" data-act="sample-now">See a sample trip</button><span class="hint">Replaces this blank plan with an example you can edit.</span></div></section>';
-    h+='<section class="card"><div class="sec-h"><h2>Budget</h2><p class="hint">Estimates update as you change the party, days and dining.</p></div>';
-    [['tickets','Tickets',pl(t.parkDays,'park day')+' × '+money(state.prices.adult)+' adult base',t.tickets],
-     ['ll','Lightning Lane','Multi Pass or Single Pass, ages 3 and up',t.ll],
-     ['dining','Dining','Meals placed in Dining, with tax and tip',t.dining]].forEach(function(row){
-      var k=row[0],lbl=row[1],sub=row[2],val=row[3],bud=+state.budget[k]||0;
-      var pct=bud>0?Math.min(100,Math.round(val/bud*100)):0;
-      var over=bud>0&&val>bud;
-      var stHtml=bud<=0?'<span class="status muted">No budget set</span>':(bud>=val?'<span class="status good">'+money(bud-val)+' left</span>':'<span class="status bad">'+money(val-bud)+' over</span>');
-      h+='<div class="brow"><div class="brow-h"><div><h3>'+lbl+'</h3><p class="hint">'+sub+'</p></div><label class="tgt">Budget <span class="money-in">$<input type="number" min="0" step="25" inputmode="decimal" value="'+bud+'" data-f="budget" data-k="'+k+'"></span></label></div><div class="brow-n"><strong class="big">'+money(val)+'</strong>'+stHtml+'</div><div class="bar'+(over?' over':'')+'"><i style="width:'+pct+'%"></i></div></div>';
-    });
-    h+='</section>';
-
-    h+='<div class="grid2"><section class="card"><div class="sec-h"><h2>Who is going</h2></div><p class="hint" style="margin-bottom:8px">Age sets the price: under 3 is free, 3–9 pays the child price, 10 and up pays the adult price.</p>';
-    state.party.forEach(function(p,i){
-      var a=+p.age||0;
-      var band=a<3?'<span class="pill b-free">Under 3</span>':(a<=9?'<span class="pill b-child">Child 3–9</span>':'<span class="pill b-adult">Adult 10+</span>');
-      h+='<div class="prow"><input type="text" value="'+esc(p.name)+'" data-f="party-name" data-i="'+i+'" aria-label="Traveler name" maxlength="30"><label class="age">Age <input type="number" min="0" max="99" value="'+a+'" data-f="party-age" data-i="'+i+'"></label>'+band+'<button class="x" data-act="rm-person" data-i="'+i+'" aria-label="Remove '+esc(p.name)+'"'+(state.party.length<=1?' disabled':'')+'>×</button></div>';
-    });
-    h+='<div class="prow"><button class="btn ghost sm" data-act="add-person">Add traveler</button><span class="hint">'+pl(c.adult,'adult')+', '+pl(c.child,'child')+', '+c.free+' under 3</span></div></section>';
-
-    h+='<section class="card"><div class="sec-h"><h2>Prices</h2></div><div class="fgrid">';
-    h+='<label class="fld"><span>Adult ticket, per park day</span><span class="money-in">$<input type="number" min="0" step="1" value="'+(+state.prices.adult||0)+'" data-f="tix-adult"></span></label>';
-    h+='<label class="fld"><span>Child ticket (3–9), per park day</span><span class="money-in">$<input type="number" min="0" step="1" value="'+(+state.prices.child||0)+'" data-f="tix-child"></span></label>';
-    h+='<label class="fld"><span>Sales tax</span><span class="money-in"><input type="number" min="0" max="20" step="0.1" value="'+(+state.prices.tax||0)+'" data-f="taxRate">%</span></label>';
-    h+='<label class="fld"><span>Tip on table service</span><span class="money-in"><input type="number" min="0" max="40" step="1" value="'+(+state.prices.tip||0)+'" data-f="tipRate">%</span></label>';
-    h+='<label class="fld"><span>Meal cost, each child under 3</span><span class="money-in">$<input type="number" min="0" step="1" value="'+(+state.prices.toddler||0)+'" data-f="toddler"></span></label>';
-    h+='</div><label class="check"><input type="checkbox" data-f="tix-hopper"'+(state.prices.hopper?' checked':'')+'> Add Park Hopper</label><p class="hint" style="margin-top:10px">Longer stays lower the per-day ticket price, so enter your average per day from your quote.</p></section></div>';
-
-    h+='<section class="card"><div class="sec-h"><h2>Days</h2><button class="btn sm" data-act="add-day">Add day</button></div>';
-    state.days.forEach(function(d,idx){
-      h+='<div class="drow"><span class="dn">Day '+(idx+1)+'</span><label>Where<select data-f="day-place" data-d="'+d.id+'">'+PLACES.map(function(plName){return '<option'+(d.place===plName?' selected':'')+'>'+esc(plName)+'</option>';}).join('')+'</select></label><label>Lightning Lane<select data-f="day-ll" data-d="'+d.id+'"><option value="none"'+(d.ll==='none'?' selected':'')+'>None</option><option value="multi"'+(d.ll==='multi'?' selected':'')+'>Multi Pass</option><option value="single"'+(d.ll==='single'?' selected':'')+'>Single Pass</option></select></label><button class="x" data-act="rm-day" data-d="'+d.id+'" aria-label="Remove day '+(idx+1)+'"'+(state.days.length<=1?' disabled':'')+'>×</button></div>';
-    });
-    h+='</section>';
-
-    h+='<section class="card"><div class="sec-h"><h2>Cost by day</h2></div><div class="scroll"><table><thead><tr><th>Day</th><th>Where</th><th>Tickets</th><th>Lightning Lane</th><th>Dining</th><th>Total</th></tr></thead><tbody>';
-    var hop=state.prices.hopper?1.15:1;
-    var taxMult=1+(+state.prices.tax||0)/100;
-    var tipMult=1+(+state.prices.tip||0)/100;
-    var allR=R.concat(state.customR||[]);
-    state.days.forEach(function(d,idx){
-      var isPark=PARKS.indexOf(d.place)!==-1;
-      var dTix=isPark?hop*(c.adult*(+state.prices.adult||0)+c.child*(+state.prices.child||0)):0;
-      var dLL=d.ll==='multi'?+(state.llPrices[d.place]||DEF_MULTI[d.place]||25)*(c.adult+c.child):(d.ll==='single'?18*(c.adult+c.child):0);
-      var dDin=0;
-      MEALS.forEach(function(m){
-        var rid=d.meals&&d.meals[m];
-        var rest=rid&&allR.find(function(x){return x.id===rid;});
-        if(rest){
-          var sub=c.adult*(+rest.adult||0)+c.child*(+rest.kid||0)+c.free*(+state.prices.toddler||0);
-          dDin+=sub*taxMult*((rest.type==='ts'||rest.type==='char')?tipMult:1);
-        }
-      });
-      h+='<tr><td>Day '+(idx+1)+'</td><td>'+esc(d.place)+'</td><td>'+money(dTix)+'</td><td>'+money(dLL)+'</td><td>'+money(dDin)+'</td><td><strong>'+money(dTix+dLL+dDin)+'</strong></td></tr>';
-    });
-    h+='</tbody><tfoot><tr><td colspan="2">Trip total</td><td>'+money(t.tickets)+'</td><td>'+money(t.ll)+'</td><td>'+money(t.dining)+'</td><td>'+money(t.total)+'</td></tr></tfoot></table></div></section>';
-    return h;
-  }
-
-  function renderDining(){
-    return '<section class="card"><div class="sec-h"><h2>Dining &amp; Meals</h2><p class="hint">Select a day and meal slot in your budget or add custom meals.</p></div><p class="hint">Tip: Add restaurants and meals in the Trip &amp; budget tab or customize prices in your party settings.</p></section>';
-  }
-
-  function renderRides(){
-    var h='<section class="card"><div class="sec-h"><h2>Ride Priorities</h2><button class="btn sm" data-act="add-ride">Add ride</button></div><div class="addrow"><input type="text" id="newRideName" placeholder="Ride name (e.g. Space Mountain)"><select id="newRidePark">'+PARKS.map(function(p){return '<option>'+esc(p)+'</option>';}).join('')+'</select><select id="newRideThrill"><option value="1">Gentle</option><option value="2" selected>Moderate</option><option value="3">Intense</option></select></div><ul class="list" style="margin-top:14px">';
-    if(!state.rides.length){
-      h+='<li class="hint">No rides ranked yet. Add a ride above to build your priority list.</li>';
-    }else{
-      state.rides.forEach(function(rd,i){
-        h+='<li class="ri"><span class="rno">'+(i+1)+'</span><div class="ri-main"><strong>'+esc(rd.name)+'</strong><span class="pill">'+esc(rd.park)+'</span><span class="pill th-'+rd.thrill+'">'+THRILL[rd.thrill]+'</span></div><div class="ri-ctl"><button class="x" data-act="rm-ride" data-i="'+i+'" aria-label="Remove ride">×</button></div></li>';
-      });
-    }
-    h+='</ul></section>';
-    return h;
-  }
-
-  function renderLL(){
-    return '<section class="card"><div class="sec-h"><h2>Lightning Lane Guide</h2></div><div class="llopts"><div class="llopt"><h3>Lightning Lane Multi Pass</h3><div class="price">Starting ~$22–$32+ / guest</div><ul><li>Advance selections up to 7 days ahead for Disney Resort guests (3 days for others).</li><li>Book up to 3 attractions per day in advance, then tap for more as you go.</li></ul><div class="best"><b>Best for:</b> Guests packing multiple rides into a full park day.</div></div><div class="llopt"><h3>Lightning Lane Single Pass</h3><div class="price">Per attraction / guest</div><ul><li>Covers top headliner attractions sold separately from Multi Pass.</li><li>Great when you only want skip-the-line access for one or two marquee rides.</li></ul><div class="best"><b>Best for:</b> Families targeting specific headline rides without buying Multi Pass.</div></div></div></section>';
-  }
-
-  function renderPlan(){
-    var h='<section class="card"><div class="sec-h"><h2>Day Plan</h2><p class="hint">Review your planned days and park assignments.</p></div>';
-    state.days.forEach(function(d,i){
-      h+='<div class="dcard"><div class="dc-h"><div><h3>Day '+(i+1)+'<span class="place">'+esc(d.place)+'</span></h3></div><span class="pill">LL: '+esc(d.ll.toUpperCase())+'</span></div><p class="hint">Assigned meals: '+MEALS.map(function(m){return MEAL_LABEL[m]+': '+(d.meals&&d.meals[m]?'Selected':'None');}).join(' · ')+'</p></div>';
-    });
-    h+='</section>';
-    return h;
-  }
-
-  function renderSummary(){
-    var t=totals();
-    var h='<section class="card sheet"><div><h2>Trip Summary — '+esc(state.trip||'Untitled Trip')+'</h2><p class="hint">Party: '+pl(t.c.adult,'adult')+', '+pl(t.c.child,'child')+', '+t.c.free+' under 3 · '+pl(state.days.length,'day')+'</p></div><table class="btable"><thead><tr><th>Category</th><th>Estimated Cost</th></tr></thead><tbody><tr><td>Park Tickets</td><td>'+money(t.tickets)+'</td></tr><tr><td>Lightning Lane</td><td>'+money(t.ll)+'</td></tr><tr><td>Dining</td><td>'+money(t.dining)+'</td></tr></tbody><tfoot><tr><td>Estimated Total</td><td>'+money(t.total)+'</td></tr></tfoot></table></section>';
-    return h;
-  }
-
-  function render(){
-    renderHeader();
-    var v=q('#view');
-    if(state.tab==='trip') v.innerHTML=renderTrip();
-    else if(state.tab==='dining') v.innerHTML=renderDining();
-    else if(state.tab==='rides') v.innerHTML=renderRides();
-    else if(state.tab==='ll') v.innerHTML=renderLL();
-    else if(state.tab==='plan') v.innerHTML=renderPlan();
-    else if(state.tab==='summary') v.innerHTML=renderSummary();
-  }
-
-  document.addEventListener('click',function(e){
-    var el=e.target.closest('[data-act]');
-    if(!el) return;
-    var act=el.dataset.act;
-    if(act==='tab'){
-      state.tab=el.dataset.id;
-      save();render();
-    }else if(act==='sample-now'||act==='reset-sample'){
-      state=sampleState();
-      save();render();
-    }else if(act==='reset-blank'){
-      state=blankState();
-      save();render();
-    }else if(act==='add-person'){
-      state.party.push({id:uid(),name:'Traveler '+(state.party.length+1),age:10});
-      save();render();
-    }else if(act==='rm-person'){
-      var idx=+el.dataset.i;
-      if(state.party.length>1){state.party.splice(idx,1);save();render();}
-    }else if(act==='add-day'){
-      state.days.push({id:uid(),place:'Magic Kingdom',ll:'none',meals:{},plan:[]});
-      save();render();
-    }else if(act==='rm-day'){
-      var did=el.dataset.d;
-      if(state.days.length>1){state.days=state.days.filter(function(d){return d.id!==did;});save();render();}
-    }else if(act==='add-ride'){
-      var inp=q('#newRideName');
-      var nm=inp&&inp.value.trim();
-      if(!nm) return;
-      state.rides.push({id:uid(),name:nm,park:q('#newRidePark').value,thrill:+q('#newRideThrill').value||2,plan:'standby'});
-      save();render();
-    }else if(act==='rm-ride'){
-      var ri=+el.dataset.i;
-      state.rides.splice(ri,1);
-      save();render();
-    }
-  });
-
-  document.addEventListener('input',function(e){
-    var el=e.target.closest('[data-f]');
-    if(!el) return;
-    var f=el.dataset.f;
-    if(f==='trip'){
-      state.trip=el.value;
-      save();renderHeader();
-    }else if(f==='budget'){
-      state.budget[el.dataset.k]=Math.max(0,+el.value||0);
-      save();renderHeader();
-      if(state.tab==='trip') render();
-    }else if(f==='party-name'){
-      state.party[+el.dataset.i].name=el.value;
-      save();
-    }else if(f==='party-age'){
-      state.party[+el.dataset.i].age=Math.max(0,Math.min(99,+el.value||0));
-      save();render();
-    }else if(f==='tix-adult'){
-      state.prices.adult=Math.max(0,+el.value||0);
-      save();render();
-    }else if(f==='tix-child'){
-      state.prices.child=Math.max(0,+el.value||0);
-      save();render();
-    }else if(f==='taxRate'){
-      state.prices.tax=Math.max(0,+el.value||0);
-      save();render();
-    }else if(f==='tipRate'){
-      state.prices.tip=Math.max(0,+el.value||0);
-      save();render();
-    }else if(f==='toddler'){
-      state.prices.toddler=Math.max(0,+el.value||0);
-      save();render();
-    }else if(f==='tix-hopper'){
-      state.prices.hopper=!!el.checked;
-      save();render();
-    }else if(f==='day-place'){
-      var d1=state.days.find(function(x){return x.id===el.dataset.d;});
-      if(d1){d1.place=el.value;save();render();}
-    }else if(f==='day-ll'){
-      var d2=state.days.find(function(x){return x.id===el.dataset.d;});
-      if(d2){d2.ll=el.value;save();render();}
-    }
-  });
-
-  render();
-  })();
-  </script>
-</body>
-</html>
+/* ---------- catalog (starting estimates; every price is editable) ---------- */
+var R=[];
+function addR(loc,rows){rows.forEach(function(r){var o=r[4]||{};R.push({id:slug(loc+' '+r[0]),name:r[0],loc:loc,type:r[1],adult:r[2],kid:r[3],e:!!o.e,c:!!o.c,inc:!!o.inc,n:o.n||''});});}
+var E={e:1},EC={e:1,c:1};
+addR('Magic Kingdom',[
+ ["Cinderella's Royal Table",'char',92,57,{n:'Lunch and dinner price. Breakfast is $79 adult, $49 child.'}],
+ ['The Crystal Palace','char',64,46,{n:'Lunch and dinner price. Breakfast is $57 adult, $37 child.'}],
+ ['Be Our Guest','ts',49,19,{e:1,n:'Dinner entrees run $35–55. Child price estimated.'}],
+ ['Liberty Tree Tavern','ts',45,18,{e:1,n:'Family-style meal. Verify the price.'}],
+ ["Tony's Town Square",'ts',38,14,E],
+ ['The Plaza Restaurant','ts',28,12,E],
+ ['Jungle Navigation Co. Skipper Canteen','ts',39,14,{e:1,n:'Based on a $35 noodle bowl plus a drink. Child price estimated.'}],
+ ['The Diamond Horseshoe','ts',32,14,EC],
+ ['Pecos Bill Tall Tale Inn','qs',17,9,E],['Columbia Harbour House','qs',16,9,E],["Cosmic Ray's Starlight Cafe",'qs',16,9,E],["Casey's Corner",'qs',14,8,E]]);
+addR('EPCOT',[
+ ['Akershus Royal Banquet Hall','char',69,47,{n:'Princess meal, lunch and dinner price. Breakfast is $66 adult, $42 child.'}],
+ ["Chip 'n' Dale's Harvest Feast (Garden Grill)",'char',62,43,{n:'Lunch and dinner price. Breakfast is $49 adult, $34 child.'}],
+ ['Biergarten Restaurant','ts',51,28,{n:'Buffet, posted price.'}],
+ ['Space 220','ts',79,38,{e:1,n:'Dinner prix fixe is $79; lunch is $55. Child price estimated.'}],
+ ['Takumi-Tei','ts',150,60,{e:1,n:'Semi-omakase starts at $150. Child price estimated.'}],
+ ['Le Cellier Steakhouse','ts',62,24,{e:1,n:'Filet runs about $65, other entrees less.'}],
+ ['Coral Reef Restaurant','ts',40,15,E],['La Hacienda de San Angel','ts',40,15,E],['San Angel Inn','ts',33,13,E],
+ ['Chefs de France','ts',45,18,E],['Monsieur Paul','ts',85,30,E],['Nine Dragons','ts',33,13,E],
+ ['Rose & Crown Dining Room','ts',36,15,E],['Shiki-Sai: Sushi Izakaya','ts',33,13,E],['Spice Road Table','ts',33,13,E],
+ ['Teppan Edo','ts',45,22,E],['Tutto Italia','ts',45,16,E],['Via Napoli','ts',32,12,E],
+ ['La Crêperie de Paris','ts',22,10,{e:1,c:1,n:'Some lists show this as counter service.'}],
+ ['Restaurant Marrakesh','ts',40,15,EC],['Tokyo Dining','ts',38,15,EC],['Tutto Gusto Wine Cellar','ts',38,15,EC],
+ ['Sunshine Seasons','qs',17,9,E],['Connections Eatery','qs',16,9,E],['Regal Eagle Smokehouse','qs',17,9,E]]);
+addR('Hollywood Studios',[
+ ['Hollywood & Vine','char',64,45,{n:'Character meal, lunch and dinner price. Breakfast is $49 adult, $34 child.'}],
+ ['Roundup Rodeo BBQ','ts',52,32,{n:'Fixed price, all you care to enjoy.'}],
+ ["50's Prime Time Cafe",'ts',33,13,E],['The Hollywood Brown Derby','ts',58,20,E],['Sci-Fi Dine-In Theater','ts',32,13,E],
+ ["Mama Melrose's Ristorante Italiano",'ts',32,13,{e:1,c:1,n:'Missing from several 2026 lists. It may be closed.'}],
+ ['Docking Bay 7 Food and Cargo','qs',16,9,E],['Backlot Express','qs',16,9,E],["Woody's Lunch Box",'qs',13,8,E],['Ronto Wraps','qs',13,8,E]]);
+addR('Animal Kingdom',[
+ ['Tusker House (Donald\'s Dining Safari)','char',64,43,{n:'Lunch and dinner price. Breakfast is $53 adult, $38 child.'}],
+ ['Tiffins','ts',58,20,{e:1,n:'Reported range is $45–70 per person.'}],
+ ['Yak & Yeti Restaurant','ts',34,13,E],['Rainforest Cafe','ts',32,13,E],
+ ["Satu'li Canteen",'qs',17,9,E],['Flame Tree Barbecue','qs',16,9,E],['Pizzafari','qs',13,8,E]]);
+addR('Disney Springs',[
+ ['Paddlefish','ts',40,14,{n:'Priced from the Feb 2026 menu. Seafood boils excluded.'}],
+ ["Chef Art Smith's Homecomin'",'ts',36,13,E],['City Works Eatery and Pour House','ts',28,12,E],['EET by Maneet Chauhan','ts',33,13,E],
+ ["Enzo's Hideaway",'ts',38,14,E],['Frontera Cocina','ts',34,13,E],['House of Blues','ts',30,12,E],['Maria and Enzo\'s','ts',36,14,E],
+ ['Morimoto Asia','ts',40,15,E],['Paradiso 37','ts',30,12,E],['Planet Hollywood Observatory','ts',28,12,E],
+ ['Portobello','ts',36,14,EC],['Raglan Road','ts',34,13,E],['Rainforest Cafe (Disney Springs)','ts',32,13,E],
+ ['Splitsville Dining Room','ts',28,12,E],['STK Orlando','ts',70,25,E],['Summer House on the Lake','ts',36,14,E],
+ ['Terralina Crafted Italian','ts',34,13,E],['The BOATHOUSE','ts',48,15,E],['The Edison','ts',38,14,E],['T-REX Cafe','ts',30,12,E],
+ ['Jaleo by José Andrés','ts',40,16,E],['Wine Bar George','ts',38,14,E],
+ ['Earl of Sandwich','qs',12,8,E],['Blaze Pizza','qs',13,9,E]]);
+addR('Resorts',[
+ ['Grand Floridian Cafe (Grand Floridian)','ts',32,14,{e:1,n:'Adult from the 2026 dinner menu. Child price estimated.'}],
+ ['Citricos (Grand Floridian)','ts',53,18,{n:'Based on a 2025 menu.'}],
+ ["Narcoossee's (Grand Floridian)",'ts',58,22,{e:1,n:'Adult from a 2025 menu. Child price estimated.'}],
+ ['1900 Park Fare (Grand Floridian)','char',69,45,{n:'Dinner price. Breakfast is $59 adult, $37 child.'}],
+ ["Victoria & Albert's (Grand Floridian)",'ts',300,300,{e:1,n:'Prix fixe signature dining. Price not verified, so replace it with your quote.'}],
+ ['Garden View Tea Room (Grand Floridian)','ts',45,30,{e:1,n:'Afternoon tea. Price not verified.'}],
+ ['Kona Cafe (Polynesian)','ts',35,14,E],["'Ohana (Polynesian)",'char',69,46,{n:'Dinner, all you care to enjoy. Breakfast is $58 adult, $36 child.'}],
+ ['Wailulu Bar & Grill (Polynesian)','ts',30,13,EC],
+ ['California Grill (Contemporary)','ts',99,45,{n:'Dinner prix fixe, posted price.'}],
+ ["Chef Mickey's (Contemporary)",'char',72,46,{n:'Dinner price. Breakfast is $62 adult, $41 child.'}],
+ ['Steakhouse 71 (Contemporary)','ts',45,16,E],['The Wave of American Flavors (Contemporary)','ts',36,14,EC],
+ ['Story Book Dining at Artist Point (Wilderness Lodge)','char',72,46,{n:'Dinner with Snow White and friends.'}],
+ ['Whispering Canyon Cafe (Wildernes
