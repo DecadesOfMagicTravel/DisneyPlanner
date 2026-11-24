@@ -380,6 +380,9 @@ textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px soli
 'use strict';
 
 var KEY = 'decades-of-magic-wdw-planner-v1';
+/* Taxes are added automatically. Orange County: 6.5% sales tax + 6% tourist development tax. Edit here if rates change. */
+var HOTEL_TAX_PCT = 12.5;
+var TICKET_TAX_PCT = 6.5;
 var MEALS = ['breakfast', 'lunch', 'dinner', 'snack'];
 var MEAL_LABEL = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', snack: 'Snack' };
 var MEAL_TIME = { breakfast: '08:30', lunch: '12:30', dinner: '18:30', snack: '15:30' };
@@ -875,7 +878,7 @@ function mealCost(restId){
 function calcHotel(){
   var nights = Math.max(0, +state.hotelNights || 0);
   var rate = Math.max(0, +state.hotelNightly || 0);
-  var tax = Math.max(0, +state.hotelTax || 0);
+  var tax = HOTEL_TAX_PCT;
   return nights * rate * (1 + tax / 100);
 }
 
@@ -884,7 +887,7 @@ function calcTickets(){
   var paying = c.adult + c.child;
   var days = Math.max(0, +state.ticketDays || 0);
   var price = Math.max(0, +state.ticketPrice || 0);
-  var tax = Math.max(0, +state.ticketTax || 0);
+  var tax = TICKET_TAX_PCT;
   return paying * days * price * (1 + tax / 100);
 }
 
@@ -1164,10 +1167,9 @@ function renderTrip(){
           '</label>' +
           '<label class="fld">Nightly rate ($)<input type="number" min="0" step="5" data-state-num="hotelNightly" value="' + (+state.hotelNightly || 0) + '"></label>' +
           '<label class="fld">Hotel nights<input type="number" min="0" max="30" data-state-num="hotelNights" value="' + (+state.hotelNights || 0) + '"></label>' +
-          '<label class="fld">Hotel tax (%)<input type="number" min="0" max="25" step="0.5" data-state-num="hotelTax" value="' + (+state.hotelTax || 0) + '"></label>' +
           '<label class="fld">Ticket days<input type="number" min="0" max="21" data-state-num="ticketDays" value="' + (+state.ticketDays || 0) + '"></label>' +
           '<label class="fld">Ticket price / day ($)<input type="number" min="0" step="5" data-state-num="ticketPrice" value="' + (+state.ticketPrice || 0) + '"></label>' +
-          '<label class="fld">Ticket tax (%)<input type="number" min="0" max="25" step="0.5" data-state-num="ticketTax" value="' + (+state.ticketTax || 0) + '"></label>' +
+          '<p class="hint" style="grid-column:1 / -1">Totals include ' + HOTEL_TAX_PCT + '% hotel tax and ' + TICKET_TAX_PCT + '% ticket sales tax, added automatically.</p>' +
         '</div>' +
       '</div>' +
       '<div class="card">' +
