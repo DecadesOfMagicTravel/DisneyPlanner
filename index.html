@@ -16,8 +16,36 @@
   --good:#13774B; --good-soft:#D9F1E5;
   --bad:#B8322A; --bad-soft:#FADFDC;
   --drop:#6DECE0;
+  --dom-lavender:#887BB0; --dom-mint:#6DECE0; --dom-butter:#FBE698;
+  --dom-aqua:#45D1CB; --dom-rose:#F9BDC0; --dom-cream:#F6F5F1;
   --f-display:'Bricolage Grotesque','DM Sans',system-ui,sans-serif;
   --f-body:'DM Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0E1630; --surface:#172246; --surface2:#1F2D59; --line:#2D3C6C;
+    --ink:#E9EEFB; --muted:#A3AFCF;
+    --brand:#45D1CB; --on-brand:#0B1622;
+    --accent:#F2A650; --accent-soft:#3B2C16;
+    --good:#4CC38A; --good-soft:#163A2C;
+    --bad:#FF8577; --bad-soft:#44201D;
+    --drop:#1B4D5C;
+    --dom-lavender:#887BB0; --dom-mint:#6DECE0; --dom-butter:#FBE698;
+    --dom-aqua:#45D1CB; --dom-rose:#F9BDC0; --dom-cream:#F6F5F1;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0E1630; --surface:#172246; --surface2:#1F2D59; --line:#2D3C6C;
+  --ink:#E9EEFB; --muted:#A3AFCF;
+  --brand:#45D1CB; --on-brand:#0B1622;
+  --accent:#F2A650; --accent-soft:#3B2C16;
+  --good:#4CC38A; --good-soft:#163A2C;
+  --bad:#FF8577; --bad-soft:#44201D;
+  --drop:#1B4D5C;
+  --dom-lavender:#887BB0; --dom-mint:#6DECE0; --dom-butter:#FBE698;
+  --dom-aqua:#45D1CB; --dom-rose:#F9BDC0; --dom-cream:#F6F5F1;
+  color-scheme:dark;
 }
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
@@ -61,11 +89,23 @@ input[type=time]{width:112px}
 .hint{font-size:.85rem}
 .wrap{max-width:1180px;margin:0 auto}
 
-/* top bar */
-.topbar{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding-top:12px;border-bottom:1px solid var(--line);margin-bottom:20px}
-.top-row{max-width:1180px;margin:0 auto;display:flex;gap:16px 28px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding-bottom:10px}
+/* top bar & scroll minimization */
+.topbar{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:20;
+  background:var(--bg);padding-top:12px;border-bottom:1px solid var(--line);margin-bottom:20px;
+  transition:padding-top .18s ease,box-shadow .18s ease;
+}
+.top-row{
+  max-width:1180px;margin:0 auto;display:flex;gap:16px 28px;align-items:center;justify-content:space-between;flex-wrap:wrap;
+  padding-bottom:10px;max-height:260px;opacity:1;overflow:hidden;
+  transition:max-height .22s ease,opacity .16s ease,padding-bottom .18s ease;
+}
+.topbar.compact{padding-top:2px;box-shadow:0 3px 12px rgba(15,23,42,.08)}
+.topbar.compact .top-row{
+  max-height:0;opacity:0;padding-bottom:0;pointer-events:none;
+}
 .brand{display:flex;gap:10px;align-items:center;color:var(--brand);min-width:0}
-.brand-logo{width:48px;height:48px;flex:0 0 auto;display:block;overflow:visible}
+.brand-logo{width:50px;height:50px;flex:0 0 auto;display:block;overflow:visible;border-radius:50%;background:transparent}
 .wordmark{font-family:var(--f-display);font-weight:700;font-size:1.25rem;color:var(--ink);display:block;line-height:1.1}
 .tripname{border:0;background:transparent;padding:2px 0;color:var(--muted);font-size:.88rem;width:min(260px,60vw);border-radius:4px}
 .tripname:hover{background:var(--surface2)}
@@ -134,6 +174,13 @@ main{max-width:1180px;margin:0 auto}
 .fld small{font-size:.78rem}
 .fld input[type=number],.fld select{width:100%}
 .check{display:flex;gap:8px;align-items:center;font-size:.9rem;margin-top:12px}
+.addon-block{padding:12px 0;border-top:1px solid var(--line);display:grid;gap:8px}
+.addon-block:first-child{border-top:0;padding-top:0}
+.addon-top{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.addon-top strong{font-size:.96rem;color:var(--ink)}
+.addon-sub{font-size:.84rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.addon-sub b{color:var(--ink)}
+
 .drow{display:grid;grid-template-columns:auto repeat(auto-fit,minmax(130px,1fr)) auto;gap:10px 14px;align-items:end;padding:12px 0;border-top:1px solid var(--line)}
 .drow:first-of-type{border-top:0}
 .drow .dn{font-family:var(--f-display);font-weight:700;padding-bottom:7px;min-width:48px}
@@ -195,8 +242,7 @@ tfoot td{font-weight:700;border-top:2px solid var(--line)}
 .ri .rno{font-family:var(--f-display);font-weight:700;width:26px;text-align:center;color:var(--ink);font-size:1.1rem}
 .ri-main{flex:1 1 160px;min-width:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .ri-main strong{font-weight:600}
-.ri-ctl{display:flex;gap:2px}
-.ri select{padding:5px 7px;font-size:.85rem}
+.ri-ctl{display:flex;gap:2px;align-items:center}
 .endzone{border:2px dashed var(--line);border-radius:10px;padding:12px;text-align:center;color:var(--muted);font-size:.85rem;margin-top:8px}
 .endzone.over{background:var(--drop);border-color:var(--brand)}
 .addrow{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
@@ -227,9 +273,6 @@ textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px soli
 .intro-note{font-size:.88rem;color:var(--muted);line-height:1.5}
 .intro-note a{color:var(--ink);text-decoration-color:var(--brand);font-weight:600}
 .intro-bar{display:flex;justify-content:flex-end;margin-bottom:12px}
-.opt-box{margin-top:14px;padding-top:14px;border-top:1px solid var(--line);display:grid;gap:12px}
-.opt-summary{font-size:.88rem;color:var(--muted);font-variant-numeric:tabular-nums}
-.opt-summary b{color:var(--ink)}
 .sum-tools{display:flex;gap:10px 14px;align-items:center;flex-wrap:wrap}
 .sum-tools p{flex:1 1 260px}
 .sheet{display:grid;gap:24px}
@@ -240,11 +283,11 @@ textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px soli
 .etable th,.etable td{text-align:left;vertical-align:top}
 .etable td:first-child{white-space:nowrap;width:1%}
 .sday .costs{margin-bottom:8px}
-/* lightning lane guide */
+
+/* lightning lane informational guide */
 .llopts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr));gap:12px}
 .llopt{background:var(--surface2);border-radius:12px;padding:14px;display:grid;gap:8px;align-content:start}
 .llopt h3{font-size:1.1rem}
-.llopt .price{font-family:var(--f-display);font-size:1.2rem;font-variant-numeric:tabular-nums}
 .llopt ul,.llsteps{margin:0;padding-left:18px;display:grid;gap:4px;font-size:.9rem}
 .llopt .best{font-size:.84rem;color:var(--muted);border-top:1px solid var(--line);padding-top:8px}
 .llopt .best b{color:var(--ink)}
@@ -252,17 +295,13 @@ textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px soli
 .llcols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr));gap:14px;margin-top:14px;align-items:start}
 .llcol{border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:8px;align-content:start}
 .llcol-h{display:grid;gap:2px}
-.llcol-h small{color:var(--muted);font-size:.8rem}
+.llcol-h small{color:var(--muted);font-size:.82rem;font-weight:600}
 .llcol.c-single{border-top:4px solid var(--accent)}
 .llcol.c-t1{border-top:4px solid var(--brand)}
 .llcol.c-t2,.llcol.c-all{border-top:4px solid var(--good)}
 .llitem{display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:var(--surface2);border-radius:8px;padding:7px 10px;font-size:.9rem}
 .llitem span.nm{flex:1 1 140px;min-width:0;font-weight:500}
-.llitem small{flex-basis:100%;color:var(--muted);font-size:.78rem}
-.pill.p-single{background:var(--accent-soft);color:var(--accent)}
-.pill.p-t1{background:var(--drop);color:var(--ink)}
-.pill.p-t2,.pill.p-all{background:var(--good-soft);color:var(--good)}
-.llcheck td:nth-child(3),.llcheck th:nth-child(3),.llcheck td:nth-child(4),.llcheck th:nth-child(4){text-align:left}
+
 @media print{
   :root:root:root{--bg:#fff;--surface:#fff;--surface2:#f1f1f1;--line:#bdbdbd;--ink:#000;--muted:#444;--brand:#000;--on-brand:#fff;--accent:#000;--accent-soft:#eee;--good:#000;--good-soft:#eee;--bad:#000;--bad-soft:#eee;--drop:#eee}
   body{background:#fff;color:#000;padding:0;font-size:11pt}
@@ -275,37 +314,36 @@ textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px soli
 }
 @media (prefers-reduced-motion:no-preference){.bar > i{transition:width .3s ease}}
 </style>
-
+</head>
+<body>
 <header class="topbar" id="top">
   <div class="top-row">
     <div class="brand">
-      <svg class="brand-logo" viewBox="0 0 120 120" width="48" height="48" role="img" aria-label="Decades of Magic Travel Agency circular badge">
-        <defs>
-          <path id="domTopArc" d="M 18,60 A 42,42 0 1,1 102,60" fill="none"/>
-          <path id="domBotArc" d="M 102,60 A 42,42 0 1,1 18,60" fill="none"/>
-        </defs>
-        <!-- Outer circular yellow medallion with transparent outer background -->
-        <circle cx="60" cy="60" r="56" fill="#FBE698"/>
-        <!-- Rose/pink inner ring (#F9BDC0) -->
-        <circle cx="60" cy="60" r="35" fill="none" stroke="#F9BDC0" stroke-width="1.6"/>
-        <!-- Top & bottom arc labels -->
-        <text fill="#2BA6A0" font-family="'DM Sans',system-ui,sans-serif" font-size="7.6" font-weight="600" letter-spacing="3.2">
-          <textPath href="#domTopArc" startOffset="50%" text-anchor="middle">TRAVEL</textPath>
-        </text>
-        <text fill="#2BA6A0" font-family="'DM Sans',system-ui,sans-serif" font-size="7.6" font-weight="600" letter-spacing="3.2">
-          <textPath href="#domBotArc" startOffset="50%" text-anchor="middle">AGENCY</textPath>
-        </text>
-        <!-- Center script lettering in teal-blue (#45D1CB) with shadow (#2BA6A0) -->
-        <g font-family="'Pacifico',cursive" text-anchor="middle" dominant-baseline="central">
-          <text x="61.3" y="45.8" font-size="14.5" fill="#2BA6A0" transform="rotate(-5 61.3 45.8)">Decades</text>
-          <text x="61.0" y="61.3" font-size="11.2" fill="#2BA6A0" transform="rotate(-4 61.0 61.3)">of</text>
-          <text x="61.3" y="77.3" font-size="16.2" fill="#2BA6A0" transform="rotate(-4 61.3 77.3)">Magic</text>
+      <div class="brand-logo" id="logoMount" aria-label="Decades of Magic Travel Agency circular badge">
+        <svg id="logoFallbackSvg" viewBox="0 0 120 120" width="50" height="50" role="img" aria-label="Decades of Magic Travel Agency circular badge">
+          <defs>
+            <path id="domTopArc" d="M 18,60 A 42,42 0 1,1 102,60" fill="none"/>
+            <path id="domBotArc" d="M 102,60 A 42,42 0 1,1 18,60" fill="none"/>
+          </defs>
+          <circle cx="60" cy="60" r="56" fill="#FBE698"/>
+          <circle cx="60" cy="60" r="35" fill="none" stroke="#F9BDC0" stroke-width="1.6"/>
+          <text fill="#2BA6A0" font-family="'DM Sans',system-ui,sans-serif" font-size="7.6" font-weight="600" letter-spacing="3.2">
+            <textPath href="#domTopArc" startOffset="50%" text-anchor="middle">TRAVEL</textPath>
+          </text>
+          <text fill="#2BA6A0" font-family="'DM Sans',system-ui,sans-serif" font-size="7.6" font-weight="600" letter-spacing="3.2">
+            <textPath href="#domBotArc" startOffset="50%" text-anchor="middle">AGENCY</textPath>
+          </text>
+          <g font-family="'Pacifico',cursive" text-anchor="middle" dominant-baseline="central">
+            <text x="61.3" y="45.8" font-size="14.5" fill="#2BA6A0" transform="rotate(-5 61.3 45.8)">Decades</text>
+            <text x="61.0" y="61.3" font-size="11.2" fill="#2BA6A0" transform="rotate(-4 61.0 61.3)">of</text>
+            <text x="61.3" y="77.3" font-size="16.2" fill="#2BA6A0" transform="rotate(-4 61.3 77.3)">Magic</text>
 
-          <text x="60" y="44.2" font-size="14.5" fill="#45D1CB" transform="rotate(-5 60 44.2)">Decades</text>
-          <text x="60" y="59.8" font-size="11.2" fill="#45D1CB" transform="rotate(-4 60 59.8)">of</text>
-          <text x="60" y="75.8" font-size="16.2" fill="#45D1CB" transform="rotate(-4 60 75.8)">Magic</text>
-        </g>
-      </svg>
+            <text x="60" y="44.2" font-size="14.5" fill="#45D1CB" transform="rotate(-5 60 44.2)">Decades</text>
+            <text x="60" y="59.8" font-size="11.2" fill="#45D1CB" transform="rotate(-4 60 59.8)">of</text>
+            <text x="60" y="75.8" font-size="16.2" fill="#45D1CB" transform="rotate(-4 60 75.8)">Magic</text>
+          </g>
+        </svg>
+      </div>
       <div>
         <span class="wordmark">Decades of Magic WDW Planner</span>
         <input id="tripName" class="tripname" data-f="trip" aria-label="Trip name" maxlength="60">
@@ -315,6 +353,7 @@ textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px soli
   </div>
   <nav class="tabs" id="tabs" aria-label="Planner sections"></nav>
 </header>
+
 <div class="wrap" id="introWrap"></div>
 <main id="view"></main>
 <footer class="foot" id="foot"></footer>
@@ -322,277 +361,452 @@ textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px soli
 <script>
 (function(){
 'use strict';
-var KEY='decades-of-magic-wdw-planner-v1';
-var MEALS=['breakfast','lunch','dinner','snack'];
-var MEAL_LABEL={breakfast:'Breakfast',lunch:'Lunch',dinner:'Dinner',snack:'Snack'};
-var MEAL_TIME={breakfast:'08:30',lunch:'12:30',dinner:'18:30',snack:'15:30'};
-var PARKS=['Magic Kingdom','EPCOT','Hollywood Studios','Animal Kingdom'];
-var PLACES=PARKS.concat(['Disney Springs','Resort day']);
-var LOCS=PARKS.concat(['Disney Springs','Resorts','Snacks']);
-var TYPE_LABEL={qs:'Quick service',ts:'Table service',char:'Character meal',show:'Dinner show',snack:'Snack'};
-var BAND_LABEL={free:'Under 3 Free',child:'Child 3–9',adult:'Adult 10+'};
-var THRILL={1:'Gentle',2:'Moderate',3:'Intense'};
-var PLAN_LABEL={standby:'Standby',multi:'Multi Pass',single:'Single Pass'};
-var DEF_MULTI={'Magic Kingdom':32,'EPCOT':27,'Hollywood Studios':30,'Animal Kingdom':22};
-var TABS=[['trip','Trip & budget'],['dining','Dining'],['rides','Ride priorities'],['ll','Lightning Lane'],['plan','Day plan'],['summary','Summary']];
-var ENTRY_LABEL={ride:'Ride',show:'Show',break:'Break',travel:'Travel',note:'Note',meal:'Meal'};
 
-/* Grouped Walt Disney World Resort options with average estimated nightly rates */
-var WDW_RESORTS={
-  'Value Resorts':[
-    {name:"Disney's Art of Animation Resort",rate:245},
-    {name:"Disney's Pop Century Resort",rate:195},
-    {name:"Disney's All-Star Movies Resort",rate:155},
-    {name:"Disney's All-Star Music Resort",rate:150},
-    {name:"Disney's All-Star Sports Resort",rate:150}
+var KEY = 'decades-of-magic-wdw-planner-v1';
+var MEALS = ['breakfast', 'lunch', 'dinner', 'snack'];
+var MEAL_LABEL = { breakfast: 'Breakfast', lunch: 'Lunch', dinner: 'Dinner', snack: 'Snack' };
+var MEAL_TIME = { breakfast: '08:30', lunch: '12:30', dinner: '18:30', snack: '15:30' };
+var PARKS = ['Magic Kingdom', 'EPCOT', 'Hollywood Studios', 'Animal Kingdom'];
+var PLACES = PARKS.concat(['Disney Springs', 'Resort day']);
+var LOCS = PARKS.concat(['Disney Springs', 'Resorts', 'Snacks']);
+var TYPE_LABEL = { qs: 'Quick service', ts: 'Table service', char: 'Character meal', show: 'Dinner show', snack: 'Snack' };
+var BAND_LABEL = { free: 'Under 3 Free', child: 'Child 3–9', adult: 'Adult 10+' };
+var THRILL = { 1: 'Gentle', 2: 'Moderate', 3: 'Intense' };
+var TABS = [
+  ['trip', 'Trip & budget'],
+  ['dining', 'Dining'],
+  ['rides', 'Ride priorities'],
+  ['ll', 'Lightning Lane'],
+  ['plan', 'Day plan'],
+  ['summary', 'Summary']
+];
+var ENTRY_LABEL = { ride: 'Ride', show: 'Show', break: 'Break', travel: 'Travel', note: 'Note', meal: 'Meal' };
+
+var WDW_RESORTS = {
+  'Value Resorts': [
+    { name: "Disney's Art of Animation Resort", rate: 245 },
+    { name: "Disney's Pop Century Resort", rate: 195 },
+    { name: "Disney's All-Star Movies Resort", rate: 155 },
+    { name: "Disney's All-Star Music Resort", rate: 150 },
+    { name: "Disney's All-Star Sports Resort", rate: 150 }
   ],
-  'Moderate Resorts':[
-    {name:"Disney's Caribbean Beach Resort",rate:275},
-    {name:"Disney's Coronado Springs Resort",rate:265},
-    {name:"Disney's Port Orleans Resort — French Quarter",rate:290},
-    {name:"Disney's Port Orleans Resort — Riverside",rate:275},
-    {name:"The Cabins at Disney's Fort Wilderness Resort",rate:460}
+  'Moderate Resorts': [
+    { name: "Disney's Caribbean Beach Resort", rate: 275 },
+    { name: "Disney's Coronado Springs Resort", rate: 265 },
+    { name: "Disney's Port Orleans Resort — French Quarter", rate: 290 },
+    { name: "Disney's Port Orleans Resort — Riverside", rate: 275 },
+    { name: "The Cabins at Disney's Fort Wilderness Resort", rate: 460 }
   ],
-  'Deluxe Resorts':[
-    {name:"Disney's Animal Kingdom Lodge",rate:510},
-    {name:"Disney's Beach Club Resort",rate:640},
-    {name:"Disney's BoardWalk Inn",rate:620},
-    {name:"Disney's Contemporary Resort",rate:680},
-    {name:"Disney's Grand Floridian Resort & Spa",rate:790},
-    {name:"Disney's Polynesian Village Resort",rate:710},
-    {name:"Disney's Wilderness Lodge",rate:520},
-    {name:"Disney's Yacht Club Resort",rate:640}
+  'Deluxe Resorts': [
+    { name: "Disney's Animal Kingdom Lodge", rate: 510 },
+    { name: "Disney's Beach Club Resort", rate: 640 },
+    { name: "Disney's BoardWalk Inn", rate: 620 },
+    { name: "Disney's Contemporary Resort", rate: 680 },
+    { name: "Disney's Grand Floridian Resort & Spa", rate: 790 },
+    { name: "Disney's Polynesian Village Resort", rate: 710 },
+    { name: "Disney's Wilderness Lodge", rate: 520 },
+    { name: "Disney's Yacht Club Resort", rate: 640 }
   ],
-  'Deluxe Villa Resorts':[
-    {name:"Bay Lake Tower at Disney's Contemporary Resort",rate:660},
-    {name:"Boulder Ridge Villas at Disney's Wilderness Lodge",rate:515},
-    {name:"Copper Creek Villas & Cabins at Disney's Wilderness Lodge",rate:565},
-    {name:"Disney's Beach Club Villas",rate:610},
-    {name:"Disney's BoardWalk Villas",rate:585},
-    {name:"Disney's Old Key West Resort",rate:450},
-    {name:"Disney's Riviera Resort",rate:635},
-    {name:"Disney's Saratoga Springs Resort & Spa",rate:470},
-    {name:"The Campsites at Disney's Fort Wilderness Resort",rate:115},
-    {name:"The Villas at Disney's Grand Floridian Resort & Spa",rate:760},
-    {name:"Villas at Disney's Polynesian Village Resort",rate:690},
-    {name:"Animal Kingdom Villas — Jambo House & Kidani Village",rate:495}
+  'Deluxe Villa Resorts': [
+    { name: "Bay Lake Tower at Disney's Contemporary Resort", rate: 660 },
+    { name: "Boulder Ridge Villas at Disney's Wilderness Lodge", rate: 515 },
+    { name: "Copper Creek Villas & Cabins at Disney's Wilderness Lodge", rate: 565 },
+    { name: "Disney's Beach Club Villas", rate: 610 },
+    { name: "Disney's BoardWalk Villas", rate: 585 },
+    { name: "Disney's Old Key West Resort", rate: 450 },
+    { name: "Disney's Riviera Resort", rate: 635 },
+    { name: "Disney's Saratoga Springs Resort & Spa", rate: 470 },
+    { name: "The Campsites at Disney's Fort Wilderness Resort", rate: 115 },
+    { name: "The Villas at Disney's Grand Floridian Resort & Spa", rate: 760 },
+    { name: "Villas at Disney's Polynesian Village Resort", rate: 690 },
+    { name: "Animal Kingdom Villas — Jambo House & Kidani Village", rate: 495 }
   ]
 };
 
-/* Optional Dining Plan presets (per-night estimates; editable) */
-var DINING_PLANS={
-  none:{label:'None ($0)',adultRate:0,childRate:0,desc:'No prepaid dining plan; track meals or snacks as you go.'},
-  qs:{label:'Quick-Service Dining Plan (est. $57/adult, $24/child per night)',adultRate:57,childRate:24,desc:'Estimated per-night quick-service & snack plan rate (editable).'},
-  standard:{label:'Standard Disney Dining Plan (est. $95/adult, $29/child per night)',adultRate:95,childRate:29,desc:'Estimated per-night table-service + quick-service + snack plan rate (editable).'},
-  deluxe:{label:'Deluxe Disney Dining Plan (est. $119/adult, $46/child per night)',adultRate:119,childRate:46,desc:'Estimated per-night deluxe dining allowance rate (editable).'}
+var DINING_PLANS = {
+  none: { label: 'None ($0)', adultRate: 0, childRate: 0 },
+  qs: { label: 'Quick-Service Dining Plan (est. $57/adult, $24/child per night)', adultRate: 57, childRate: 24 },
+  standard: { label: 'Standard Disney Dining Plan (est. $95/adult, $29/child per night)', adultRate: 95, childRate: 29 },
+  deluxe: { label: 'Deluxe Disney Dining Plan (est. $119/adult, $46/child per night)', adultRate: 119, childRate: 46 }
 };
 
-function q(s){return document.querySelector(s);}
-function slug(s){return String(s).toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'');}
-function esc(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];});}
-function money(n){return '$'+Math.round(n).toLocaleString('en-US');}
-function uid(){return Math.random().toString(36).slice(2,8);}
-function pl(n,w){return n+' '+w+(n===1?'':'s');}
-function toMin(s){var p=String(s||'09:00').split(':');return (+p[0]||0)*60+(+p[1]||0);}
-function fmtTime(s){var m=toMin(s),h=Math.floor(m/60),mm=m%60,ap=h>=12?'PM':'AM';h=h%12||12;return h+':'+(mm<10?'0':'')+mm+' '+ap;}
-
-/* ---------- catalog (starting estimates; every price is editable) ---------- */
-var R=[];
-function addR(loc,rows){rows.forEach(function(r){var o=r[4]||{};R.push({id:slug(loc+' '+r[0]),name:r[0],loc:loc,type:r[1],adult:r[2],kid:r[3],e:!!o.e,c:!!o.c,inc:!!o.inc,n:o.n||''});});}
-var E={e:1},EC={e:1,c:1};
-addR('Magic Kingdom',[
- ["Cinderella's Royal Table",'char',92,57,{n:'Lunch and dinner price. Breakfast is $79 adult, $49 child.'}],
- ['The Crystal Palace','char',64,46,{n:'Lunch and dinner price. Breakfast is $57 adult, $37 child.'}],
- ['Be Our Guest','ts',49,19,{e:1,n:'Dinner entrees run $35–55. Child price estimated.'}],
- ['Liberty Tree Tavern','ts',45,18,{e:1,n:'Family-style meal. Verify the price.'}],
- ["Tony's Town Square",'ts',38,14,E],
- ['The Plaza Restaurant','ts',28,12,E],
- ['Jungle Navigation Co. Skipper Canteen','ts',39,14,{e:1,n:'Based on a $35 noodle bowl plus a drink. Child price estimated.'}],
- ['The Diamond Horseshoe','ts',32,14,EC],
- ['Pecos Bill Tall Tale Inn','qs',17,9,E],['Columbia Harbour House','qs',16,9,E],["Cosmic Ray's Starlight Cafe",'qs',16,9,E],["Casey's Corner",'qs',14,8,E]]);
-addR('EPCOT',[
- ['Akershus Royal Banquet Hall','char',69,47,{n:'Princess meal, lunch and dinner price. Breakfast is $66 adult, $42 child.'}],
- ["Chip 'n' Dale's Harvest Feast (Garden Grill)",'char',62,43,{n:'Lunch and dinner price. Breakfast is $49 adult, $34 child.'}],
- ['Biergarten Restaurant','ts',51,28,{n:'Buffet, posted price.'}],
- ['Space 220','ts',79,38,{e:1,n:'Dinner prix fixe is $79; lunch is $55. Child price estimated.'}],
- ['Takumi-Tei','ts',150,60,{e:1,n:'Semi-omakase starts at $150. Child price estimated.'}],
- ['Le Cellier Steakhouse','ts',62,24,{n:'Filet runs about $65, other entrees less.'}],
- ['Coral Reef Restaurant','ts',40,15,E],['La Hacienda de San Angel','ts',40,15,E],['San Angel Inn','ts',33,13,E],
- ['Chefs de France','ts',45,18,E],['Monsieur Paul','ts',85,30,E],['Nine Dragons','ts',33,13,E],
- ['Rose & Crown Dining Room','ts',36,15,E],['Shiki-Sai: Sushi Izakaya','ts',33,13,E],['Spice Road Table','ts',33,13,E],
- ['Teppan Edo','ts',45,22,E],['Tutto Italia','ts',45,16,E],['Via Napoli','ts',32,12,E],
- ['La Crêperie de Paris','ts',22,10,{e:1,c:1,n:'Some lists show this as counter service.'}],
- ['Restaurant Marrakesh','ts',40,15,EC],['Tokyo Dining','ts',38,15,EC],['Tutto Gusto Wine Cellar','ts',38,15,EC],
- ['Sunshine Seasons','qs',17,9,E],['Connections Eatery','qs',16,9,E],['Regal Eagle Smokehouse','qs',17,9,E]]);
-addR('Hollywood Studios',[
- ['Hollywood & Vine','char',64,45,{n:'Character meal, lunch and dinner price. Breakfast is $49 adult, $34 child.'}],
- ['Roundup Rodeo BBQ','ts',52,32,{n:'Fixed price, all you care to enjoy.'}],
- ["50's Prime Time Cafe",'ts',33,13,E],['The Hollywood Brown Derby','ts',58,20,E],['Sci-Fi Dine-In Theater','ts',32,13,E],
- ["Mama Melrose's Ristorante Italiano",'ts',32,13,{e:1,c:1,n:'Missing from several 2026 lists. It may be closed.'}],
- ['Docking Bay 7 Food and Cargo','qs',16,9,E],['Backlot Express','qs',16,9,E],["Woody's Lunch Box",'qs',13,8,E],['Ronto Wraps','qs',13,8,E]]);
-addR('Animal Kingdom',[
- ['Tusker House (Donald\'s Dining Safari)','char',64,43,{n:'Lunch and dinner price. Breakfast is $53 adult, $38 child.'}],
- ['Tiffins','ts',58,20,{e:1,n:'Reported range is $45–70 per person.'}],
- ['Yak & Yeti Restaurant','ts',34,13,E],['Rainforest Cafe','ts',32,13,E],
- ["Satu'li Canteen",'qs',17,9,E],['Flame Tree Barbecue','qs',16,9,E],['Pizzafari','qs',13,8,E]]);
-addR('Disney Springs',[
- ['Paddlefish','ts',40,14,{n:'Priced from the Feb 2026 menu. Seafood boils excluded.'}],
- ["Chef Art Smith's Homecomin'",'ts',36,13,E],['City Works Eatery and Pour House','ts',28,12,E],['EET by Maneet Chauhan','ts',33,13,E],
- ["Enzo's Hideaway",'ts',38,14,E],['Frontera Cocina','ts',34,13,E],['House of Blues','ts',30,12,E],['Maria and Enzo\'s','ts',36,14,E],
- ['Morimoto Asia','ts',40,15,E],['Paradiso 37','ts',30,12,E],['Planet Hollywood Observatory','ts',28,12,E],
- ['Portobello','ts',36,14,EC],['Raglan Road','ts',34,13,E],['Rainforest Cafe (Disney Springs)','ts',32,13,E],
- ['Splitsville Dining Room','ts',28,12,E],['STK Orlando','ts',70,25,E],['Summer House on the Lake','ts',36,14,E],
- ['Terralina Crafted Italian','ts',34,13,E],['The BOATHOUSE','ts',48,15,E],['The Edison','ts',38,14,E],['T-REX Cafe','ts',30,12,E],
- ['Jaleo by José Andrés','ts',40,16,E],['Wine Bar George','ts',38,14,E],
- ['Earl of Sandwich','qs',12,8,E],['Blaze Pizza','qs',13,9,E]]);
-addR('Resorts',[
- ['Grand Floridian Cafe (Grand Floridian)','ts',32,14,{e:1,n:'Adult from the 2026 dinner menu. Child price estimated.'}],
- ['Citricos (Grand Floridian)','ts',53,18,{n:'Based on a 2025 menu.'}],
- ["Narcoossee's (Grand Floridian)",'ts',58,22,{e:1,n:'Adult from a 2025 menu. Child price estimated.'}],
- ['1900 Park Fare (Grand Floridian)','char',69,45,{n:'Dinner price. Breakfast is $59 adult, $37 child.'}],
- ["Victoria & Albert's (Grand Floridian)",'ts',300,300,{e:1,n:'Prix fixe signature dining. Price not verified, so replace it with your quote.'}],
- ['Garden View Tea Room (Grand Floridian)','ts',45,30,{e:1,n:'Afternoon tea. Price not verified.'}],
- ['Kona Cafe (Polynesian)','ts',35,14,E],["'Ohana (Polynesian)",'char',69,46,{n:'Dinner, all you care to enjoy. Breakfast is $58 adult, $36 child.'}],
- ['Wailulu Bar & Grill (Polynesian)','ts',30,13,EC],
- ['California Grill (Contemporary)','ts',99,45,{n:'Dinner prix fixe, posted price.'}],
- ["Chef Mickey's (Contemporary)",'char',72,46,{n:'Dinner price. Breakfast is $62 adult, $41 child.'}],
- ['Steakhouse 71 (Contemporary)','ts',45,16,E],['The Wave of American Flavors (Contemporary)','ts',36,14,EC],
- ['Story Book Dining at Artist Point (Wilderness Lodge)','char',72,46,{n:'Dinner with Snow White and friends.'}],
- ['Whispering Canyon Cafe (Wilderness Lodge)','ts',34,15,E],['Geyser Point Bar & Grill (Wilderness Lodge)','ts',28,12,EC],
- ['Boma Flavors of Africa (Animal Kingdom Lodge)','ts',58,34,{n:'Dinner buffet. Breakfast is $39 adult, $23 child.'}],
- ['Jiko The Cooking Place (Animal Kingdom Lodge)','ts',56,15,{n:'Priced from the Feb 2026 menu.'}],
- ['Sanaa (Animal Kingdom Lodge)','ts',33,15,{n:'Priced from the Jan 2026 lunch menu.'}],
- ['Yachtsman Steakhouse (Yacht Club)','ts',75,22,E],['Ale & Compass Restaurant (Yacht Club)','ts',34,16,{e:1,n:'Adult from the 2026 dinner menu. Child price estimated.'}],
- ['Cape May Cafe (Beach Club)','char',52,35,{n:'Character breakfast price. The dinner buffet is $52 adult, $30 child.'}],
- ['Beaches & Cream Soda Shop (Beach Club)','ts',18,10,E],
- ['Flying Fish (BoardWalk)','ts',58,21,{n:'Based on a 2025 menu.'}],['Trattoria al Forno (BoardWalk)','ts',38,18,{n:'Priced from the 2026 dinner menu.'}],
- ['The Cake Bake Shop Restaurant (BoardWalk)','ts',30,14,E],
- ["Topolino's Terrace (Riviera)",'char',59,39,{e:1,n:'Character breakfast price. Dinner price not found.'}],
- ["Olivia's Cafe (Old Key West)",'ts',32,13,E],['The Turf Club Bar and Grill (Saratoga Springs)','ts',36,14,EC],
- ['Maya Grill (Coronado Springs)','ts',41,16,{e:1,n:'Sources disagree on the menu. Verify.'}],['Three Bridges Bar and Grill (Coronado Springs)','ts',29,16,{n:'Priced from the Feb 2026 menu.'}],
- ['Toledo Tapas, Steak & Seafood (Coronado Springs)','ts',45,18,{e:1,n:'Only part of the menu was found.'}],
- ["Sebastian's Bistro (Caribbean Beach)",'ts',39,21,{n:'Posted prix fixe, all you care to enjoy.'}],
- ["Boatwright's Dining Hall (Port Orleans Riverside)",'ts',37,16,{n:'Priced from the Feb 2026 menu.'}],
- ['Hoop-Dee-Doo Musical Revue (Fort Wilderness)','show',70,42,{inc:1,n:'Dinner show. Price includes tax and gratuity (midpoint of seating categories).'}],
- ['Garden Grove (Swan)','ts',35,15,EC],['Il Mulino New York Trattoria (Swan)','ts',70,25,E],['Kimonos Sushi Bar (Swan)','ts',30,12,EC],
- ['Amare (Swan Reserve)','ts',35,14,EC],["Todd English's bluezoo (Dolphin)",'ts',60,20,EC],['The Fountain (Dolphin)','ts',18,10,E],
- ['Rosa Mexicano (Dolphin)','ts',35,14,E],['Bourbon Steak by Michael Mina (Dolphin)','ts',85,25,E]]);
-addR('Snacks',[['Dole Whip','snack',7,7,E],['Mickey Pretzel','snack',7,7,E],['Premium Ice Cream Bar','snack',6,6,E],['Popcorn Bucket','snack',6,6,E],['Turkey Leg','snack',12,12,E],['Churro','snack',6,6,E]]);
-
-var RIDE_DATA={
- 'Magic Kingdom':[['Seven Dwarfs Mine Train',2],['TRON Lightcycle / Run',3],['Space Mountain',3],['Big Thunder Mountain Railroad',2],["Tiana's Bayou Adventure",2],['Haunted Mansion',1],['Pirates of the Caribbean',1],["Peter Pan's Flight",1],['Jungle Cruise',1],["Buzz Lightyear's Space Ranger Spin",1],["It's a Small World",1],['Under the Sea: Journey of The Little Mermaid',1]],
- 'EPCOT':[['Guardians of the Galaxy: Cosmic Rewind',3],['Test Track',3],['Frozen Ever After',1],["Soarin' Around the World",2],["Remy's Ratatouille Adventure",1],['Spaceship Earth',1],['Mission: SPACE',3],['Living with the Land',1]],
- 'Hollywood Studios':[['Star Wars: Rise of the Resistance',2],['Slinky Dog Dash',2],["Mickey & Minnie's Runaway Railway",1],['Millennium Falcon: Smugglers Run',2],['The Twilight Zone Tower of Terror',3],["Rock 'n' Roller Coaster",3],['Toy Story Mania!',1],['Alien Swirling Saucers',1]],
- 'Animal Kingdom':[['Avatar Flight of Passage',3],["Na'vi River Journey",1],['Kilimanjaro Safaris',1],['Expedition Everest',3],['DINOSAUR',3],['Kali River Rapids',2],['Festival of the Lion King',1]]
+var LL_ADDON_OPTIONS = {
+  none: { label: 'None ($0)', dailyRate: 0 },
+  multi: { label: 'Lightning Lane Multi Pass (est. $29/guest/day)', dailyRate: 29 },
+  single: { label: 'Lightning Lane Single Pass (est. $18/guest/day)', dailyRate: 18 },
+  both: { label: 'Multi Pass + Single Pass (est. $47/guest/day)', dailyRate: 47 },
+  premier: { label: 'Lightning Lane Premier Pass (est. $229/guest/day)', dailyRate: 229 }
 };
-var RIDES={};
+
+function q(s){ return document.querySelector(s); }
+function slug(s){ return String(s).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''); }
+function esc(s){ return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){ return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+function money(n){ return '$' + Math.round(n || 0).toLocaleString('en-US'); }
+function uid(){ return Math.random().toString(36).slice(2, 8); }
+function pl(n, w){ return n + ' ' + w + (n === 1 ? '' : 's'); }
+function toMin(s){ var p = String(s || '09:00').split(':'); return (+p[0] || 0) * 60 + (+p[1] || 0); }
+function fmtTime(s){
+  var m = toMin(s), h = Math.floor(m / 60), mm = m % 60, ap = h >= 12 ? 'PM' : 'AM';
+  h = h % 12 || 12;
+  return h + ':' + (mm < 10 ? '0' : '') + mm + ' ' + ap;
+}
+
+/* Load circular badge from uploaded image_f73e29.png or Logo.png onto canvas with transparent outer background */
+/* Key Logo.png onto a transparent canvas outside the circular medallion */
+(function initTransparentLogo(){
+  var mount = q('#logoMount');
+  var fallback = q('#logoFallbackSvg');
+  if(!mount || !fallback) return;
+  var sources = ['data:image/webp;base64,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'];
+  var idxSrc = 0;
+  function tryLoad(){
+    if(idxSrc >= sources.length) return;
+    var img = new Image();
+    img.crossOrigin = 'anonymous';
+    img.onload = function(){
+      try{
+        var w = img.naturalWidth || 240;
+        var h = img.naturalHeight || 240;
+        var cvs = document.createElement('canvas');
+        cvs.width = w;
+        cvs.height = h;
+        var ctx = cvs.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        var data = ctx.getImageData(0, 0, w, h);
+        var px = data.data;
+        /* Remove pink outer background outside the circular medallion */
+        var cx = w / 2, cy = h / 2, rad = Math.min(w, h) * 0.455;
+        for(var i = 0; i < px.length; i += 4){
+          var pIdx = i / 4;
+          var x = pIdx % w;
+          var y = Math.floor(pIdx / w);
+          var dist = Math.hypot(x - cx, y - cy);
+          var r = px[i], g = px[i + 1], b = px[i + 2];
+          var isPinkBg = (r > 215 && g > 165 && g < 215 && b > 170 && b < 220 && (r - g) > 25);
+          if(dist > rad && isPinkBg){
+            px[i + 3] = 0;
+          }
+        }
+        ctx.putImageData(data, 0, 0);
+        cvs.style.width = '48px';
+        cvs.style.height = '48px';
+        cvs.style.borderRadius = '50%';
+        cvs.style.display = 'block';
+        cvs.style.background = 'transparent';
+        mount.innerHTML = '';
+        mount.appendChild(cvs);
+      }catch(e){
+        idxSrc++;
+        tryLoad();
+      }
+    };
+    img.onerror = function(){
+      idxSrc++;
+      tryLoad();
+    };
+    img.src = sources[idxSrc];
+  }
+  tryLoad();
+})();
+
+/* ---------- dining catalog ---------- */
+var R = [];
+function addR(loc, rows){
+  rows.forEach(function(r){
+    var o = r[4] || {};
+    R.push({
+      id: slug(loc + ' ' + r[0]),
+      name: r[0],
+      loc: loc,
+      type: r[1],
+      adult: r[2],
+      kid: r[3],
+      e: !!o.e,
+      c: !!o.c,
+      inc: !!o.inc,
+      n: o.n || ''
+    });
+  });
+}
+var E = { e: 1 }, EC = { e: 1, c: 1 };
+addR('Magic Kingdom', [
+  ["Cinderella's Royal Table", 'char', 92, 57, { n: 'Lunch and dinner price. Breakfast is $79 adult, $49 child.' }],
+  ['The Crystal Palace', 'char', 64, 46, { n: 'Lunch and dinner price. Breakfast is $57 adult, $37 child.' }],
+  ['Be Our Guest', 'ts', 49, 19, { e: 1, n: 'Dinner entrees run $35–55. Child price estimated.' }],
+  ['Liberty Tree Tavern', 'ts', 45, 18, { e: 1, n: 'Family-style meal. Verify the price.' }],
+  ["Tony's Town Square", 'ts', 38, 14, E],
+  ['The Plaza Restaurant', 'ts', 28, 12, E],
+  ['Jungle Navigation Co. Skipper Canteen', 'ts', 39, 14, { e: 1, n: 'Based on a $35 noodle bowl plus a drink. Child price estimated.' }],
+  ['The Diamond Horseshoe', 'ts', 32, 14, EC],
+  ['Pecos Bill Tall Tale Inn', 'qs', 17, 9, E],
+  ['Columbia Harbour House', 'qs', 16, 9, E],
+  ["Cosmic Ray's Starlight Cafe", 'qs', 16, 9, E],
+  ["Casey's Corner", 'qs', 14, 8, E]
+]);
+addR('EPCOT', [
+  ['Akershus Royal Banquet Hall', 'char', 69, 47, { n: 'Princess meal, lunch and dinner price. Breakfast is $66 adult, $42 child.' }],
+  ["Chip 'n' Dale's Harvest Feast (Garden Grill)", 'char', 62, 43, { n: 'Lunch and dinner price. Breakfast is $49 adult, $34 child.' }],
+  ['Biergarten Restaurant', 'ts', 51, 28, { n: 'Buffet, posted price.' }],
+  ['Space 220', 'ts', 79, 38, { e: 1, n: 'Dinner prix fixe is $79; lunch is $55. Child price estimated.' }],
+  ['Takumi-Tei', 'ts', 150, 60, { e: 1, n: 'Semi-omakase starts at $150. Child price estimated.' }],
+  ['Le Cellier Steakhouse', 'ts', 62, 24, { n: 'Filet runs about $65, other entrees less.' }],
+  ['Coral Reef Restaurant', 'ts', 40, 15, E],
+  ['La Hacienda de San Angel', 'ts', 40, 15, E],
+  ['San Angel Inn', 'ts', 33, 13, E],
+  ['Chefs de France', 'ts', 45, 18, E],
+  ['Monsieur Paul', 'ts', 85, 30, E],
+  ['Nine Dragons', 'ts', 33, 13, E],
+  ['Rose & Crown Dining Room', 'ts', 36, 15, E],
+  ['Shiki-Sai: Sushi Izakaya', 'ts', 33, 13, E],
+  ['Spice Road Table', 'ts', 33, 13, E],
+  ['Teppan Edo', 'ts', 45, 22, E],
+  ['Tutto Italia', 'ts', 45, 16, E],
+  ['Via Napoli', 'ts', 32, 12, E],
+  ['La Crêperie de Paris', 'ts', 22, 10, EC],
+  ['Sunshine Seasons', 'qs', 17, 9, E],
+  ['Connections Eatery', 'qs', 16, 9, E],
+  ['Regal Eagle Smokehouse', 'qs', 17, 9, E]
+]);
+addR('Hollywood Studios', [
+  ['Hollywood & Vine', 'char', 64, 45, { n: 'Character meal, lunch and dinner price. Breakfast is $49 adult, $34 child.' }],
+  ['Roundup Rodeo BBQ', 'ts', 52, 32, { n: 'Fixed price, all you care to enjoy.' }],
+  ["50's Prime Time Cafe", 'ts', 33, 13, E],
+  ['The Hollywood Brown Derby', 'ts', 58, 20, E],
+  ['Sci-Fi Dine-In Theater', 'ts', 32, 13, E],
+  ['Docking Bay 7 Food and Cargo', 'qs', 16, 9, E],
+  ['Backlot Express', 'qs', 16, 9, E],
+  ["Woody's Lunch Box", 'qs', 13, 8, E],
+  ['Ronto Wraps', 'qs', 13, 8, E]
+]);
+addR('Animal Kingdom', [
+  ["Tusker House (Donald's Dining Safari)", 'char', 64, 43, { n: 'Lunch and dinner price. Breakfast is $53 adult, $38 child.' }],
+  ['Tiffins', 'ts', 58, 20, { e: 1, n: 'Reported range is $45–70 per person.' }],
+  ['Yak & Yeti Restaurant', 'ts', 34, 13, E],
+  ['Rainforest Cafe', 'ts', 32, 13, E],
+  ["Satu'li Canteen", 'qs', 17, 9, E],
+  ['Flame Tree Barbecue', 'qs', 16, 9, E],
+  ['Pizzafari', 'qs', 13, 8, E]
+]);
+addR('Disney Springs', [
+  ['Paddlefish', 'ts', 40, 14, E],
+  ["Chef Art Smith's Homecomin'", 'ts', 36, 13, E],
+  ['City Works Eatery and Pour House', 'ts', 28, 12, E],
+  ['Frontera Cocina', 'ts', 34, 13, E],
+  ['Morimoto Asia', 'ts', 40, 15, E],
+  ['Raglan Road', 'ts', 34, 13, E],
+  ['The BOATHOUSE', 'ts', 48, 15, E],
+  ['Wine Bar George', 'ts', 38, 14, E],
+  ['Earl of Sandwich', 'qs', 12, 8, E],
+  ['Blaze Pizza', 'qs', 13, 9, E]
+]);
+addR('Resorts', [
+  ['Grand Floridian Cafe (Grand Floridian)', 'ts', 32, 14, E],
+  ['1900 Park Fare (Grand Floridian)', 'char', 69, 45, E],
+  ['Kona Cafe (Polynesian)', 'ts', 35, 14, E],
+  ["'Ohana (Polynesian)", 'char', 69, 46, E],
+  ['California Grill (Contemporary)', 'ts', 99, 45, E],
+  ["Chef Mickey's (Contemporary)", 'char', 72, 46, E],
+  ['Steakhouse 71 (Contemporary)', 'ts', 45, 16, E],
+  ['Whispering Canyon Cafe (Wilderness Lodge)', 'ts', 34, 15, E],
+  ['Boma Flavors of Africa (Animal Kingdom Lodge)', 'ts', 58, 34, E],
+  ['Sanaa (Animal Kingdom Lodge)', 'ts', 33, 15, E],
+  ["Topolino's Terrace (Riviera)", 'char', 59, 39, E]
+]);
+addR('Snacks', [
+  ['Dole Whip', 'snack', 7, 7, E],
+  ['Mickey Pretzel', 'snack', 7, 7, E],
+  ['Ice Cream Bar', 'snack', 6, 6, E],
+  ['Popcorn Bucket', 'snack', 6, 6, E],
+  ['Turkey Leg', 'snack', 12, 12, E],
+  ['Churro', 'snack', 6, 6, E]
+]);
+
+/* Ride catalog */
+var RIDE_DATA = {
+  'Magic Kingdom': [
+    ['Seven Dwarfs Mine Train', 2],
+    ['TRON Lightcycle / Run', 3],
+    ['Space Mountain', 3],
+    ['Big Thunder Mountain Railroad', 2],
+    ["Tiana's Bayou Adventure", 2],
+    ['Haunted Mansion', 1],
+    ['Pirates of the Caribbean', 1],
+    ["Peter Pan's Flight", 1],
+    ['Jungle Cruise', 1],
+    ["Buzz Lightyear's Space Ranger Spin", 1],
+    ["It's a Small World", 1],
+    ['Under the Sea: Journey of The Little Mermaid', 1]
+  ],
+  'EPCOT': [
+    ['Guardians of the Galaxy: Cosmic Rewind', 3],
+    ['Test Track', 3],
+    ['Frozen Ever After', 1],
+    ["Soarin' Around the World", 2],
+    ["Remy's Ratatouille Adventure", 1],
+    ['Spaceship Earth', 1],
+    ['Mission: SPACE', 3],
+    ['Living with the Land', 1]
+  ],
+  'Hollywood Studios': [
+    ['Star Wars: Rise of the Resistance', 2],
+    ['Slinky Dog Dash', 2],
+    ["Mickey & Minnie's Runaway Railway", 1],
+    ['Millennium Falcon: Smugglers Run', 2],
+    ['The Twilight Zone Tower of Terror', 3],
+    ["Rock 'n' Roller Coaster", 3],
+    ['Toy Story Mania!', 1],
+    ['Alien Swirling Saucers', 1]
+  ],
+  'Animal Kingdom': [
+    ['Avatar Flight of Passage', 3],
+    ["Na'vi River Journey", 1],
+    ['Kilimanjaro Safaris', 1],
+    ['Expedition Everest', 3],
+    ['Kali River Rapids', 2],
+    ['Festival of the Lion King', 1]
+  ]
+};
+
+var RIDES = {};
 PARKS.forEach(function(p){
-  RIDES[p]=(RIDE_DATA[p]||[]).map(function(row){
-    return {id:slug(p+' '+row[0]),name:row[0],thrill:row[1]};
+  RIDES[p] = (RIDE_DATA[p] || []).map(function(row){
+    return { id: slug(p + ' ' + row[0]), name: row[0], thrill: row[1] };
   });
 });
 
-/* Lightning Lane lineups reference data */
-var LL_ASOF='late October 2026';
-var LL_DATA={
- 'Magic Kingdom':{
-   single:[['Seven Dwarfs Mine Train'],['TRON Lightcycle / Run']],
-   t1:[['Big Thunder Mountain Railroad'],['Jungle Cruise'],["Peter Pan's Flight"],['Space Mountain'],["Tiana's Bayou Adventure"]],
-   t2:[['The Barnstormer'],["Buzz Lightyear's Space Ranger Spin"],['Dumbo the Flying Elephant'],['Haunted Mansion'],["It's a Small World"],['Mad Tea Party'],['The Magic Carpets of Aladdin'],['The Many Adventures of Winnie the Pooh'],["Mickey's PhilharMagic",{s:1}],['Monsters, Inc. Laugh Floor',{s:1}],['Pirates of the Caribbean'],['Tomorrowland Speedway'],['Under the Sea: Journey of The Little Mermaid']]
- },
- 'EPCOT':{
-   single:[['Guardians of the Galaxy: Cosmic Rewind']],
-   t1:[['Frozen Ever After'],["Remy's Ratatouille Adventure"],['Test Track']],
-   t2:[["Soarin' Across America",{m:"Soarin' Around the World",n:"Limited-time version of Soarin'."}],['Disney and Pixar Short Film Festival',{s:1}],['Journey into Imagination with Figment'],['Living with the Land'],['Mission: SPACE'],['The Seas with Nemo & Friends'],['Spaceship Earth'],['Turtle Talk with Crush',{s:1}]]
- },
- 'Hollywood Studios':{
-   single:[['Star Wars: Rise of the Resistance']],
-   t1:[["Mickey & Minnie's Runaway Railway"],['Millennium Falcon: Smugglers Run'],["Rock 'n' Roller Coaster Starring The Muppets",{m:"Rock 'n' Roller Coaster"}],['Slinky Dog Dash']],
-   t2:[['Alien Swirling Saucers'],['Beauty and the Beast Live on Stage',{s:1}],['Disney Jr. Mickey Mouse Clubhouse Live!',{s:1}],['For the First Time in Forever: A Frozen Sing-Along Celebration',{s:1}],['Indiana Jones Epic Stunt Spectacular',{s:1}],['Star Tours: The Adventures Continue'],['The Twilight Zone Tower of Terror'],['Toy Story Mania!'],['The Little Mermaid: A Musical Adventure',{s:1}]]
- },
- 'Animal Kingdom':{
-   single:[['Avatar Flight of Passage']],
-   all:[['Expedition Everest: Legend of the Forbidden Mountain',{m:'Expedition Everest'}],['Feathered Friends in Flight!',{s:1}],['Festival of the Lion King',{s:1}],['Finding Nemo: The Big Blue... and Beyond!',{s:1}],['Zootopia: Better Zoogether!',{s:1}],['Kali River Rapids'],['Kilimanjaro Safaris'],["Na'vi River Journey"]]
- }
-};
-var LL_GONE={'animal-kingdom-dinosaur':'Closed permanently on February 2, 2026.'};
-var LL_CAT={single:'Single Pass',t1:'Multi Pass Tier 1',t2:'Multi Pass Tier 2',all:'Multi Pass'};
-var LL_PEAK={'Magic Kingdom':45,'EPCOT':37,'Hollywood Studios':39,'Animal Kingdom':35};
-var LL_PREMIER={'Magic Kingdom':'$299–$499','EPCOT':'$149–$249','Hollywood Studios':'$249–$349','Animal Kingdom':'$119–$199'};
-var SINGLE_PRICE={
-  'magic-kingdom-seven-dwarfs-mine-train':14,
-  'magic-kingdom-tron-lightcycle-run':22,
-  'epcot-guardians-of-the-galaxy-cosmic-rewind':19,
-  'hollywood-studios-star-wars-rise-of-the-resistance':25,
-  'animal-kingdom-avatar-flight-of-passage':18
+/* Informational-only Lightning Lane reference (no pricing, no "headliner"/"top picks"/"more picks", pick limits per category) */
+var LL_GUIDE = {
+  'Magic Kingdom': {
+    single: {
+      heading: 'Individual Pass Rides',
+      limitText: 'Buy up to 2 individual passes per day',
+      items: ['Seven Dwarfs Mine Train', 'TRON Lightcycle / Run']
+    },
+    t1: {
+      heading: 'Tier 1',
+      limitText: 'Choose up to 1 ride from Tier 1 in advance',
+      items: ['Big Thunder Mountain Railroad', 'Jungle Cruise', "Peter Pan's Flight", 'Space Mountain', "Tiana's Bayou Adventure"]
+    },
+    t2: {
+      heading: 'Tier 2',
+      limitText: 'Choose up to 2 rides from Tier 2 in advance',
+      items: ['The Barnstormer', "Buzz Lightyear's Space Ranger Spin", 'Dumbo the Flying Elephant', 'Haunted Mansion', "It's a Small World", 'Mad Tea Party', 'The Magic Carpets of Aladdin', 'The Many Adventures of Winnie the Pooh', "Mickey's PhilharMagic", 'Monsters, Inc. Laugh Floor', 'Pirates of the Caribbean', 'Tomorrowland Speedway', 'Under the Sea: Journey of The Little Mermaid']
+    }
+  },
+  'EPCOT': {
+    single: {
+      heading: 'Individual Pass Rides',
+      limitText: 'Buy up to 1 individual pass per day',
+      items: ['Guardians of the Galaxy: Cosmic Rewind']
+    },
+    t1: {
+      heading: 'Tier 1',
+      limitText: 'Choose up to 1 ride from Tier 1 in advance',
+      items: ['Frozen Ever After', "Remy's Ratatouille Adventure", 'Test Track']
+    },
+    t2: {
+      heading: 'Tier 2',
+      limitText: 'Choose up to 2 rides from Tier 2 in advance',
+      items: ["Soarin' Around the World", 'Disney and Pixar Short Film Festival', 'Journey into Imagination with Figment', 'Living with the Land', 'Mission: SPACE', 'The Seas with Nemo & Friends', 'Spaceship Earth', 'Turtle Talk with Crush']
+    }
+  },
+  'Hollywood Studios': {
+    single: {
+      heading: 'Individual Pass Rides',
+      limitText: 'Buy up to 1 individual pass per day',
+      items: ['Star Wars: Rise of the Resistance']
+    },
+    t1: {
+      heading: 'Tier 1',
+      limitText: 'Choose up to 1 ride from Tier 1 in advance',
+      items: ["Mickey & Minnie's Runaway Railway", 'Millennium Falcon: Smugglers Run', "Rock 'n' Roller Coaster", 'Slinky Dog Dash']
+    },
+    t2: {
+      heading: 'Tier 2',
+      limitText: 'Choose up to 2 rides from Tier 2 in advance',
+      items: ['Alien Swirling Saucers', 'Beauty and the Beast Live on Stage', 'Disney Jr. Mickey Mouse Clubhouse Live!', 'For the First Time in Forever: A Frozen Sing-Along Celebration', 'Indiana Jones Epic Stunt Spectacular', 'Star Tours: The Adventures Continue', 'The Twilight Zone Tower of Terror', 'Toy Story Mania!', 'The Little Mermaid: A Musical Adventure']
+    }
+  },
+  'Animal Kingdom': {
+    single: {
+      heading: 'Individual Pass Rides',
+      limitText: 'Buy up to 1 individual pass per day',
+      items: ['Avatar Flight of Passage']
+    },
+    all: {
+      heading: 'Multi Pass Rides',
+      limitText: 'Choose up to 3 rides in advance',
+      items: ['Expedition Everest', 'Feathered Friends in Flight!', 'Festival of the Lion King', 'Finding Nemo: The Big Blue... and Beyond!', 'Zootopia: Better Zoogether!', 'Kali River Rapids', 'Kilimanjaro Safaris', "Na'vi River Journey"]
+    }
+  }
 };
 
 /* ---------- zero-initialized default state ---------- */
 function seedState(){
   return {
-    tab:'trip',
-    theme:'auto',
-    trip:'My WDW Trip',
-    party:[],
-    nights:0,
-    hotelRate:0,
-    selectedResort:'',
-    ticketDays:0,
-    ticketRate:0,
-    hopper:false,
-    diningPlan:'none',
-    diningPlanAdultRate:0,
-    diningPlanChildRate:0,
-    memoryMaker:false,
-    memoryMakerPrice:185,
-    target:{hotel:0,tickets:0,dining:0,ll:0,other:0},
-    days:[],
-    priorities:{
-      'Magic Kingdom':[],
-      'EPCOT':[],
-      'Hollywood Studios':[],
-      'Animal Kingdom':[]
-    },
-    llPlan:{
-      'Magic Kingdom':{},
-      'EPCOT':{},
-      'Hollywood Studios':{},
-      'Animal Kingdom':{}
-    },
-    custom:[],
-    edits:{},
-    showIntro:true,
-    notes:''
+    trip: '',
+    selectedResort: '',
+    hotelNightly: 0,
+    hotelNights: 0,
+    hotelTax: 0,
+    ticketPrice: 0,
+    ticketDays: 0,
+    ticketTax: 0,
+    diningPlan: 'none',
+    diningPlanAdultRate: 0,
+    diningPlanChildRate: 0,
+    memoryMaker: false,
+    memoryMakerPrice: 0,
+    llAddonType: 'none',
+    llAddonDays: 0,
+    llAddonDailyRate: 0,
+    showIntro: true,
+    party: [],
+    days: [],
+    targets: { total: 0, hotel: 0, tickets: 0, dining: 0, extras: 0 },
+    meals: {},
+    edits: {},
+    custom: [],
+    removedRides: { 'Magic Kingdom': [], 'EPCOT': [], 'Hollywood Studios': [], 'Animal Kingdom': [] },
+    priorities: { 'Magic Kingdom': [], 'EPCOT': [], 'Hollywood Studios': [], 'Animal Kingdom': [] },
+    plans: {},
+    notes: {},
+    theme: 'auto',
+    tab: 'trip',
+    activeDay: ''
   };
 }
 
-var state=loadState();
-var ui={
-  loc:'All',
-  type:'All',
-  search:'',
-  pickedRest:null,
-  editingRest:null,
-  planDay:0,
-  llPark:'Magic Kingdom',
-  priPark:'Magic Kingdom',
-  copied:false
+var state = loadState();
+var ui = {
+  loc: 'All',
+  type: 'All',
+  search: '',
+  pickedRest: null,
+  editingRest: null,
+  llPark: 'Magic Kingdom',
+  priPark: 'All',
+  copied: false,
+  notice: ''
 };
 
 function loadState(){
   try{
-    var raw=localStorage.getItem(KEY);
+    var raw = localStorage.getItem(KEY);
     if(!raw) return seedState();
-    var p=JSON.parse(raw);
-    var d=seedState();
-    return Object.assign(d,p,{
-      party:Array.isArray(p.party)?p.party:d.party,
-      days:Array.isArray(p.days)?p.days:d.days,
-      target:Object.assign(d.target,p.target||{}),
-      priorities:Object.assign(d.priorities,p.priorities||{}),
-      llPlan:Object.assign(d.llPlan,p.llPlan||{}),
-      custom:Array.isArray(p.custom)?p.custom:d.custom,
-      edits:Object.assign({},p.edits||{})
+    var p = JSON.parse(raw);
+    var d = seedState();
+    return Object.assign(d, p, {
+      targets: Object.assign(d.targets, p.targets || {}),
+      party: Array.isArray(p.party) ? p.party : [],
+      days: Array.isArray(p.days) ? p.days : [],
+      meals: Object.assign({}, p.meals || {}),
+      edits: Object.assign({}, p.edits || {}),
+      custom: Array.isArray(p.custom) ? p.custom : [],
+      removedRides: Object.assign(d.removedRides, p.removedRides || {}),
+      priorities: Object.assign(d.priorities, p.priorities || {}),
+      plans: Object.assign({}, p.plans || {}),
+      notes: Object.assign({}, p.notes || {})
     });
   }catch(e){
     return seedState();
@@ -600,1199 +814,1251 @@ function loadState(){
 }
 
 function saveState(){
-  try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}
+  try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
 }
 
 /* ---------- calculations ---------- */
 function ageBand(age){
-  var n=+age;
-  if(isNaN(n)||n<3) return 'free';
-  if(n<10) return 'child';
+  var n = +age;
+  if(isNaN(n) || n < 3) return 'free';
+  if(n < 10) return 'child';
   return 'adult';
 }
 
 function partyCounts(){
-  var c={total:(state.party||[]).length,free:0,child:0,adult:0};
-  (state.party||[]).forEach(function(m){c[ageBand(m.age)]++;});
+  var c = { total: (state.party || []).length, free: 0, child: 0, adult: 0 };
+  (state.party || []).forEach(function(m){ c[ageBand(m.age)]++; });
   return c;
 }
 
 function allRest(){
-  return R.concat(state.custom||[]);
+  return R.concat((state.custom || []).filter(function(x){ return x.kind === 'rest' || !x.kind; }));
 }
 
 function restPrices(r){
-  var ed=(state.edits&&state.edits[r.id])||{};
+  var ed = (state.edits && state.edits[r.id]) || {};
   return {
-    adult:ed.adult!=null?+ed.adult:r.adult,
-    kid:ed.kid!=null?+ed.kid:r.kid
+    adult: ed.adult != null ? +ed.adult : r.adult,
+    kid: ed.kid != null ? +ed.kid : r.kid
   };
 }
 
 function mealCost(restId){
-  if(!restId) return {total:0,adultTotal:0,kidTotal:0,freeCount:0};
-  var r=allRest().find(function(x){return x.id===restId;});
-  if(!r) return {total:0,adultTotal:0,kidTotal:0,freeCount:0};
-  var pr=restPrices(r);
-  var c=partyCounts();
-  var adultTotal=c.adult*pr.adult;
-  var kidTotal=c.child*pr.kid;
-  return {total:adultTotal+kidTotal,adultTotal:adultTotal,kidTotal:kidTotal,freeCount:c.free,rest:r,pr:pr};
+  if(!restId) return { total: 0, adultTotal: 0, kidTotal: 0, freeCount: 0 };
+  var r = allRest().find(function(x){ return x.id === restId; });
+  if(!r) return { total: 0, adultTotal: 0, kidTotal: 0, freeCount: 0 };
+  var pr = restPrices(r);
+  var c = partyCounts();
+  var adultTotal = c.adult * pr.adult;
+  var kidTotal = c.child * pr.kid;
+  return { total: adultTotal + kidTotal, adultTotal: adultTotal, kidTotal: kidTotal, freeCount: c.free, rest: r, pr: pr };
 }
 
 function calcHotel(){
-  return Math.max(0,(+state.hotelRate||0)*(+state.nights||0));
+  var nights = Math.max(0, +state.hotelNights || 0);
+  var rate = Math.max(0, +state.hotelNightly || 0);
+  var tax = Math.max(0, +state.hotelTax || 0);
+  return nights * rate * (1 + tax / 100);
 }
 
 function calcTickets(){
-  var c=partyCounts();
-  var paying=c.adult+c.child;
-  var perDay=(+state.ticketRate||0)+(state.hopper?35:0);
-  return Math.max(0,paying*(+state.ticketDays||0)*perDay);
+  var c = partyCounts();
+  var paying = c.adult + c.child;
+  var days = Math.max(0, +state.ticketDays || 0);
+  var price = Math.max(0, +state.ticketPrice || 0);
+  var tax = Math.max(0, +state.ticketTax || 0);
+  return paying * days * price * (1 + tax / 100);
 }
 
 function calcDiningPlan(){
-  if(!state.diningPlan || state.diningPlan==='none') return 0;
-  var c=partyCounts();
-  var n=Math.max(0,+state.nights||0);
-  var adRate=Math.max(0,+state.diningPlanAdultRate||0);
-  var chRate=Math.max(0,+state.diningPlanChildRate||0);
-  return n*(c.adult*adRate + c.child*chRate);
+  if(!state.diningPlan || state.diningPlan === 'none') return 0;
+  var nights = Math.max(0, +state.hotelNights || 0);
+  var c = partyCounts();
+  var adRate = Math.max(0, +state.diningPlanAdultRate || 0);
+  var chRate = Math.max(0, +state.diningPlanChildRate || 0);
+  return nights * (c.adult * adRate + c.child * chRate);
 }
 
 function calcAssignedMeals(){
-  var sum=0;
-  (state.days||[]).forEach(function(d){
-    MEALS.forEach(function(m){
-      sum+=mealCost(d.meals&&d.meals[m]).total;
-    });
+  var sum = 0;
+  (state.days || []).forEach(function(d){
+    var mObj = (state.meals && state.meals[d.id]) || {};
+    MEALS.forEach(function(m){ sum += mealCost(mObj[m]).total; });
   });
   return sum;
 }
 
 function calcDining(){
-  return calcDiningPlan()+calcAssignedMeals();
+  return calcDiningPlan() + calcAssignedMeals();
 }
 
 function calcMemoryMaker(){
-  return state.memoryMaker?Math.max(0,+state.memoryMakerPrice||0):0;
+  if(!state.memoryMaker) return 0;
+  return Math.max(0, +state.memoryMakerPrice || 0);
 }
 
-function calcLL(){
-  var c=partyCounts();
-  var paying=c.adult+c.child;
-  var total=0;
-
-  (state.days||[]).forEach(function(d){
-    if(d.llMulti){
-      total+=paying*(DEF_MULTI[d.park]||28);
-    }
-    (d.llSingle||[]).forEach(function(rid){
-      total+=paying*(SINGLE_PRICE[rid]||18);
-    });
-  });
-
-  PARKS.forEach(function(pk){
-    var map=(state.llPlan&&state.llPlan[pk])||{};
-    var multiCount=0;
-    Object.keys(map).forEach(function(rid){
-      var mode=map[rid];
-      if(mode==='single'){
-        total+=paying*(SINGLE_PRICE[rid]||18);
-      }else if(mode==='multi'){
-        multiCount++;
-      }
-    });
-    if(multiCount>0){
-      var hasDayMulti=(state.days||[]).some(function(d){return d.park===pk && d.llMulti;});
-      if(!hasDayMulti) total+=paying*(DEF_MULTI[pk]||28);
-    }
-  });
-
-  return total;
+function calcLLAddon(){
+  if(!state.llAddonType || state.llAddonType === 'none') return 0;
+  var days = Math.max(0, +state.llAddonDays || 0);
+  var rate = Math.max(0, +state.llAddonDailyRate || 0);
+  var c = partyCounts();
+  var paying = Math.max(1, c.adult + c.child);
+  return days * rate * paying;
 }
 
-function calcOther(){
-  return calcMemoryMaker();
+function calcExtras(){
+  return calcMemoryMaker() + calcLLAddon();
 }
 
 function calcActuals(){
+  var hotel = calcHotel();
+  var tickets = calcTickets();
+  var dining = calcDining();
+  var extras = calcExtras();
   return {
-    hotel:calcHotel(),
-    tickets:calcTickets(),
-    dining:calcDining(),
-    ll:calcLL(),
-    other:calcOther()
+    hotel: hotel,
+    tickets: tickets,
+    dining: dining,
+    extras: extras,
+    total: hotel + tickets + dining + extras
   };
 }
 
-function totalTarget(){
-  return Object.keys(state.target).reduce(function(sum,k){return sum+(+state.target[k]||0);},0);
-}
-
-function totalSpend(act){
-  return act.hotel+act.tickets+act.dining+act.ll+act.other;
+function effectiveTargetTotal(){
+  var t = state.targets || {};
+  var sumCats = (+t.hotel || 0) + (+t.tickets || 0) + (+t.dining || 0) + (+t.extras || 0);
+  return Math.max(+t.total || 0, sumCats);
 }
 
 function parkRides(park){
-  var base=(RIDES[park]||[]).slice();
-  var custom=(state.custom||[]).filter(function(item){return item.kind==='ride' && item.park===park;});
-  var all=base.concat(custom);
-  var byId={};
-  all.forEach(function(r){byId[r.id]=r;});
-  var ord=(state.priorities&&state.priorities[park])||[];
-  var sorted=[];
-  ord.forEach(function(id){if(byId[id]){sorted.push(byId[id]);delete byId[id];}});
-  Object.keys(byId).forEach(function(id){sorted.push(byId[id]);});
+  var removed = (state.removedRides && state.removedRides[park]) || [];
+  var base = (RIDES[park] || []).filter(function(r){ return removed.indexOf(r.id) === -1; });
+  var customRides = (state.custom || []).filter(function(item){ return item.kind === 'ride' && item.park === park && removed.indexOf(item.id) === -1; });
+  var all = base.concat(customRides);
+  var byId = {};
+  all.forEach(function(r){ byId[r.id] = r; });
+  var ord = (state.priorities && state.priorities[park]) || [];
+  var sorted = [];
+  ord.forEach(function(id){ if(byId[id]){ sorted.push(byId[id]); delete byId[id]; } });
+  Object.keys(byId).forEach(function(id){ sorted.push(byId[id]); });
   return sorted;
 }
 
-/* ---------- theme, header & instructions ---------- */
+/* ---------- theme, scroll minimization & syncTopBar ---------- */
 function applyTheme(){
-  var root=document.documentElement;
-  if(state.theme==='dark') root.setAttribute('data-theme','dark');
-  else if(state.theme==='light') root.setAttribute('data-theme','light');
+  var root = document.documentElement;
+  if(state.theme === 'dark') root.setAttribute('data-theme', 'dark');
+  else if(state.theme === 'light') root.setAttribute('data-theme', 'light');
   else root.removeAttribute('data-theme');
 }
 
+function syncTopBar(){
+  var tb = q('#top');
+  if(!tb) return;
+  document.documentElement.style.setProperty('--tb', tb.offsetHeight + 'px');
+}
+
+var scrollRaf = null;
+function onScroll(){
+  if(scrollRaf) return;
+  scrollRaf = window.requestAnimationFrame(function(){
+    var tb = q('#top');
+    if(tb){
+      var y = window.scrollY || window.pageYOffset || 0;
+      if(y > 48) tb.classList.add('compact');
+      else tb.classList.remove('compact');
+      syncTopBar();
+    }
+    scrollRaf = null;
+  });
+}
+
 function renderTop(){
-  var nameInput=q('#tripName');
-  if(nameInput && document.activeElement!==nameInput) nameInput.value=state.trip||'';
+  var nameInput = q('#tripName');
+  if(nameInput && document.activeElement !== nameInput) nameInput.value = state.trip || '';
 
-  var act=calcActuals();
-  var spent=totalSpend(act);
-  var bud=totalTarget();
-  var pct=bud>0?Math.min(100,Math.round((spent/bud)*100)):0;
-  var over=spent>bud && bud>0;
-  var diff=bud-spent;
+  var act = calcActuals();
+  var spent = act.total;
+  var bud = effectiveTargetTotal();
+  var pct = bud > 0 ? Math.min(100, Math.round((spent / bud) * 100)) : 0;
+  var over = bud > 0 && spent > bud;
+  var diff = bud - spent;
 
-  q('#sum').innerHTML=
-    '<div class="sum-main"><span class="k">Estimated spend</span><strong>'+money(spent)+'</strong></div>'+
-    '<div class="sum-bar">'+
-      '<div class="bar'+(over?' over':'')+'"><i style="width:'+pct+'%"></i></div>'+
-      '<span class="st '+(over?'bad':'good')+'">'+(over?money(Math.abs(diff))+' over '+money(bud)+' budget':money(diff)+' left of '+money(bud)+' budget')+'</span>'+
-    '</div>'+
-    '<div class="sum-split">'+
-      '<span>Hotel <b>'+money(act.hotel)+'</b></span>'+
-      '<span>Tickets <b>'+money(act.tickets)+'</b></span>'+
-      '<span>Dining <b>'+money(act.dining)+'</b></span>'+
-      '<span>LL <b>'+money(act.ll)+'</b></span>'+
-      '<span>Other <b>'+money(act.other)+'</b></span>'+
+  q('#sum').innerHTML =
+    '<div class="sum-main"><span class="k">Estimated total</span><strong>' + money(spent) + '</strong></div>' +
+    '<div class="sum-bar">' +
+      '<div class="bar' + (over ? ' over' : '') + '"><i style="width:' + pct + '%"></i></div>' +
+      '<span class="st ' + (over ? 'bad' : 'good') + '">' +
+        (bud > 0
+          ? (over ? money(Math.abs(diff)) + ' over ' + money(bud) + ' budget' : money(diff) + ' remaining of ' + money(bud))
+          : 'No budget target set yet') +
+      '</span>' +
+    '</div>' +
+    '<div class="sum-split">' +
+      '<span>Hotel <b>' + money(act.hotel) + '</b></span>' +
+      '<span>Tickets <b>' + money(act.tickets) + '</b></span>' +
+      '<span>Dining <b>' + money(act.dining) + '</b></span>' +
+      '<span>Add-ons <b>' + money(act.extras) + '</b></span>' +
     '</div>';
 
-  q('#tabs').innerHTML=TABS.map(function(t){
-    var sel=state.tab===t[0];
-    return '<button class="tab" role="tab" aria-selected="'+sel+'" data-tab="'+t[0]+'">'+esc(t[1])+'</button>';
+  q('#tabs').innerHTML = TABS.map(function(t){
+    var sel = state.tab === t[0];
+    return '<button class="tab" type="button" role="tab" aria-selected="' + sel + '" data-tab="' + t[0] + '">' + esc(t[1]) + '</button>';
   }).join('');
 
-  var introWrap=q('#introWrap');
-  if(introWrap){
-    if(state.showIntro){
-      introWrap.innerHTML=
-        '<section class="card intro" aria-label="How to use instructions">'+
-          '<div class="sec-h">'+
-            '<h2>How to use Decades of Magic WDW Planner</h2>'+
-            '<button class="btn ghost sm" type="button" data-action="toggle-intro">Hide instructions</button>'+
-          '</div>'+
-          '<ol>'+
-            '<li>Add travelers and ages below.</li>'+
-            '<li>Select a hotel or add a nightly rate</li>'+
-            '<li>Use the additional tabs to select dining options, rank rides, and create a custom itinerary.</li>'+
-          '</ol>'+
-          '<p class="intro-note"><em>Please note that all prices are approximate and subject to change. For exact pricing, contact <a href="mailto:DecadesOfMagicTravel@gmail.com">DecadesOfMagicTravel@gmail.com</a>.</em></p>'+
-        '</section>';
-    }else{
-      introWrap.innerHTML=
-        '<div class="intro-bar">'+
-          '<button class="btn ghost sm" type="button" data-action="toggle-intro">Show instructions</button>'+
-        '</div>';
-    }
+  var themeLabel = state.theme === 'auto' ? 'Auto' : (state.theme === 'dark' ? 'Dark' : 'Light');
+  q('#foot').innerHTML =
+    (ui.notice ? '<div class="note">' + esc(ui.notice) + '</div>' : '') +
+    '<div class="foot-btns">' +
+      '<button class="btn ghost sm" type="button" data-action="cycle-theme">Theme: ' + esc(themeLabel) + '</button>' +
+      '<button class="btn ghost sm" type="button" data-action="add-day">+ Add day</button>' +
+      '<button class="btn ghost sm" type="button" data-action="reset-zero">Reset trip to zero</button>' +
+    '</div>' +
+    '<p>Saved locally in your browser. All prices are approximate and subject to change.</p>';
+
+  syncTopBar();
+}
+
+/* Instructions only on first tab ("trip") */
+function renderIntroWrap(){
+  var wrap = q('#introWrap');
+  if(!wrap) return;
+  if(state.tab !== 'trip'){
+    wrap.innerHTML = '';
+    return;
   }
-
-  q('#foot').innerHTML=
-    '<div class="foot-btns">'+
-      '<button class="btn ghost sm" data-action="cycle-theme">Theme: '+esc(state.theme.charAt(0).toUpperCase()+state.theme.slice(1))+'</button>'+
-      '<button class="btn ghost sm" data-action="add-day">+ Add day</button>'+
-      '<button class="btn ghost sm" data-action="reset-zero">Reset to zero</button>'+
-    '</div>'+
-    '<p>All planning data is saved locally in your browser. Prices are approximate and editable.</p>';
-
-  var tb=q('.topbar');
-  if(tb) document.documentElement.style.setProperty('--tb',tb.offsetHeight+'px');
+  if(state.showIntro === false){
+    wrap.innerHTML =
+      '<div class="intro-bar"><button class="link" type="button" data-action="show-intro">Show instructions</button></div>';
+    return;
+  }
+  wrap.innerHTML =
+    '<section class="card intro" aria-label="Instructions">' +
+      '<div class="sec-h">' +
+        '<h2>Instructions</h2>' +
+        '<button class="btn ghost sm" type="button" data-action="hide-intro">Hide instructions</button>' +
+      '</div>' +
+      '<ol>' +
+        '<li>Add travelers and ages below.</li>' +
+        '<li>Select a hotel or add a nightly rate, set tickets and optional add-ons, and set budget targets.</li>' +
+        '<li>Use the additional tabs to select dining options, rank rides, check Lightning Lane info, build your day plan, and copy or print your summary.</li>' +
+      '</ol>' +
+      '<p class="intro-note"><em>Please note that all prices are approximate and subject to change. For exact pricing, please contact <a href="mailto:DecadesOfMagicTravel@gmail.com">DecadesOfMagicTravel@gmail.com</a>.</em></p>' +
+    '</section>';
 }
 
 /* ---------- tab 1: trip & budget ---------- */
 function renderTrip(){
-  var c=partyCounts();
-  var act=calcActuals();
-  var dpCost=calcDiningPlan();
-  var mmCost=calcMemoryMaker();
+  var c = partyCounts();
+  var act = calcActuals();
+  var dpCost = calcDiningPlan();
+  var mmCost = calcMemoryMaker();
+  var llCost = calcLLAddon();
 
-  var resortGroups=Object.keys(WDW_RESORTS).map(function(grp){
-    var opts=WDW_RESORTS[grp].map(function(res){
-      var sel=state.selectedResort===res.name?' selected':'';
-      return '<option value="'+esc(res.name)+'"'+sel+'>'+esc(res.name)+' (avg ~'+money(res.rate)+'/nt)</option>';
+  var partyListHtml = (state.party || []).length
+    ? state.party.map(function(m){
+        var band = ageBand(m.age);
+        return '<div class="prow">' +
+          '<input type="text" data-member-name="' + m.id + '" value="' + esc(m.name) + '" placeholder="Traveler name" aria-label="Traveler name">' +
+          '<label class="age">Age <input type="number" min="0" max="99" data-member-age="' + m.id + '" value="' + (+m.age || 0) + '" aria-label="Traveler age"></label>' +
+          '<span class="pill b-' + band + '">' + BAND_LABEL[band] + '</span>' +
+          '<button class="x" type="button" data-del-member="' + m.id + '" aria-label="Remove traveler">&times;</button>' +
+        '</div>';
+      }).join('')
+    : '<p class="hint">0 travelers added yet. Click "+ Add traveler" to include guests in ticket and add-on totals.</p>';
+
+  var resortGroups = Object.keys(WDW_RESORTS).map(function(group){
+    var opts = WDW_RESORTS[group].map(function(item){
+      var sel = state.selectedResort === item.name ? ' selected' : '';
+      return '<option value="' + esc(item.name) + '"' + sel + '>' + esc(item.name) + ' (~' + money(item.rate) + '/nt)</option>';
     }).join('');
-    return '<optgroup label="'+esc(grp)+'">'+opts+'</optgroup>';
+    return '<optgroup label="' + esc(group) + '">' + opts + '</optgroup>';
   }).join('');
 
-  var partyHtml=(state.party||[]).length?state.party.map(function(m){
-    var band=ageBand(m.age);
-    return '<div class="prow">'+
-      '<input type="text" data-member-name="'+m.id+'" value="'+esc(m.name)+'" aria-label="Traveler name">'+
-      '<label class="age">Age <input type="number" min="0" max="99" data-member-age="'+m.id+'" value="'+esc(m.age)+'"></label>'+
-      '<span class="pill b-'+band+'">'+BAND_LABEL[band]+'</span>'+
-      '<button class="x" data-del-member="'+m.id+'" aria-label="Remove traveler">&times;</button>'+
-    '</div>';
-  }).join(''):'<p class="hint">No travelers added yet (0 guests).</p>';
-
-  var dpOptions=Object.keys(DINING_PLANS).map(function(k){
-    var p=DINING_PLANS[k];
-    return '<option value="'+k+'"'+(state.diningPlan===k?' selected':'')+'>'+esc(p.label)+'</option>';
+  var dpOptions = Object.keys(DINING_PLANS).map(function(k){
+    var p = DINING_PLANS[k];
+    return '<option value="' + k + '"' + (state.diningPlan === k ? ' selected' : '') + '>' + esc(p.label) + '</option>';
   }).join('');
 
-  var targetRows=[
-    ['hotel','Hotel & resort',act.hotel],
-    ['tickets','Park tickets',act.tickets],
-    ['dining','Dining & dining plan',act.dining],
-    ['ll','Lightning Lane',act.ll],
-    ['other','Other (Memory Maker)',act.other]
-  ].map(function(r){
-    var key=r[0],label=r[1],val=r[2];
-    var tgt=+state.target[key]||0;
-    var pct=tgt>0?Math.min(100,Math.round((val/tgt)*100)):0;
-    var over=val>tgt && tgt>0;
-    return '<div class="brow">'+
-      '<div class="brow-n">'+
-        '<h3>'+esc(label)+'</h3>'+
-        '<div class="brow-h">'+
-          '<span class="big '+(over?'bad':'')+'">'+money(val)+'</span>'+
-          '<label class="tgt">Target <span class="money-in">$<input type="number" min="0" step="25" data-target="'+key+'" value="'+tgt+'"></span></label>'+
-        '</div>'+
-      '</div>'+
-      '<div class="bar'+(over?' over':'')+'"><i style="width:'+pct+'%"></i></div>'+
-      '<span class="hint">'+(tgt>0?(over?money(val-tgt)+' above target':money(tgt-val)+' under target'):'Set a target budget above')+'</span>'+
+  var llOptions = Object.keys(LL_ADDON_OPTIONS).map(function(k){
+    var o = LL_ADDON_OPTIONS[k];
+    return '<option value="' + k + '"' + (state.llAddonType === k ? ' selected' : '') + '>' + esc(o.label) + '</option>';
+  }).join('');
+
+  var targetRows = [
+    ['hotel', 'Hotel & resort', act.hotel],
+    ['tickets', 'Park tickets', act.tickets],
+    ['dining', 'Dining (plan + meals)', act.dining],
+    ['extras', 'Optional add-ons (Memory Maker & Lightning Lane)', act.extras]
+  ].map(function(row){
+    var key = row[0], label = row[1], val = row[2];
+    var tgt = +(state.targets && state.targets[key]) || 0;
+    var pct = tgt > 0 ? Math.min(100, Math.round((val / tgt) * 100)) : 0;
+    var over = tgt > 0 && val > tgt;
+    return '<div class="brow">' +
+      '<div class="brow-n">' +
+        '<h3>' + esc(label) + '</h3>' +
+        '<div class="brow-h">' +
+          '<span class="big ' + (over ? 'bad' : '') + '">' + money(val) + '</span>' +
+          '<label class="tgt">Target <span class="money-in">$<input type="number" min="0" step="25" data-target-cat="' + key + '" value="' + tgt + '"></span></label>' +
+        '</div>' +
+      '</div>' +
+      '<div class="bar' + (over ? ' over' : '') + '"><i style="width:' + pct + '%"></i></div>' +
+      '<span class="hint">' +
+        (tgt > 0
+          ? (over ? money(val - tgt) + ' over category target' : money(tgt - val) + ' remaining in category target')
+          : 'Set a target amount to track category progress') +
+      '</span>' +
     '</div>';
   }).join('');
 
-  var daysHtml=(state.days||[]).length?state.days.map(function(d,i){
-    return '<div class="drow">'+
-      '<div class="dn">Day '+(i+1)+'</div>'+
-      '<label>Park / focus <select data-day-park="'+d.id+'">'+
-        PLACES.map(function(p){return '<option value="'+esc(p)+'"'+(d.park===p?' selected':'')+'>'+esc(p)+'</option>';}).join('')+
-      '</select></label>'+
-      '<label>Start time <input type="time" data-day-start="'+d.id+'" value="'+esc(d.start||'09:00')+'"></label>'+
-      '<label>Multi Pass <select data-day-ll="'+d.id+'">'+
-        '<option value="1"'+(d.llMulti?' selected':'')+'>Yes ($'+(DEF_MULTI[d.park]||28)+'/guest)</option>'+
-        '<option value="0"'+(!d.llMulti?' selected':'')+'>No</option>'+
-      '</select></label>'+
-      '<button class="x" data-del-day="'+d.id+'" aria-label="Remove day">&times;</button>'+
-    '</div>';
-  }).join(''):'<p class="hint">0 trip days added yet. Click "+ Add day" to add days to your itinerary.</p>';
+  var daysRows = (state.days || []).length
+    ? state.days.map(function(d, idx){
+        return '<div class="drow">' +
+          '<div class="dn">Day ' + (idx + 1) + '</div>' +
+          '<label>Park / focus <select data-day-park="' + d.id + '">' +
+            PLACES.map(function(p){ return '<option value="' + esc(p) + '"' + (d.park === p ? ' selected' : '') + '>' + esc(p) + '</option>'; }).join('') +
+          '</select></label>' +
+          '<label>Start time <input type="time" data-day-start="' + d.id + '" value="' + esc(d.start || '09:00') + '"></label>' +
+          '<button class="x" type="button" data-del-day="' + d.id + '" aria-label="Remove day">&times;</button>' +
+        '</div>';
+      }).join('')
+    : '<p class="hint">0 trip days scheduled yet. Add a day to plan meals and daily itineraries.</p>';
 
-  return '<div class="grid2">'+
-      '<div class="card">'+
-        '<div class="sec-h"><h2>Party &amp; ages</h2><button class="btn sm" data-action="add-member">+ Add traveler</button></div>'+
-        '<p class="hint" style="margin-bottom:8px">'+pl(c.total,'traveler')+' &middot; '+c.adult+' Adult (10+), '+c.child+' Child (3–9), '+c.free+' Under 3 Free</p>'+
-        partyHtml+
-      '</div>'+
-      '<div class="card">'+
-        '<div class="sec-h"><h2>Hotel &amp; tickets</h2></div>'+
-        '<div class="fgrid">'+
-          '<label class="fld" style="grid-column:1 / -1">Walt Disney World Resort'+
-            '<select data-resort-select>'+
-              '<option value="">Custom / select a WDW resort...</option>'+
-              resortGroups+
-            '</select>'+
-            '<small>Selecting a resort auto-fills an average nightly estimate; you can edit the rate anytime.</small>'+
-          '</label>'+
-          '<label class="fld">Nightly rate ($)<input type="number" min="0" step="10" data-hotel-field="hotelRate" value="'+(+state.hotelRate||0)+'"></label>'+
-          '<label class="fld">Nights<input type="number" min="0" max="30" data-hotel-field="nights" value="'+(+state.nights||0)+'"></label>'+
-          '<label class="fld">Ticket / day ($)<input type="number" min="0" step="5" data-ticket-field="ticketRate" value="'+(+state.ticketRate||0)+'"></label>'+
-          '<label class="fld">Ticket days<input type="number" min="0" max="21" data-ticket-field="ticketDays" value="'+(+state.ticketDays||0)+'"></label>'+
-        '</div>'+
-        '<label class="check"><input type="checkbox" data-ticket-field="hopper"'+(state.hopper?' checked':'')+'> Park Hopper add-on (+$35/day per paying guest)</label>'+
-        '<div class="opt-box">'+
-          '<div class="sec-h" style="margin-bottom:0"><h3>Optional Dining Plan &amp; Memory Maker</h3><span class="pill">Optional add-ons</span></div>'+
-          '<label class="fld">Walt Disney World Dining Plan (Optional)'+
-            '<select data-dining-plan>'+dpOptions+'</select>'+
-          '</label>'+
-          '<div class="fgrid">'+
-            '<label class="fld">Adult / night ($)<input type="number" min="0" step="1" data-dp-rate="diningPlanAdultRate" value="'+(+state.diningPlanAdultRate||0)+'"></label>'+
-            '<label class="fld">Child 3–9 / night ($)<input type="number" min="0" step="1" data-dp-rate="diningPlanChildRate" value="'+(+state.diningPlanChildRate||0)+'"></label>'+
-          '</div>'+
-          '<p class="opt-summary">Dining plan subtotal: <b>'+money(dpCost)+'</b> ('+(+state.nights||0)+' nights &times; '+c.adult+' adults &amp; '+c.child+' children; under 3 free)</p>'+
-          '<div class="check" style="margin-top:0;justify-content:space-between;flex-wrap:wrap">'+
-            '<label style="display:inline-flex;gap:8px;align-items:center"><input type="checkbox" data-mm-toggle'+(state.memoryMaker?' checked':'')+'> Add Memory Maker photo package</label>'+
-            '<label class="tgt">Package price <span class="money-in">$<input type="number" min="0" step="5" data-mm-price value="'+(+state.memoryMakerPrice||0)+'"></span></label>'+
-          '</div>'+
-          '<p class="opt-summary">Memory Maker added to budget: <b>'+money(mmCost)+'</b></p>'+
-        '</div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="card">'+
-      '<div class="sec-h"><h2>Budget &amp; targets</h2><span class="hint">Total target: '+money(totalTarget())+'</span></div>'+
-      targetRows+
-    '</div>'+
-    '<div class="card">'+
-      '<div class="sec-h"><h2>Daily park &amp; itinerary days ('+(state.days||[]).length+')</h2><button class="btn sm" data-action="add-day">+ Add day</button></div>'+
-      daysHtml+
+  return '<div class="card">' +
+      '<div class="sec-h">' +
+        '<h2>Travelers &amp; ages</h2>' +
+        '<button class="btn sm" type="button" data-action="add-member">+ Add traveler</button>' +
+      '</div>' +
+      '<p class="hint" style="margin-bottom:8px">' + pl(c.total, 'traveler') + ' &middot; ' + c.adult + ' Adult (10+), ' + c.child + ' Child (3–9), ' + c.free + ' Under 3</p>' +
+      partyListHtml +
+    '</div>' +
+    '<div class="grid2">' +
+      '<div class="card">' +
+        '<div class="sec-h"><h2>Hotel &amp; tickets</h2><span class="status">' + money(act.hotel + act.tickets) + '</span></div>' +
+        '<div class="fgrid">' +
+          '<label class="fld" style="grid-column:1 / -1">Walt Disney World Resort' +
+            '<select data-resort-select>' +
+              '<option value="">-- Choose a WDW Resort or enter nightly rate --</option>' +
+              resortGroups +
+            '</select>' +
+            '<small>Auto-fills average nightly rate; edit nightly rate anytime.</small>' +
+          '</label>' +
+          '<label class="fld">Nightly rate ($)<input type="number" min="0" step="5" data-state-num="hotelNightly" value="' + (+state.hotelNightly || 0) + '"></label>' +
+          '<label class="fld">Hotel nights<input type="number" min="0" max="30" data-state-num="hotelNights" value="' + (+state.hotelNights || 0) + '"></label>' +
+          '<label class="fld">Hotel tax (%)<input type="number" min="0" max="25" step="0.5" data-state-num="hotelTax" value="' + (+state.hotelTax || 0) + '"></label>' +
+          '<label class="fld">Ticket days<input type="number" min="0" max="21" data-state-num="ticketDays" value="' + (+state.ticketDays || 0) + '"></label>' +
+          '<label class="fld">Ticket price / day ($)<input type="number" min="0" step="5" data-state-num="ticketPrice" value="' + (+state.ticketPrice || 0) + '"></label>' +
+          '<label class="fld">Ticket tax (%)<input type="number" min="0" max="25" step="0.5" data-state-num="ticketTax" value="' + (+state.ticketTax || 0) + '"></label>' +
+        '</div>' +
+      '</div>' +
+      '<div class="card">' +
+        '<div class="sec-h"><h2>Optional Add-On\'s</h2><span class="status">' + money(dpCost + act.extras) + '</span></div>' +
+        '<div class="addon-block">' +
+          '<div class="addon-top"><strong>Dining Plan</strong><span class="addon-sub">Plan subtotal: <b>' + money(dpCost) + '</b></span></div>' +
+          '<label class="fld">Dining Plan selection' +
+            '<select data-dining-plan>' + dpOptions + '</select>' +
+          '</label>' +
+          '<div class="fgrid">' +
+            '<label class="fld">Adult 10+ / night ($)<input type="number" min="0" step="1" data-state-num="diningPlanAdultRate" value="' + (+state.diningPlanAdultRate || 0) + '"></label>' +
+            '<label class="fld">Child 3–9 / night ($)<input type="number" min="0" step="1" data-state-num="diningPlanChildRate" value="' + (+state.diningPlanChildRate || 0) + '"></label>' +
+          '</div>' +
+        '</div>' +
+        '<div class="addon-block">' +
+          '<div class="addon-top"><strong>Memory Maker</strong><span class="addon-sub">Added: <b>' + money(mmCost) + '</b></span></div>' +
+          '<label class="check" style="margin-top:0"><input type="checkbox" data-mm-check' + (state.memoryMaker ? ' checked' : '') + '> Include Memory Maker in budget</label>' +
+          '<div class="fgrid">' +
+            '<label class="fld">Memory Maker price ($)<input type="number" min="0" step="5" data-state-num="memoryMakerPrice" value="' + (+state.memoryMakerPrice || 0) + '"></label>' +
+          '</div>' +
+        '</div>' +
+        '<div class="addon-block">' +
+          '<div class="addon-top"><strong>Lightning Lane</strong><span class="addon-sub">LL subtotal: <b>' + money(llCost) + '</b></span></div>' +
+          '<label class="fld">Lightning Lane pass' +
+            '<select data-ll-addon-select>' + llOptions + '</select>' +
+          '</label>' +
+          '<div class="fgrid">' +
+            '<label class="fld">Number of days<input type="number" min="0" max="21" data-state-num="llAddonDays" value="' + (+state.llAddonDays || 0) + '"></label>' +
+            '<label class="fld">Rate / guest / day ($)<input type="number" min="0" step="1" data-state-num="llAddonDailyRate" value="' + (+state.llAddonDailyRate || 0) + '"></label>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="sec-h">' +
+        '<h2>Budget targets &amp; breakdown</h2>' +
+        '<label class="tgt">Overall target <span class="money-in">$<input type="number" min="0" step="50" data-target-total value="' + (+state.targets.total || 0) + '"></span></label>' +
+      '</div>' +
+      targetRows +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="sec-h"><h2>Trip days (' + (state.days || []).length + ')</h2><button class="btn sm" type="button" data-action="add-day">+ Add day</button></div>' +
+      daysRows +
     '</div>';
 }
 
 /* ---------- tab 2: dining ---------- */
 function renderDining(){
-  var locChips=LOCS.map(function(l){
-    var on=ui.loc===l;
-    return '<button class="chip'+(on?' on':'')+'" data-loc="'+esc(l)+'">'+esc(l)+'</button>';
+  var locChips = LOCS.map(function(l){
+    return '<button class="chip' + (ui.loc === l ? ' on' : '') + '" type="button" data-loc="' + esc(l) + '">' + esc(l) + '</button>';
   }).join('');
 
-  var types=['All','qs','ts','char','show','snack'];
-  var typeChips=types.map(function(t){
-    var on=ui.type===t;
-    var label=t==='All'?'All types':TYPE_LABEL[t];
-    return '<button class="chip'+(on?' on':'')+'" data-type="'+esc(t)+'">'+esc(label)+'</button>';
+  var typeChips = ['All', 'qs', 'ts', 'char', 'show', 'snack'].map(function(t){
+    return '<button class="chip' + (ui.type === t ? ' on' : '') + '" type="button" data-type="' + esc(t) + '">' + esc(t === 'All' ? 'All types' : TYPE_LABEL[t]) + '</button>';
   }).join('');
 
-  var term=(ui.search||'').trim().toLowerCase();
-  var filtered=allRest().filter(function(r){
-    if(ui.loc!=='All' && r.loc!==ui.loc) return false;
-    if(ui.type!=='All' && r.type!==ui.type) return false;
-    if(term && r.name.toLowerCase().indexOf(term)===-1 && r.loc.toLowerCase().indexOf(term)===-1) return false;
+  var term = (ui.search || '').trim().toLowerCase();
+  var filtered = allRest().filter(function(r){
+    if(ui.loc !== 'All' && r.loc !== ui.loc) return false;
+    if(ui.type !== 'All' && r.type !== ui.type) return false;
+    if(term && r.name.toLowerCase().indexOf(term) === -1 && r.loc.toLowerCase().indexOf(term) === -1) return false;
     return true;
   });
 
-  var pickedObj=ui.pickedRest?allRest().find(function(r){return r.id===ui.pickedRest;}):null;
+  var pickedObj = ui.pickedRest ? allRest().find(function(r){ return r.id === ui.pickedRest; }) : null;
 
-  var catalogCards=filtered.map(function(r){
-    var pr=restPrices(r);
-    var isPicked=ui.pickedRest===r.id;
-    var isEditing=ui.editingRest===r.id;
-    return '<div class="rcard'+(isPicked?' picked':'')+'" draggable="true" data-drag-rest="'+r.id+'" data-pick-rest="'+r.id+'">'+
-      '<div class="rc-top">'+
-        '<strong>'+esc(r.name)+'</strong>'+
-        '<span class="pill t-'+r.type+'">'+esc(TYPE_LABEL[r.type]||r.type)+'</span>'+
-      '</div>'+
-      '<div class="rc-meta">'+esc(r.loc)+' &middot; <b>'+money(pr.adult)+'</b> adult / <b>'+money(pr.kid)+'</b> child'+
-        (r.e?' <span class="pill est">Est.</span>':'')+
-        (r.c?' <span class="pill chk">Verify</span>':'')+
-      '</div>'+
-      (r.n?'<p class="rc-note">'+esc(r.n)+'</p>':'')+
-      '<div><button class="link" type="button" data-edit-rest="'+r.id+'">'+(isEditing?'Done editing':'Adjust prices')+'</button></div>'+
-      (isEditing?
-        '<div class="edit" onclick="event.stopPropagation()">'+
-          '<label>Adult $ <input type="number" min="0" step="1" data-ov-adult="'+r.id+'" value="'+pr.adult+'"></label>'+
-          '<label>Child $ <input type="number" min="0" step="1" data-ov-kid="'+r.id+'" value="'+pr.kid+'"></label>'+
-          '<button class="btn ghost sm" type="button" data-reset-price="'+r.id+'">Reset</button>'+
-        '</div>':'')+
+  var catalogHtml = filtered.map(function(r){
+    var pr = restPrices(r);
+    var isPicked = ui.pickedRest === r.id;
+    var isEditing = ui.editingRest === r.id;
+    var isCustom = String(r.id).indexOf('custom-') === 0;
+    return '<div class="rcard' + (isPicked ? ' picked' : '') + '" draggable="true" data-drag-rest="' + r.id + '" data-pick-rest="' + r.id + '">' +
+      '<div class="rc-top">' +
+        '<strong>' + esc(r.name) + '</strong>' +
+        '<span class="pill t-' + r.type + '">' + esc(TYPE_LABEL[r.type] || r.type) + '</span>' +
+      '</div>' +
+      '<div class="rc-meta">' + esc(r.loc) + ' &middot; <b>' + money(pr.adult) + '</b> adult / <b>' + money(pr.kid) + '</b> child' +
+        (r.e ? ' <span class="pill est">Est.</span>' : '') +
+        (r.c ? ' <span class="pill chk">Verify</span>' : '') +
+      '</div>' +
+      (r.n ? '<p class="rc-note">' + esc(r.n) + '</p>' : '') +
+      '<div style="display:flex;gap:12px;align-items:center">' +
+        '<button class="link" type="button" data-edit-rest="' + r.id + '">' + (isEditing ? 'Done' : 'Edit price') + '</button>' +
+        (isCustom ? '<button class="link" type="button" data-del-custom-rest="' + r.id + '">Remove</button>' : '') +
+      '</div>' +
+      (isEditing
+        ? '<div class="edit" onclick="event.stopPropagation()">' +
+            '<label>Adult $ <input type="number" min="0" step="1" data-ov-adult="' + r.id + '" value="' + pr.adult + '"></label>' +
+            '<label>Child $ <input type="number" min="0" step="1" data-ov-kid="' + r.id + '" value="' + pr.kid + '"></label>' +
+            '<button class="btn ghost sm" type="button" data-reset-price="' + r.id + '">Reset</button>' +
+          '</div>'
+        : '') +
     '</div>';
   }).join('');
 
-  var bannerHtml=pickedObj?
-    '<div class="banner">'+
-      '<span>Selected: <strong>'+esc(pickedObj.name)+'</strong> — tap any meal slot on the right to place it.</span>'+
-      '<button class="btn ghost sm" type="button" data-action="clear-picked">Cancel</button>'+
-    '</div>':'';
+  var bannerHtml = pickedObj
+    ? '<div class="banner">' +
+        '<span>Picked: <strong>' + esc(pickedObj.name) + '</strong> — tap any meal slot to place it.</span>' +
+        '<button class="btn ghost sm" type="button" data-action="clear-picked">Cancel</button>' +
+      '</div>'
+    : '';
 
-  var dayCards=(state.days||[]).length?state.days.map(function(d,idx){
-    var slotsHtml=MEALS.map(function(m){
-      var rid=d.meals&&d.meals[m];
-      var mc=mealCost(rid);
-      var armed=!!ui.pickedRest;
-      return '<div class="slot'+(armed?' armed':'')+'" data-drop-slot="'+d.id+':'+m+'">'+
-        '<div class="slot-h"><span>'+esc(MEAL_LABEL[m])+'</span><span>'+esc(fmtTime(MEAL_TIME[m]))+'</span></div>'+
-        (rid && mc.rest?
-          '<div class="placed" draggable="true" data-drag-placed="'+d.id+':'+m+'">'+
-            '<div class="rc-top"><strong>'+esc(mc.rest.name)+'</strong><button class="x" type="button" data-clear-slot="'+d.id+':'+m+'" aria-label="Remove meal">&times;</button></div>'+
-            '<span class="tot">'+money(mc.total)+'</span>'+
-            '<span class="pp"><span>'+money(mc.adultTotal)+' adults &middot; '+money(mc.kidTotal)+' kids</span>'+(mc.freeCount?'<span>'+mc.freeCount+' under 3 free</span>':'')+'</span>'+
-          '</div>':
-          '<span class="empty">'+(armed?'Tap to place here':'Drop or pick a spot')+'</span>')+
-      '</div>';
-    }).join('');
+  var dayCards = (state.days || []).length
+    ? state.days.map(function(d, idx){
+        var dayMeals = (state.meals && state.meals[d.id]) || {};
+        var slotsHtml = MEALS.map(function(m){
+          var rid = dayMeals[m];
+          var mc = mealCost(rid);
+          var armed = !!ui.pickedRest;
+          return '<div class="slot' + (armed ? ' armed' : '') + '" data-drop-slot="' + d.id + ':' + m + '">' +
+            '<div class="slot-h"><span>' + esc(MEAL_LABEL[m]) + '</span><span>' + esc(fmtTime(MEAL_TIME[m])) + '</span></div>' +
+            (rid && mc.rest
+              ? '<div class="placed" draggable="true" data-drag-placed="' + d.id + ':' + m + '">' +
+                  '<div class="rc-top"><strong>' + esc(mc.rest.name) + '</strong><button class="x" type="button" data-clear-slot="' + d.id + ':' + m + '" aria-label="Clear slot">&times;</button></div>' +
+                  '<span class="tot">' + money(mc.total) + '</span>' +
+                  '<span class="pp"><span>' + money(mc.adultTotal) + ' adults &middot; ' + money(mc.kidTotal) + ' kids</span>' + (mc.freeCount ? '<span>' + mc.freeCount + ' under 3 free</span>' : '') + '</span>' +
+                '</div>'
+              : '<span class="empty">' + (armed ? 'Tap to place here' : 'Drop or pick a spot') + '</span>') +
+          '</div>';
+        }).join('');
+        var dMealSum = MEALS.reduce(function(s, m){ return s + mealCost(dayMeals[m]).total; }, 0);
+        return '<div class="dcard">' +
+          '<div class="dc-h"><h3>Day ' + (idx + 1) + '<span class="place">' + esc(d.park) + '</span></h3><span class="status">' + money(dMealSum) + '</span></div>' +
+          '<div class="slots">' + slotsHtml + '</div>' +
+        '</div>';
+      }).join('')
+    : '<div class="dcard"><p class="hint">0 trip days scheduled yet. Add a day to assign meals.</p></div>';
 
-    var dayTotal=MEALS.reduce(function(s,m){return s+mealCost(d.meals&&d.meals[m]).total;},0);
-    return '<div class="dcard">'+
-      '<div class="dc-h">'+
-        '<h3>Day '+(idx+1)+'<span class="place">'+esc(d.park)+'</span></h3>'+
-        '<span class="status">'+money(dayTotal)+'</span>'+
-      '</div>'+
-      '<div class="slots">'+slotsHtml+'</div>'+
-    '</div>';
-  }).join(''):'<div class="dcard"><p class="hint">0 trip days scheduled yet. Add a day in Trip &amp; budget or the footer to assign meals.</p></div>';
-
-  var diningTgt=+state.target.dining||0;
-  var diningAct=calcDining();
-
-  return '<div class="card" style="margin-bottom:16px">'+
-      '<div class="sec-h"><h2>Dining cost tracker</h2><span class="status">Total dining: '+money(diningAct)+(diningTgt?' / '+money(diningTgt)+' target':'')+'</span></div>'+
-      '<p class="hint">Includes prepaid Dining Plan ('+money(calcDiningPlan())+') plus assigned day meal slots ('+money(calcAssignedMeals())+').</p>'+
-    '</div>'+
-    '<div class="split">'+
-      '<div class="card sticky">'+
-        '<h2>Restaurants &amp; snacks</h2>'+
-        '<p class="hint">Drag a card to a meal slot, or tap to select and tap a slot.</p>'+
-        '<div class="chips"><button class="chip'+(ui.loc==='All'?' on':'')+'" data-loc="All">All locations</button>'+locChips+'</div>'+
-        '<div class="chips">'+typeChips+'</div>'+
-        '<input type="search" placeholder="Search dining..." data-search-rest value="'+esc(ui.search)+'" style="width:100%;margin-bottom:10px">'+
-        '<div class="catalog">'+(catalogCards||'<p class="hint">No matching spots.</p>')+'</div>'+
-        '<details class="add-rest">'+
-          '<summary>+ Add custom restaurant</summary>'+
-          '<div class="fgrid">'+
-            '<label class="fld">Name<input type="text" id="newRestName" placeholder="e.g. Harbor snack stand"></label>'+
-            '<label class="fld">Location<select id="newRestLoc">'+LOCS.map(function(l){return '<option value="'+esc(l)+'">'+esc(l)+'</option>';}).join('')+'</select></label>'+
-            '<label class="fld">Type<select id="newRestType"><option value="qs">Quick service</option><option value="ts">Table service</option><option value="char">Character meal</option><option value="show">Dinner show</option><option value="snack">Snack</option></select></label>'+
-            '<label class="fld">Adult ($)<input type="number" id="newRestAdult" min="0" value="25"></label>'+
-            '<label class="fld">Child ($)<input type="number" id="newRestKid" min="0" value="12"></label>'+
-          '</div>'+
-          '<div style="margin-top:10px"><button class="btn sm" type="button" data-action="add-custom-rest">Save to list</button></div>'+
-        '</details>'+
-      '</div>'+
-      '<div>'+bannerHtml+dayCards+'</div>'+
+  return '<div class="split">' +
+      '<div class="card sticky">' +
+        '<h2>Dining &amp; snacks</h2>' +
+        '<p class="hint">Drag onto a meal slot, or tap to pick then tap a slot.</p>' +
+        '<div class="chips"><button class="chip' + (ui.loc === 'All' ? ' on' : '') + '" type="button" data-loc="All">All locations</button>' + locChips + '</div>' +
+        '<div class="chips">' + typeChips + '</div>' +
+        '<input type="search" placeholder="Search dining..." data-search-rest value="' + esc(ui.search) + '" style="width:100%;margin-bottom:10px">' +
+        '<div class="catalog">' + (catalogHtml || '<p class="hint">No matching restaurants.</p>') + '</div>' +
+        '<details class="add-rest">' +
+          '<summary>+ Add custom dining spot</summary>' +
+          '<div class="fgrid">' +
+            '<label class="fld">Name<input type="text" id="newRestName" placeholder="Restaurant name"></label>' +
+            '<label class="fld">Location<select id="newRestLoc">' + LOCS.map(function(l){ return '<option value="' + esc(l) + '">' + esc(l) + '</option>'; }).join('') + '</select></label>' +
+            '<label class="fld">Type<select id="newRestType"><option value="qs">Quick service</option><option value="ts">Table service</option><option value="char">Character meal</option><option value="show">Dinner show</option><option value="snack">Snack</option></select></label>' +
+            '<label class="fld">Adult ($)<input type="number" id="newRestAdult" min="0" value="20"></label>' +
+            '<label class="fld">Child ($)<input type="number" id="newRestKid" min="0" value="10"></label>' +
+          '</div>' +
+          '<div style="margin-top:10px"><button class="btn sm" type="button" data-action="add-custom-rest">Add spot</button></div>' +
+        '</details>' +
+      '</div>' +
+      '<div>' + bannerHtml + dayCards + '</div>' +
     '</div>';
 }
 
-/* ---------- tab 3: ride priorities ---------- */
+/* ---------- tab 3: ride priorities (no Standby/Multi/Single pass; includes remove ride option) ---------- */
 function renderRides(){
-  var parkSelector=
-    '<div class="card" style="margin-bottom:16px">'+
-      '<div class="sec-h"><h2>Ride priorities</h2><span class="hint">Focus a park or view all four parks below</span></div>'+
-      '<div class="chips" style="margin:0">'+
-        ['All'].concat(PARKS).map(function(pk){
-          return '<button class="chip'+(ui.priPark===pk?' on':'')+'" data-pri-park="'+esc(pk)+'">'+esc(pk)+'</button>';
-        }).join('')+
-      '</div>'+
-    '</div>';
+  var chips = ['All'].concat(PARKS).map(function(pk){
+    return '<button class="chip' + (ui.priPark === pk ? ' on' : '') + '" type="button" data-pri-park="' + esc(pk) + '">' + esc(pk) + '</button>';
+  }).join('');
 
-  var visibleParks=ui.priPark==='All'?PARKS:[ui.priPark];
-  var parkCards=visibleParks.map(function(p){
-    var list=parkRides(p);
-    var itemsHtml=list.length?list.map(function(r,idx){
-      var plan=(state.llPlan&&state.llPlan[p]&&state.llPlan[p][r.id])||'standby';
-      return '<li class="ri" draggable="true" data-ride-park="'+esc(p)+'" data-ride-id="'+r.id+'">'+
-        '<span class="rno">'+(idx+1)+'</span>'+
-        '<div class="ri-main">'+
-          '<strong>'+esc(r.name)+'</strong>'+
-          '<span class="pill th-'+r.thrill+'">'+THRILL[r.thrill]+'</span>'+
-        '</div>'+
-        '<select data-ride-thrill-edit="'+esc(p)+':'+r.id+'" aria-label="Thrill level for '+esc(r.name)+'">'+
-          '<option value="1"'+(r.thrill===1?' selected':'')+'>Gentle</option>'+
-          '<option value="2"'+(r.thrill===2?' selected':'')+'>Moderate</option>'+
-          '<option value="3"'+(r.thrill===3?' selected':'')+'>Intense</option>'+
-        '</select>'+
-        '<select data-ride-plan="'+esc(p)+':'+r.id+'" aria-label="Strategy for '+esc(r.name)+'">'+
-          Object.keys(PLAN_LABEL).map(function(k){return '<option value="'+k+'"'+(plan===k?' selected':'')+'>'+PLAN_LABEL[k]+'</option>';}).join('')+
-        '</select>'+
-        '<div class="ri-ctl">'+
-          '<button class="x" type="button" data-move-ride="'+esc(p)+':'+r.id+':-1" '+(idx===0?'disabled':'')+' aria-label="Move up">&uarr;</button>'+
-          '<button class="x" type="button" data-move-ride="'+esc(p)+':'+r.id+':1" '+(idx===list.length-1?'disabled':'')+' aria-label="Move down">&darr;</button>'+
-        '</div>'+
-      '</li>';
-    }).join(''):'<li class="hint">0 priority rides listed for '+esc(p)+'. Add attractions below to rank your favorites.</li>';
+  var listParks = ui.priPark === 'All' ? PARKS : [ui.priPark];
+  var cards = listParks.map(function(p){
+    var list = parkRides(p);
+    var items = list.length
+      ? list.map(function(r, idx){
+          return '<li class="ri" draggable="true" data-ride-park="' + esc(p) + '" data-ride-id="' + r.id + '">' +
+            '<span class="rno">' + (idx + 1) + '</span>' +
+            '<div class="ri-main"><strong>' + esc(r.name) + '</strong><span class="pill th-' + r.thrill + '">' + THRILL[r.thrill] + '</span></div>' +
+            '<div class="ri-ctl">' +
+              '<button class="x" type="button" data-move-ride="' + esc(p) + ':' + r.id + ':-1" ' + (idx === 0 ? 'disabled' : '') + ' aria-label="Move up">&uarr;</button>' +
+              '<button class="x" type="button" data-move-ride="' + esc(p) + ':' + r.id + ':1" ' + (idx === list.length - 1 ? 'disabled' : '') + ' aria-label="Move down">&darr;</button>' +
+              '<button class="x" type="button" data-remove-ride="' + esc(p) + ':' + r.id + '" aria-label="Remove ride" title="Remove ride">&times;</button>' +
+            '</div>' +
+          '</li>';
+        }).join('')
+      : '<li class="hint">0 rides in list. Add a ride below.</li>';
 
-    return '<div class="card">'+
-      '<div class="sec-h"><h2>'+esc(p)+'</h2><span class="hint">'+list.length+' attractions</span></div>'+
-      '<ul class="list" data-ride-list="'+esc(p)+'">'+itemsHtml+'</ul>'+
-      '<div class="endzone" data-ride-end="'+esc(p)+'">Drop here to move to bottom</div>'+
-      '<div class="addrow">'+
-        '<input type="text" placeholder="Add attraction..." data-new-ride-name="'+esc(p)+'">'+
-        '<select data-new-ride-thrill="'+esc(p)+'"><option value="1">Gentle</option><option value="2" selected>Moderate</option><option value="3">Intense</option></select>'+
-        '<button class="btn sm" type="button" data-add-ride="'+esc(p)+'">Add</button>'+
-      '</div>'+
+    return '<div class="card">' +
+      '<div class="sec-h"><h2>' + esc(p) + '</h2><span class="hint">' + list.length + ' attractions</span></div>' +
+      '<ul class="list" data-ride-list="' + esc(p) + '">' + items + '</ul>' +
+      '<div class="endzone" data-ride-end="' + esc(p) + '">Drop here to move to bottom</div>' +
+      '<div class="addrow">' +
+        '<input type="text" placeholder="Add attraction..." data-new-ride-name="' + esc(p) + '">' +
+        '<select data-new-ride-thrill="' + esc(p) + '"><option value="1">Gentle</option><option value="2" selected>Moderate</option><option value="3">Intense</option></select>' +
+        '<button class="btn sm" type="button" data-add-ride="' + esc(p) + '">Add</button>' +
+      '</div>' +
     '</div>';
   }).join('');
 
-  return parkSelector+'<div class="grid2">'+parkCards+'</div>';
+  return '<div class="card" style="margin-bottom:16px">' +
+      '<div class="sec-h"><h2>Ride priorities</h2><span class="hint">Drag rows, use arrows to rank, or click &times; to remove</span></div>' +
+      '<div class="chips" style="margin:0">' + chips + '</div>' +
+    '</div>' +
+    '<div class="grid2">' + cards + '</div>';
 }
 
-/* ---------- tab 4: lightning lane ---------- */
+/* ---------- tab 4: lightning lane (informational only; no dropdowns/pricing; Tier 1/Tier 2 + pick counts; no per-ride tier/pass tags) ---------- */
 function renderLL(){
-  var p=ui.llPark||'Magic Kingdom';
-  var data=LL_DATA[p]||{};
-  var cols=Object.keys(data).map(function(cat){
-    var items=(data[cat]||[]).map(function(entry){
-      var label=entry[0];
-      var meta=entry[1]||{};
-      var matchName=meta.m||label;
-      var rid=slug(p+' '+matchName);
-      var assigned=(state.llPlan&&state.llPlan[p]&&state.llPlan[p][rid])||'standby';
-      return '<div class="llitem">'+
-        '<span class="nm">'+esc(label)+'</span>'+
-        (meta.s?'<span class="pill">Show/Char</span>':'')+
-        '<select data-ll-assign="'+esc(p)+':'+rid+'" aria-label="Lightning Lane mode for '+esc(label)+'">'+
-          '<option value="standby"'+(assigned==='standby'?' selected':'')+'>Standby</option>'+
-          '<option value="multi"'+(assigned==='multi'?' selected':'')+'>Multi Pass</option>'+
-          '<option value="single"'+(assigned==='single'?' selected':'')+'>Single Pass</option>'+
-        '</select>'+
-        (meta.n?'<small>'+esc(meta.n)+'</small>':'')+
-      '</div>';
+  var p = ui.llPark || 'Magic Kingdom';
+  var parkObj = LL_GUIDE[p] || {};
+
+  var colsHtml = Object.keys(parkObj).map(function(cat){
+    var group = parkObj[cat];
+    var itemsHtml = (group.items || []).map(function(title){
+      return '<div class="llitem"><span class="nm">' + esc(title) + '</span></div>';
     }).join('');
-    return '<div class="llcol c-'+cat+'">'+
-      '<div class="llcol-h"><h3>'+esc(LL_CAT[cat]||cat)+'</h3><small>'+(data[cat]||[]).length+' experiences</small></div>'+
-      items+
+    return '<div class="llcol c-' + cat + '">' +
+      '<div class="llcol-h"><h3>' + esc(group.heading) + '</h3><small>' + esc(group.limitText) + '</small></div>' +
+      itemsHtml +
     '</div>';
   }).join('');
 
-  var goneRows=Object.keys(LL_GONE).map(function(id){
-    return '<tr><td>'+esc(id)+'</td><td>'+esc(LL_GONE[id])+'</td></tr>';
-  }).join('');
-
-  return '<div class="card">'+
-      '<div class="sec-h"><h2>Lightning Lane options &amp; guide</h2><span class="hint">Estimated LL spend: '+money(calcLL())+' &middot; Lineups noted '+esc(LL_ASOF)+'</span></div>'+
-      '<div class="llopts">'+
-        '<div class="llopt"><h3>Lightning Lane Multi Pass</h3><div class="price">~$'+(LL_PEAK[p]||40)+' peak</div><ul><li>Pre-book up to 3 rides in advance</li><li>Tap in to unlock same-day selections</li><li>Includes select shows &amp; characters</li></ul><div class="best"><b>Best for:</b> Full park days with multiple tier-1 and tier-2 attractions.</div></div>'+
-        '<div class="llopt"><h3>Lightning Lane Single Pass</h3><div class="price">$14–$25 / ride</div><ul><li>Sold individually per headliner attraction</li><li>Can be purchased with or without Multi Pass</li><li>Skip standby lines on top headliners</li></ul><div class="best"><b>Best for:</b> High-demand attractions like TRON Lightcycle / Run or Guardians.</div></div>'+
-        '<div class="llopt"><h3>Lightning Lane Premier Pass</h3><div class="price">'+esc(LL_PREMIER[p]||'$119–$499')+'</div><ul><li>One-time entry to each eligible Lightning Lane</li><li>Enter without fixed return times</li><li>Limited availability per day</li></ul><div class="best"><b>Best for:</b> Tight timelines or flexible park-hopping days.</div></div>'+
-      '</div>'+
-    '</div>'+
-    '<div class="card">'+
-      '<div class="sec-h"><h2>Park lineup &amp; strategy assignment</h2>'+
-        '<div class="chips" style="margin:0">'+
-          PARKS.map(function(pk){return '<button class="chip'+(p===pk?' on':'')+'" data-ll-park="'+esc(pk)+'">'+esc(pk)+'</button>';}).join('')+
-        '</div>'+
-      '</div>'+
-      '<p class="hint">Peak Multi Pass estimate at '+esc(p)+': ~$'+(LL_PEAK[p]||35)+'/guest. Premier Pass range: '+esc(LL_PREMIER[p]||'')+'.</p>'+
-      '<div class="llcols">'+cols+'</div>'+
-    '</div>'+
-    '<div class="card">'+
-      '<div class="sec-h"><h2>Attraction status notes</h2></div>'+
-      '<div class="scroll"><table class="llcheck"><thead><tr><th>Attraction ID</th><th>Note</th></tr></thead><tbody>'+goneRows+'</tbody></table></div>'+
+  return '<div class="card">' +
+      '<div class="sec-h"><h2>Lightning Lane guide</h2><span class="hint">Informational guide &middot; Select passes &amp; days under Optional Add-On\'s on Trip &amp; budget</span></div>' +
+      '<div class="llopts">' +
+        '<div class="llopt">' +
+          '<h3>Lightning Lane Multi Pass</h3>' +
+          '<ul>' +
+            '<li>Choose rides ahead of your trip and pick up more return times during your park day</li>' +
+            '<li>In parks with tiers, select from Tier 1 and Tier 2 according to the choice limits shown below</li>' +
+          '</ul>' +
+          '<div class="best"><b>Good fit:</b> Days when you want scheduled return times for multiple rides.</div>' +
+        '</div>' +
+        '<div class="llopt">' +
+          '<h3>Lightning Lane Single Pass</h3>' +
+          '<ul>' +
+            '<li>Reserved individually for select high-demand rides rather than bundled in Multi Pass</li>' +
+            '<li>Can be used on its own or alongside Multi Pass</li>' +
+          '</ul>' +
+          '<div class="best"><b>Good fit:</b> Guests who want a reserved time on a specific individual-pass ride.</div>' +
+        '</div>' +
+        '<div class="llopt">' +
+          '<h3>Lightning Lane Premier Pass</h3>' +
+          '<ul>' +
+            '<li>One-time Lightning Lane entry to eligible park attractions without picking return times in advance</li>' +
+            '<li>Available in limited quantities by park and date</li>' +
+          '</ul>' +
+          '<div class="best"><b>Good fit:</b> Guests who want flexible arrival without managing return windows.</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="sec-h"><h2>How planning works</h2></div>' +
+      '<ol class="llsteps">' +
+        '<li><b>Advance planning window:</b> Resort guests can plan ahead of check-in for their stay; other guests can plan ahead of their visit date.</li>' +
+        '<li><b>Category choices:</b> Follow the pick limits listed under each group below when planning ahead.</li>' +
+        '<li><b>During your park day:</b> Once you use a Lightning Lane pass, you can choose another available option in the app.</li>' +
+      '</ol>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="sec-h">' +
+        '<h2>Attractions by category</h2>' +
+        '<div class="chips" style="margin:0">' +
+          PARKS.map(function(pk){ return '<button class="chip' + (p === pk ? ' on' : '') + '" type="button" data-ll-park="' + esc(pk) + '">' + esc(pk) + '</button>'; }).join('') +
+        '</div>' +
+      '</div>' +
+      '<p class="hint">Showing <b>' + esc(p) + '</b>.</p>' +
+      '<div class="llcols">' + colsHtml + '</div>' +
     '</div>';
 }
 
 /* ---------- tab 5: day plan ---------- */
-function ensureDayEntries(day){
-  if(!Array.isArray(day.entries)) day.entries=[];
+function currentDayObj(){
+  if(!(state.days || []).length) return null;
+  var found = state.days.find(function(d){ return d.id === state.activeDay; });
+  return found || state.days[0];
 }
 
-function buildMealEntries(day){
-  var out=[];
+function dayEntries(day){
+  state.plans = state.plans || {};
+  if(!Array.isArray(state.plans[day.id])) state.plans[day.id] = [];
+  return state.plans[day.id];
+}
+
+function syncedMealItems(day){
+  var mObj = (state.meals && state.meals[day.id]) || {};
+  var out = [];
   MEALS.forEach(function(m){
-    var rid=day.meals&&day.meals[m];
+    var rid = mObj[m];
     if(!rid) return;
-    var r=allRest().find(function(x){return x.id===rid;});
+    var r = allRest().find(function(x){ return x.id === rid; });
     if(!r) return;
     out.push({
-      id:'meal-'+day.id+'-'+m,
-      kind:'meal',
-      time:MEAL_TIME[m]||'12:00',
-      title:MEAL_LABEL[m]+': '+r.name,
-      detail:r.loc+' · '+money(mealCost(rid).total)
+      id: 'meal-' + day.id + '-' + m,
+      kind: 'meal',
+      time: MEAL_TIME[m] || '12:00',
+      title: MEAL_LABEL[m] + ': ' + r.name,
+      detail: r.loc + ' · ' + money(mealCost(rid).total)
     });
   });
   return out;
 }
 
 function renderPlan(){
-  if(!(state.days||[]).length){
-    return '<div class="card"><div class="sec-h"><h2>Day plan</h2><span class="hint">0 days scheduled</span></div><p class="hint">No trip days yet. Add a day in Trip &amp; budget or click "+ Add day" in the footer to build your itinerary.</p></div>';
+  if(!(state.days || []).length){
+    return '<div class="card">' +
+      '<div class="sec-h"><h2>Day plan</h2><button class="btn sm" type="button" data-action="add-day">+ Add day</button></div>' +
+      '<p class="hint">0 trip days scheduled yet. Add a day to build your itinerary.</p>' +
+    '</div>';
   }
-  var idx=Math.max(0,Math.min(state.days.length-1,ui.planDay||0));
-  var day=state.days[idx];
-  ensureDayEntries(day);
-
-  var combined=buildMealEntries(day).concat(day.entries||[]).sort(function(a,b){
-    return toMin(a.time)-toMin(b.time);
+  var day = currentDayObj();
+  var idx = state.days.indexOf(day);
+  var customItems = dayEntries(day);
+  var combined = syncedMealItems(day).concat(customItems).sort(function(a, b){
+    return toMin(a.time) - toMin(b.time);
   });
 
-  var dtabs=state.days.map(function(d,i){
-    return '<button class="dtab'+(i===idx?' on':'')+'" data-plan-day="'+i+'">Day '+(i+1)+'<small>'+esc(d.park)+' &middot; '+esc(fmtTime(d.start))+'</small></button>';
+  var dtabs = state.days.map(function(d, i){
+    return '<button class="dtab' + (d.id === day.id ? ' on' : '') + '" type="button" data-active-day="' + d.id + '">Day ' + (i + 1) + '<small>' + esc(d.park) + ' &middot; ' + esc(fmtTime(d.start)) + '</small></button>';
   }).join('');
 
-  var tlHtml=combined.length?combined.map(function(ev){
-    var k=ev.kind||'note';
-    var bClass=(k==='ride'||k==='meal'||k==='show')?k:'';
-    var isCustom=!String(ev.id).indexOf('meal-')===false;
-    return '<li class="tl" draggable="'+(isCustom?'true':'false')+'" '+(isCustom?'data-entry-id="'+ev.id+'"':'')+'>'+
-      '<span class="badge '+bClass+'">'+esc(ENTRY_LABEL[k]||k)+'</span>'+
-      (isCustom?'<input type="time" data-entry-time="'+ev.id+'" value="'+esc(ev.time||'09:00')+'" aria-label="Time">':'<span class="hint" style="min-width:74px">'+esc(fmtTime(ev.time))+'</span>')+
-      '<div class="tl-body"><strong>'+esc(ev.title)+'</strong>'+(ev.detail?'<span>'+esc(ev.detail)+'</span>':'')+'</div>'+
-      (isCustom?'<button class="x" type="button" data-del-entry="'+ev.id+'" aria-label="Remove item">&times;</button>':'<span class="pill">From Dining</span>')+
-    '</li>';
-  }).join(''):'<li class="hint">0 items on this day yet. Add a timeline block below or assign meals in the Dining tab.</li>';
+  var tlHtml = combined.length
+    ? combined.map(function(ev){
+        var isMeal = String(ev.id).indexOf('meal-') === 0;
+        var k = ev.kind || 'note';
+        var bClass = (k === 'ride' || k === 'meal' || k === 'show') ? k : '';
+        return '<li class="tl" draggable="' + (!isMeal ? 'true' : 'false') + '" ' + (!isMeal ? 'data-plan-entry="' + ev.id + '"' : '') + '>' +
+          '<span class="badge ' + bClass + '">' + esc(ENTRY_LABEL[k] || k) + '</span>' +
+          (!isMeal
+            ? '<input type="time" data-entry-time="' + ev.id + '" value="' + esc(ev.time || '09:00') + '" aria-label="Time">'
+            : '<span class="hint" style="min-width:74px">' + esc(fmtTime(ev.time)) + '</span>') +
+          '<div class="tl-body"><strong>' + esc(ev.title) + '</strong>' + (ev.detail ? '<span>' + esc(ev.detail) + '</span>' : '') + '</div>' +
+          (!isMeal
+            ? '<button class="x" type="button" data-del-plan-entry="' + ev.id + '" aria-label="Remove item">&times;</button>'
+            : '<span class="pill">Dining slot</span>') +
+        '</li>';
+      }).join('')
+    : '<li class="hint">0 itinerary items for Day ' + (idx + 1) + ' yet. Add a ride, show, break, travel, note, or meal below.</li>';
 
-  var rideOpts=parkRides(day.park).map(function(r){
-    return '<option value="'+esc(r.name)+'">'+esc(r.name)+'</option>';
+  var rideSuggs = parkRides(day.park).map(function(r){
+    return '<option value="' + esc(r.name) + '">' + esc(r.name) + '</option>';
   }).join('');
 
-  return '<div class="dtabs">'+dtabs+'</div>'+
-    '<div class="card">'+
-      '<div class="sec-h"><h2>Day '+(idx+1)+' — '+esc(day.park)+'</h2><span class="hint">Starts '+esc(fmtTime(day.start))+(day.llMulti?' &middot; Multi Pass':'')+'</span></div>'+
-      '<div class="note">Meals placed on the Dining tab appear automatically alongside custom timeline items. Drag custom items to reorder or edit times directly.</div>'+
-      '<ul class="timeline" id="planTimeline">'+tlHtml+'</ul>'+
-      '<div class="addrow">'+
-        '<select id="newEntryKind"><option value="ride">Ride</option><option value="show">Show</option><option value="break">Break</option><option value="travel">Travel</option><option value="note">Note</option><option value="meal">Meal</option></select>'+
-        '<input type="time" id="newEntryTime" value="14:00">'+
-        '<input type="text" id="newEntryTitle" list="dayRideSuggestions" placeholder="Activity, ride, or note...">'+
-        '<datalist id="dayRideSuggestions">'+rideOpts+'</datalist>'+
-        '<input type="text" id="newEntryDetail" placeholder="Notes (optional)" style="max-width:200px">'+
-        '<button class="btn sm" type="button" data-action="add-entry">Add item</button>'+
-      '</div>'+
-    '</div>'+
-    '<div class="card">'+
-      '<div class="sec-h"><h2>Trip notes</h2></div>'+
-      '<textarea rows="3" data-trip-notes placeholder="Dining confirmation numbers, LL return reminders, resort notes...">'+esc(state.notes||'')+'</textarea>'+
+  var noteText = (state.notes && state.notes[day.id]) || '';
+
+  return '<div class="dtabs">' + dtabs + '</div>' +
+    '<div class="card">' +
+      '<div class="sec-h"><h2>Day ' + (idx + 1) + ' — ' + esc(day.park) + '</h2><span class="hint">Start ' + esc(fmtTime(day.start)) + '</span></div>' +
+      '<div class="note">Meals assigned on the Dining tab appear here automatically alongside your custom schedule items.</div>' +
+      '<ul class="timeline" id="dayTimeline">' + tlHtml + '</ul>' +
+      '<div class="addrow">' +
+        '<select id="entryKind">' +
+          '<option value="ride">Ride</option>' +
+          '<option value="meal">Meal</option>' +
+          '<option value="show">Show</option>' +
+          '<option value="break">Break</option>' +
+          '<option value="travel">Travel</option>' +
+          '<option value="note">Note</option>' +
+        '</select>' +
+        '<input type="time" id="entryTime" value="10:00">' +
+        '<input type="text" id="entryTitle" list="parkRideList" placeholder="Attraction, meal, or note...">' +
+        '<datalist id="parkRideList">' + rideSuggs + '</datalist>' +
+        '<input type="text" id="entryDetail" placeholder="Optional details" style="max-width:200px">' +
+        '<button class="btn sm" type="button" data-action="add-plan-item">Add item</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card">' +
+      '<div class="sec-h"><h2>Day ' + (idx + 1) + ' notes</h2></div>' +
+      '<textarea rows="3" data-day-notes placeholder="Notes for Day ' + (idx + 1) + '...">' + esc(noteText) + '</textarea>' +
     '</div>';
 }
 
 /* ---------- tab 6: summary ---------- */
-function buildPlainSummary(){
-  var act=calcActuals();
-  var spent=totalSpend(act);
-  var bud=totalTarget();
-  var c=partyCounts();
-  var lines=[];
-  lines.push(state.trip||'My WDW Trip');
-  lines.push('Party: '+c.total+' ('+c.adult+' Adult 10+, '+c.child+' Child 3-9, '+c.free+' Under 3 Free)');
-  if(state.selectedResort) lines.push('Resort: '+state.selectedResort);
-  if(state.diningPlan && state.diningPlan!=='none') lines.push('Dining Plan: '+DINING_PLANS[state.diningPlan].label);
-  if(state.memoryMaker) lines.push('Memory Maker: '+money(calcMemoryMaker()));
-  lines.push('Estimated Spend: '+money(spent)+' (Target: '+money(bud)+')');
-  lines.push('  Hotel: '+money(act.hotel)+' | Tickets: '+money(act.tickets)+' | Dining: '+money(act.dining)+' | Lightning Lane: '+money(act.ll)+' | Other: '+money(act.other));
-  PARKS.forEach(function(pk){
-    var list=parkRides(pk);
-    if(list.length){
-      lines.push(pk+' Priorities: '+list.map(function(r,i){return (i+1)+'. '+r.name;}).join(', '));
-    }
-  });
-  (state.days||[]).forEach(function(d,i){
-    lines.push('Day '+(i+1)+' ('+d.park+', starts '+fmtTime(d.start)+')');
+function buildSummaryText(){
+  var act = calcActuals();
+  var bud = effectiveTargetTotal();
+  var c = partyCounts();
+  var lines = [];
+  lines.push(state.trip || 'Decades of Magic WDW Trip');
+  lines.push('Travelers: ' + c.total + ' (' + c.adult + ' Adult 10+, ' + c.child + ' Child 3–9, ' + c.free + ' Under 3)');
+  if(state.selectedResort) lines.push('Resort: ' + state.selectedResort + ' (' + (+state.hotelNights || 0) + ' nights)');
+  if(state.diningPlan && state.diningPlan !== 'none') lines.push('Dining Plan: ' + (DINING_PLANS[state.diningPlan] ? DINING_PLANS[state.diningPlan].label : state.diningPlan) + ' (' + money(calcDiningPlan()) + ')');
+  if(state.memoryMaker) lines.push('Memory Maker: ' + money(calcMemoryMaker()));
+  if(state.llAddonType && state.llAddonType !== 'none') lines.push('Lightning Lane: ' + (LL_ADDON_OPTIONS[state.llAddonType] ? LL_ADDON_OPTIONS[state.llAddonType].label : state.llAddonType) + ' (' + (+state.llAddonDays || 0) + ' days, ' + money(calcLLAddon()) + ')');
+  lines.push('Estimated Total: ' + money(act.total) + (bud > 0 ? ' / Target: ' + money(bud) : ''));
+  lines.push('Hotel: ' + money(act.hotel) + ' | Tickets: ' + money(act.tickets) + ' | Dining: ' + money(act.dining) + ' | Add-ons: ' + money(act.extras));
+  (state.days || []).forEach(function(d, i){
+    var mObj = (state.meals && state.meals[d.id]) || {};
+    var mealList = MEALS.map(function(m){
+      var rid = mObj[m];
+      var r = rid ? allRest().find(function(x){ return x.id === rid; }) : null;
+      return r ? MEAL_LABEL[m] + ': ' + r.name + ' (' + money(mealCost(rid).total) + ')' : null;
+    }).filter(Boolean);
+    lines.push('Day ' + (i + 1) + ' (' + d.park + ', start ' + fmtTime(d.start) + ')' + (mealList.length ? ' — ' + mealList.join('; ') : ''));
   });
   return lines.join('\n');
 }
 
 function renderSummary(){
-  var act=calcActuals();
-  var spent=totalSpend(act);
-  var bud=totalTarget();
-  var c=partyCounts();
+  var act = calcActuals();
+  var bud = effectiveTargetTotal();
+  var c = partyCounts();
 
-  var bRows=[
-    ['Hotel & resort',act.hotel,state.target.hotel||0],
-    ['Park tickets',act.tickets,state.target.tickets||0],
-    ['Dining & dining plan',act.dining,state.target.dining||0],
-    ['Lightning Lane',act.ll,state.target.ll||0],
-    ['Other (Memory Maker)',act.other,state.target.other||0]
+  var tableRows = [
+    ['Hotel & resort', act.hotel, (state.targets && state.targets.hotel) || 0],
+    ['Park tickets', act.tickets, (state.targets && state.targets.tickets) || 0],
+    ['Dining (plan + meals)', act.dining, (state.targets && state.targets.dining) || 0],
+    ['Optional add-ons (Memory Maker & Lightning Lane)', act.extras, (state.targets && state.targets.extras) || 0]
   ].map(function(r){
-    return '<tr><td>'+esc(r[0])+'</td><td>'+money(r[1])+'</td><td>'+money(r[2])+'</td></tr>';
+    return '<tr><td>' + esc(r[0]) + '</td><td>' + money(r[1]) + '</td><td>' + money(r[2]) + '</td></tr>';
   }).join('');
 
-  var priBlocks=PARKS.map(function(pk){
-    var list=parkRides(pk);
-    return '<div><h3>'+esc(pk)+'</h3>'+(list.length?'<ol>'+list.map(function(r){return '<li>'+esc(r.name)+' <span class="pill th-'+r.thrill+'">'+THRILL[r.thrill]+'</span></li>';}).join('')+'</ol>':'<p class="hint">No priority rides ranked.</p>')+'</div>';
-  }).join('');
-
-  var daysSummary=(state.days||[]).length?state.days.map(function(d,i){
-    var mSum=MEALS.reduce(function(s,m){return s+mealCost(d.meals&&d.meals[m]).total;},0);
-    var mealList=MEALS.map(function(m){
-      var rid=d.meals&&d.meals[m];
-      var r=rid?allRest().find(function(x){return x.id===rid;}):null;
-      return r?MEAL_LABEL[m]+': '+r.name+' ('+money(mealCost(rid).total)+')':null;
-    }).filter(Boolean);
-
-    return '<div class="sday">'+
-      '<h3>Day '+(i+1)+' — '+esc(d.park)+'</h3>'+
-      '<p class="costs hint">Start '+esc(fmtTime(d.start))+' &middot; Dining '+money(mSum)+(d.llMulti?' &middot; Multi Pass':'')+'</p>'+
-      (mealList.length?'<ol>'+mealList.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>':'<p class="hint">No meals assigned yet.</p>')+
+  var priSections = PARKS.map(function(pk){
+    var list = parkRides(pk);
+    return '<div><h3>' + esc(pk) + '</h3>' +
+      (list.length
+        ? '<ol>' + list.map(function(r){ return '<li>' + esc(r.name) + ' <span class="pill th-' + r.thrill + '">' + THRILL[r.thrill] + '</span></li>'; }).join('') + '</ol>'
+        : '<p class="hint">0 rides prioritized.</p>') +
     '</div>';
-  }).join(''):'<p class="hint">0 trip days scheduled yet.</p>';
+  }).join('');
 
-  return '<div class="card no-print">'+
-      '<div class="sum-tools">'+
-        '<p>Print a clean trip sheet or copy a text summary to share with your travel party or advisor.</p>'+
-        '<button class="btn ghost" type="button" data-action="copy-summary">'+(ui.copied?'Copied summary':'Copy summary')+'</button>'+
-        '<button class="btn" type="button" data-action="print-summary">Print / Save PDF</button>'+
-      '</div>'+
-    '</div>'+
-    '<div class="card sheet">'+
-      '<div>'+
-        '<h1>'+esc(state.trip||'My WDW Trip')+'</h1>'+
-        '<p class="hint">'+pl(c.total,'traveler')+' ('+c.adult+' Adult 10+, '+c.child+' Child 3–9, '+c.free+' Under 3 Free)'+
-          (state.selectedResort?' &middot; '+esc(state.selectedResort):'')+
-          (state.diningPlan && state.diningPlan!=='none'?' &middot; '+esc(DINING_PLANS[state.diningPlan].label.split(' (')[0]):'')+
-          (state.memoryMaker?' &middot; Memory Maker ('+money(calcMemoryMaker())+')':'')+
-        '</p>'+
-      '</div>'+
-      '<div>'+
-        '<h2>Budget breakdown</h2>'+
-        '<table class="btable"><thead><tr><th>Category</th><th>Estimated</th><th>Target</th></tr></thead><tbody>'+bRows+'</tbody><tfoot><tr><td>Total</td><td>'+money(spent)+'</td><td>'+money(bud)+'</td></tr></tfoot></table>'+
-      '</div>'+
-      '<div>'+
-        '<h2>Ride priorities</h2>'+
-        '<div class="grid2" style="margin-top:8px">'+priBlocks+'</div>'+
-      '</div>'+
-      '<div>'+
-        '<h2>Day-by-day schedule</h2>'+
-        daysSummary+
-      '</div>'+
-      (state.notes?'<div><h2>Trip notes</h2><p>'+esc(state.notes)+'</p></div>':'')+
+  var dayBlocks = (state.days || []).length
+    ? state.days.map(function(d, i){
+        var mObj = (state.meals && state.meals[d.id]) || {};
+        var mSum = MEALS.reduce(function(s, m){ return s + mealCost(mObj[m]).total; }, 0);
+        var assigned = MEALS.map(function(m){
+          var rid = mObj[m];
+          var r = rid ? allRest().find(function(x){ return x.id === rid; }) : null;
+          return r ? MEAL_LABEL[m] + ': ' + r.name + ' (' + money(mealCost(rid).total) + ')' : null;
+        }).filter(Boolean);
+        return '<div class="sday">' +
+          '<h3>Day ' + (i + 1) + ' — ' + esc(d.park) + '</h3>' +
+          '<p class="costs hint">Start ' + esc(fmtTime(d.start)) + ' &middot; Meals ' + money(mSum) + '</p>' +
+          (assigned.length ? '<ol>' + assigned.map(function(x){ return '<li>' + esc(x) + '</li>'; }).join('') + '</ol>' : '<p class="hint">No meals assigned.</p>') +
+        '</div>';
+      }).join('')
+    : '<p class="hint">0 trip days scheduled.</p>';
+
+  return '<div class="card no-print">' +
+      '<div class="sum-tools">' +
+        '<p>Print or copy a summary of your trip costs, priorities, and days.</p>' +
+        '<button class="btn ghost" type="button" data-action="copy-summary">' + (ui.copied ? 'Copied!' : 'Copy summary') + '</button>' +
+        '<button class="btn" type="button" data-action="print-summary">Print / Save PDF</button>' +
+      '</div>' +
+    '</div>' +
+    '<div class="card sheet">' +
+      '<div>' +
+        '<h1>' + esc(state.trip || 'Decades of Magic WDW Trip') + '</h1>' +
+        '<p class="hint">' + pl(c.total, 'traveler') + ' (' + c.adult + ' Adult 10+, ' + c.child + ' Child 3–9, ' + c.free + ' Under 3)' +
+          (state.selectedResort ? ' &middot; ' + esc(state.selectedResort) : '') +
+          (state.memoryMaker ? ' &middot; Memory Maker (' + money(calcMemoryMaker()) + ')' : '') +
+        '</p>' +
+      '</div>' +
+      '<div>' +
+        '<h2>Budget breakdown</h2>' +
+        '<table class="btable"><thead><tr><th>Category</th><th>Estimated</th><th>Target</th></tr></thead><tbody>' + tableRows + '</tbody><tfoot><tr><td>Total</td><td>' + money(act.total) + '</td><td>' + money(bud) + '</td></tr></tfoot></table>' +
+      '</div>' +
+      '<div>' +
+        '<h2>Ride priorities</h2>' +
+        '<div class="grid2" style="margin-top:8px">' + priSections + '</div>' +
+      '</div>' +
+      '<div>' +
+        '<h2>Day-by-day overview</h2>' +
+        dayBlocks +
+      '</div>' +
     '</div>';
 }
 
-/* ---------- main view render ---------- */
+/* ---------- main render ---------- */
 function render(){
   applyTheme();
   renderTop();
-  var v=q('#view');
-  if(!v) return;
-  if(state.tab==='trip') v.innerHTML=renderTrip();
-  else if(state.tab==='dining') v.innerHTML=renderDining();
-  else if(state.tab==='rides') v.innerHTML=renderRides();
-  else if(state.tab==='ll') v.innerHTML=renderLL();
-  else if(state.tab==='plan') v.innerHTML=renderPlan();
-  else v.innerHTML=renderSummary();
+  renderIntroWrap();
+  var view = q('#view');
+  if(!view) return;
+  if(state.tab === 'trip') view.innerHTML = renderTrip();
+  else if(state.tab === 'dining') view.innerHTML = renderDining();
+  else if(state.tab === 'rides') view.innerHTML = renderRides();
+  else if(state.tab === 'll') view.innerHTML = renderLL();
+  else if(state.tab === 'plan') view.innerHTML = renderPlan();
+  else view.innerHTML = renderSummary();
+  syncTopBar();
 }
 
-/* ---------- events & interactions ---------- */
-var dragState={type:null,id:null,extra:null};
+/* ---------- event handling ---------- */
+var dragState = { type: null, id: null, extra: null };
 
-document.addEventListener('click',function(e){
-  var t=e.target;
+document.addEventListener('click', function(e){
+  var t = e.target;
 
-  var tabBtn=t.closest('[data-tab]');
+  var tabBtn = t.closest('[data-tab]');
   if(tabBtn){
-    state.tab=tabBtn.getAttribute('data-tab');
+    state.tab = tabBtn.getAttribute('data-tab');
+    ui.notice = '';
     saveState();
     render();
     return;
   }
 
-  var actBtn=t.closest('[data-action]');
+  var actBtn = t.closest('[data-action]');
   if(actBtn){
-    var act=actBtn.getAttribute('data-action');
-    if(act==='toggle-intro'){
-      state.showIntro=!state.showIntro;
-      saveState();render();
-    }else if(act==='cycle-theme'){
-      var seq=['auto','light','dark'];
-      state.theme=seq[(seq.indexOf(state.theme)+1)%seq.length];
-      saveState();render();
-    }else if(act==='add-day'){
-      var nextPark=PLACES[state.days.length%PLACES.length];
-      state.days.push({id:uid(),park:nextPark,start:'09:00',llMulti:false,llSingle:[],meals:{breakfast:null,lunch:null,dinner:null,snack:null},entries:[]});
-      saveState();render();
-    }else if(act==='reset-zero'){
-      state=seedState();
-      ui.pickedRest=null;ui.editingRest=null;ui.planDay=0;ui.copied=false;
-      saveState();render();
-    }else if(act==='add-member'){
-      state.party.push({id:uid(),name:'Traveler '+(state.party.length+1),age:18});
-      saveState();render();
-    }else if(act==='clear-picked'){
-      ui.pickedRest=null;render();
-    }else if(act==='add-custom-rest'){
-      var nm=(q('#newRestName')&&q('#newRestName').value||'').trim();
+    var act = actBtn.getAttribute('data-action');
+    if(act === 'hide-intro'){
+      state.showIntro = false;
+      saveState(); render();
+    }else if(act === 'show-intro'){
+      state.showIntro = true;
+      saveState(); render();
+    }else if(act === 'cycle-theme'){
+      var order = ['auto', 'light', 'dark'];
+      state.theme = order[(order.indexOf(state.theme) + 1) % order.length];
+      saveState(); render();
+    }else if(act === 'add-day'){
+      var pk = PLACES[state.days.length % PLACES.length];
+      var newId = 'day-' + uid();
+      state.days.push({ id: newId, park: pk, start: '09:00' });
+      state.meals[newId] = { breakfast: null, lunch: null, dinner: null, snack: null };
+      if(!state.activeDay) state.activeDay = newId;
+      ui.notice = 'Added Day ' + state.days.length + ' (' + pk + ').';
+      saveState(); render();
+    }else if(act === 'reset-zero'){
+      state = seedState();
+      ui.pickedRest = null; ui.editingRest = null; ui.copied = false; ui.notice = 'Trip reset to zero.';
+      saveState(); render();
+    }else if(act === 'add-member'){
+      state.party.push({ id: uid(), name: 'Traveler ' + (state.party.length + 1), age: 18 });
+      saveState(); render();
+    }else if(act === 'clear-picked'){
+      ui.pickedRest = null; render();
+    }else if(act === 'add-custom-rest'){
+      var nm = (q('#newRestName') && q('#newRestName').value || '').trim();
       if(!nm) return;
-      var loc=(q('#newRestLoc')&&q('#newRestLoc').value)||'Magic Kingdom';
-      var tp=(q('#newRestType')&&q('#newRestType').value)||'qs';
-      var ad=Math.max(0,+(q('#newRestAdult')&&q('#newRestAdult').value)||0);
-      var kd=Math.max(0,+(q('#newRestKid')&&q('#newRestKid').value)||0);
-      state.custom=state.custom||[];
-      state.custom.push({id:'custom-'+uid(),kind:'rest',name:nm,loc:loc,type:tp,adult:ad,kid:kd,e:false,c:false,n:'Custom dining option'});
-      if(q('#newRestName')) q('#newRestName').value='';
-      saveState();render();
-    }else if(act==='add-entry'){
-      if(!(state.days||[]).length) return;
-      var idx=Math.max(0,Math.min(state.days.length-1,ui.planDay||0));
-      var day=state.days[idx];
-      ensureDayEntries(day);
-      var title=(q('#newEntryTitle')&&q('#newEntryTitle').value||'').trim();
+      var loc = (q('#newRestLoc') && q('#newRestLoc').value) || 'Magic Kingdom';
+      var tp = (q('#newRestType') && q('#newRestType').value) || 'qs';
+      var ad = Math.max(0, +(q('#newRestAdult') && q('#newRestAdult').value) || 0);
+      var kd = Math.max(0, +(q('#newRestKid') && q('#newRestKid').value) || 0);
+      state.custom.push({ id: 'custom-' + uid(), kind: 'rest', name: nm, loc: loc, type: tp, adult: ad, kid: kd, e: false, c: false, n: 'Custom dining spot' });
+      if(q('#newRestName')) q('#newRestName').value = '';
+      saveState(); render();
+    }else if(act === 'add-plan-item'){
+      var dObj = currentDayObj();
+      if(!dObj) return;
+      var items = dayEntries(dObj);
+      var title = (q('#entryTitle') && q('#entryTitle').value || '').trim();
       if(!title) return;
-      var kind=(q('#newEntryKind')&&q('#newEntryKind').value)||'note';
-      var tm=(q('#newEntryTime')&&q('#newEntryTime').value)||'12:00';
-      var det=(q('#newEntryDetail')&&q('#newEntryDetail').value||'').trim();
-      day.entries.push({id:uid(),kind:kind,time:tm,title:title,detail:det});
-      day.entries.sort(function(a,b){return toMin(a.time)-toMin(b.time);});
-      saveState();render();
-    }else if(act==='copy-summary'){
-      var txt=buildPlainSummary();
-      var ta=document.createElement('textarea');
-      ta.value=txt;
-      ta.setAttribute('readonly','');
-      ta.style.position='fixed';
-      ta.style.opacity='0';
+      var kind = (q('#entryKind') && q('#entryKind').value) || 'ride';
+      var tm = (q('#entryTime') && q('#entryTime').value) || '10:00';
+      var det = (q('#entryDetail') && q('#entryDetail').value || '').trim();
+      items.push({ id: uid(), kind: kind, time: tm, title: title, detail: det });
+      items.sort(function(a, b){ return toMin(a.time) - toMin(b.time); });
+      saveState(); render();
+    }else if(act === 'copy-summary'){
+      var txt = buildSummaryText();
+      var ta = document.createElement('textarea');
+      ta.value = txt;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
       document.body.appendChild(ta);
       ta.select();
-      try{document.execCommand('copy');}catch(err){}
+      try{ document.execCommand('copy'); }catch(err){}
       document.body.removeChild(ta);
-      ui.copied=true;
+      ui.copied = true;
       render();
-      setTimeout(function(){ui.copied=false;if(state.tab==='summary')render();},2000);
-    }else if(act==='print-summary'){
+      setTimeout(function(){ ui.copied = false; if(state.tab === 'summary') render(); }, 1800);
+    }else if(act === 'print-summary'){
       window.print();
     }
     return;
   }
 
-  var delMem=t.closest('[data-del-member]');
+  var delCustomRest = t.closest('[data-del-custom-rest]');
+  if(delCustomRest){
+    e.stopPropagation();
+    var crid = delCustomRest.getAttribute('data-del-custom-rest');
+    state.custom = (state.custom || []).filter(function(x){ return x.id !== crid; });
+    if(ui.pickedRest === crid) ui.pickedRest = null;
+    if(ui.editingRest === crid) ui.editingRest = null;
+    saveState(); render(); return;
+  }
+
+  var delMem = t.closest('[data-del-member]');
   if(delMem){
-    var mid=delMem.getAttribute('data-del-member');
-    state.party=state.party.filter(function(x){return x.id!==mid;});
-    saveState();render();return;
+    var mid = delMem.getAttribute('data-del-member');
+    state.party = state.party.filter(function(m){ return m.id !== mid; });
+    saveState(); render(); return;
   }
 
-  var delDay=t.closest('[data-del-day]');
+  var delDay = t.closest('[data-del-day]');
   if(delDay){
-    var did=delDay.getAttribute('data-del-day');
-    state.days=state.days.filter(function(x){return x.id!==did;});
-    if(ui.planDay>=state.days.length) ui.planDay=Math.max(0,state.days.length-1);
-    saveState();render();return;
+    var did = delDay.getAttribute('data-del-day');
+    state.days = state.days.filter(function(d){ return d.id !== did; });
+    if(state.meals) delete state.meals[did];
+    if(state.plans) delete state.plans[did];
+    if(state.notes) delete state.notes[did];
+    if(state.activeDay === did) state.activeDay = state.days[0] ? state.days[0].id : '';
+    saveState(); render(); return;
   }
 
-  var locChip=t.closest('[data-loc]');
-  if(locChip){ui.loc=locChip.getAttribute('data-loc');render();return;}
+  var locChip = t.closest('[data-loc]');
+  if(locChip){ ui.loc = locChip.getAttribute('data-loc'); render(); return; }
 
-  var typeChip=t.closest('[data-type]');
-  if(typeChip){ui.type=typeChip.getAttribute('data-type');render();return;}
+  var typeChip = t.closest('[data-type]');
+  if(typeChip){ ui.type = typeChip.getAttribute('data-type'); render(); return; }
 
-  var priParkChip=t.closest('[data-pri-park]');
-  if(priParkChip){ui.priPark=priParkChip.getAttribute('data-pri-park');render();return;}
+  var priChip = t.closest('[data-pri-park]');
+  if(priChip){ ui.priPark = priChip.getAttribute('data-pri-park'); render(); return; }
 
-  var editRestBtn=t.closest('[data-edit-rest]');
-  if(editRestBtn){
+  var editBtn = t.closest('[data-edit-rest]');
+  if(editBtn){
     e.stopPropagation();
-    var erid=editRestBtn.getAttribute('data-edit-rest');
-    ui.editingRest=(ui.editingRest===erid?null:erid);
-    render();return;
+    var erid = editBtn.getAttribute('data-edit-rest');
+    ui.editingRest = ui.editingRest === erid ? null : erid;
+    render(); return;
   }
 
-  var resetPriceBtn=t.closest('[data-reset-price]');
-  if(resetPriceBtn){
+  var resetP = t.closest('[data-reset-price]');
+  if(resetP){
     e.stopPropagation();
-    var rprid=resetPriceBtn.getAttribute('data-reset-price');
-    if(state.edits) delete state.edits[rprid];
-    saveState();render();return;
+    var rpid = resetP.getAttribute('data-reset-price');
+    if(state.edits) delete state.edits[rpid];
+    saveState(); render(); return;
   }
 
-  var clearSlotBtn=t.closest('[data-clear-slot]');
-  if(clearSlotBtn){
+  var clearSlot = t.closest('[data-clear-slot]');
+  if(clearSlot){
     e.stopPropagation();
-    var parts=clearSlotBtn.getAttribute('data-clear-slot').split(':');
-    var dayObj=state.days.find(function(x){return x.id===parts[0];});
-    if(dayObj && dayObj.meals) dayObj.meals[parts[1]]=null;
-    saveState();render();return;
+    var sp = clearSlot.getAttribute('data-clear-slot').split(':');
+    if(state.meals && state.meals[sp[0]]) state.meals[sp[0]][sp[1]] = null;
+    saveState(); render(); return;
   }
 
-  var dropSlot=t.closest('[data-drop-slot]');
+  var dropSlot = t.closest('[data-drop-slot]');
   if(dropSlot && ui.pickedRest){
-    var sParts=dropSlot.getAttribute('data-drop-slot').split(':');
-    var dObj=state.days.find(function(x){return x.id===sParts[0];});
-    if(dObj){
-      dObj.meals=dObj.meals||{};
-      dObj.meals[sParts[1]]=ui.pickedRest;
-      ui.pickedRest=null;
-      saveState();render();return;
-    }
+    var dp = dropSlot.getAttribute('data-drop-slot').split(':');
+    state.meals[dp[0]] = state.meals[dp[0]] || { breakfast: null, lunch: null, dinner: null, snack: null };
+    state.meals[dp[0]][dp[1]] = ui.pickedRest;
+    ui.pickedRest = null;
+    saveState(); render(); return;
   }
 
-  var pickCard=t.closest('[data-pick-rest]');
+  var pickCard = t.closest('[data-pick-rest]');
   if(pickCard && !t.closest('button') && !t.closest('input')){
-    var prid=pickCard.getAttribute('data-pick-rest');
-    ui.pickedRest=(ui.pickedRest===prid?null:prid);
-    render();return;
+    var prid = pickCard.getAttribute('data-pick-rest');
+    ui.pickedRest = ui.pickedRest === prid ? null : prid;
+    render(); return;
   }
 
-  var moveBtn=t.closest('[data-move-ride]');
+  var moveBtn = t.closest('[data-move-ride]');
   if(moveBtn){
-    var mParts=moveBtn.getAttribute('data-move-ride').split(':');
-    var mp=mParts[0],mId=mParts[1],delta=+mParts[2];
-    var list=parkRides(mp).map(function(x){return x.id;});
-    var pos=list.indexOf(mId);
-    var nPos=pos+delta;
-    if(pos>-1 && nPos>=0 && nPos<list.length){
-      var tmp=list[pos];list[pos]=list[nPos];list[nPos]=tmp;
-      state.priorities[mp]=list;
-      saveState();render();
+    var mp = moveBtn.getAttribute('data-move-ride').split(':');
+    var pkName = mp[0], rid = mp[1], delta = +mp[2];
+    var list = parkRides(pkName).map(function(x){ return x.id; });
+    var pos = list.indexOf(rid);
+    var nPos = pos + delta;
+    if(pos > -1 && nPos >= 0 && nPos < list.length){
+      var tmp = list[pos]; list[pos] = list[nPos]; list[nPos] = tmp;
+      state.priorities[pkName] = list;
+      saveState(); render();
     }
     return;
   }
 
-  var addRideBtn=t.closest('[data-add-ride]');
+  var remRideBtn = t.closest('[data-remove-ride]');
+  if(remRideBtn){
+    var rr = remRideBtn.getAttribute('data-remove-ride').split(':');
+    var rPark = rr[0], rId = rr[1];
+    state.custom = (state.custom || []).filter(function(item){ return !(item.kind === 'ride' && item.id === rId); });
+    state.removedRides = state.removedRides || {};
+    state.removedRides[rPark] = state.removedRides[rPark] || [];
+    if(state.removedRides[rPark].indexOf(rId) === -1) state.removedRides[rPark].push(rId);
+    state.priorities[rPark] = (state.priorities[rPark] || []).filter(function(id){ return id !== rId; });
+    saveState(); render(); return;
+  }
+
+  var addRideBtn = t.closest('[data-add-ride]');
   if(addRideBtn){
-    var rPark=addRideBtn.getAttribute('data-add-ride');
-    var inp=q('[data-new-ride-name="'+CSS.escape(rPark)+'"]');
-    var thSel=q('[data-new-ride-thrill="'+CSS.escape(rPark)+'"]');
-    var rName=(inp&&inp.value||'').trim();
+    var rParkAdd = addRideBtn.getAttribute('data-add-ride');
+    var nInp = q('[data-new-ride-name="' + CSS.escape(rParkAdd) + '"]');
+    var tSel = q('[data-new-ride-thrill="' + CSS.escape(rParkAdd) + '"]');
+    var rName = (nInp && nInp.value || '').trim();
     if(!rName) return;
-    var rTh=+(thSel&&thSel.value)||2;
-    var newId=slug(rPark+' '+rName)+'-'+uid().slice(0,3);
-    state.custom=state.custom||[];
-    state.custom.push({id:newId,kind:'ride',park:rPark,name:rName,thrill:rTh});
-    var ord=parkRides(rPark).map(function(x){return x.id;});
-    state.priorities[rPark]=ord;
-    state.llPlan[rPark]=state.llPlan[rPark]||{};
-    state.llPlan[rPark][newId]='standby';
-    saveState();render();return;
+    var rTh = +(tSel && tSel.value) || 2;
+    var newId = slug(rParkAdd + ' ' + rName) + '-' + uid().slice(0, 3);
+    state.custom.push({ id: newId, kind: 'ride', park: rParkAdd, name: rName, thrill: rTh });
+    state.priorities[rParkAdd] = parkRides(rParkAdd).map(function(x){ return x.id; });
+    saveState(); render(); return;
   }
 
-  var llParkBtn=t.closest('[data-ll-park]');
-  if(llParkBtn){
-    ui.llPark=llParkBtn.getAttribute('data-ll-park');
-    render();return;
-  }
+  var llParkBtn = t.closest('[data-ll-park]');
+  if(llParkBtn){ ui.llPark = llParkBtn.getAttribute('data-ll-park'); render(); return; }
 
-  var planDayBtn=t.closest('[data-plan-day]');
-  if(planDayBtn){
-    ui.planDay=+planDayBtn.getAttribute('data-plan-day')||0;
-    render();return;
-  }
+  var actDayBtn = t.closest('[data-active-day]');
+  if(actDayBtn){ state.activeDay = actDayBtn.getAttribute('data-active-day'); render(); return; }
 
-  var delEntryBtn=t.closest('[data-del-entry]');
+  var delEntryBtn = t.closest('[data-del-plan-entry]');
   if(delEntryBtn){
-    var eid=delEntryBtn.getAttribute('data-del-entry');
-    var curDay=state.days[Math.max(0,Math.min(state.days.length-1,ui.planDay||0))];
-    if(curDay && Array.isArray(curDay.entries)){
-      curDay.entries=curDay.entries.filter(function(x){return x.id!==eid;});
-      saveState();render();
+    var eid = delEntryBtn.getAttribute('data-del-plan-entry');
+    var dObj = currentDayObj();
+    if(dObj && Array.isArray(state.plans && state.plans[dObj.id])){
+      state.plans[dObj.id] = state.plans[dObj.id].filter(function(x){ return x.id !== eid; });
+      saveState(); render();
     }
   }
 });
 
-document.addEventListener('input',function(e){
-  var t=e.target;
-  if(t.id==='tripName'){
-    state.trip=t.value;
-    saveState();return;
+document.addEventListener('input', function(e){
+  var t = e.target;
+  if(t.id === 'tripName'){
+    state.trip = t.value;
+    saveState(); return;
   }
   if(t.hasAttribute('data-search-rest')){
-    ui.search=t.value;
-    render();return;
+    ui.search = t.value;
+    render(); return;
   }
-  if(t.hasAttribute('data-trip-notes')){
-    state.notes=t.value;
-    saveState();return;
+  if(t.hasAttribute('data-day-notes')){
+    var dObj = currentDayObj();
+    if(dObj){
+      state.notes = state.notes || {};
+      state.notes[dObj.id] = t.value;
+      saveState();
+    }
   }
 });
 
-document.addEventListener('change',function(e){
-  var t=e.target;
+document.addEventListener('change', function(e){
+  var t = e.target;
 
-  if(t.hasAttribute('data-target')){
-    state.target[t.getAttribute('data-target')]=Math.max(0,+t.value||0);
-    saveState();render();return;
+  if(t.hasAttribute('data-target-total')){
+    state.targets.total = Math.max(0, +t.value || 0);
+    saveState(); render(); return;
+  }
+  if(t.hasAttribute('data-target-cat')){
+    state.targets[t.getAttribute('data-target-cat')] = Math.max(0, +t.value || 0);
+    saveState(); render(); return;
   }
   if(t.hasAttribute('data-member-name')){
-    var m=state.party.find(function(x){return x.id===t.getAttribute('data-member-name');});
-    if(m){m.name=t.value;saveState();render();}
+    var mem = state.party.find(function(x){ return x.id === t.getAttribute('data-member-name'); });
+    if(mem){ mem.name = t.value; saveState(); render(); }
     return;
   }
   if(t.hasAttribute('data-member-age')){
-    var ma=state.party.find(function(x){return x.id===t.getAttribute('data-member-age');});
-    if(ma){ma.age=Math.max(0,Math.min(99,+t.value||0));saveState();render();}
+    var ma = state.party.find(function(x){ return x.id === t.getAttribute('data-member-age'); });
+    if(ma){ ma.age = Math.max(0, Math.min(99, +t.value || 0)); saveState(); render(); }
     return;
   }
   if(t.hasAttribute('data-resort-select')){
-    var chosen=t.value;
-    state.selectedResort=chosen;
-    if(chosen){
+    var resName = t.value;
+    state.selectedResort = resName;
+    if(resName){
       Object.keys(WDW_RESORTS).forEach(function(grp){
-        WDW_RESORTS[grp].forEach(function(res){
-          if(res.name===chosen) state.hotelRate=res.rate;
+        WDW_RESORTS[grp].forEach(function(item){
+          if(item.name === resName) state.hotelNightly = item.rate;
         });
       });
     }
-    saveState();render();return;
-  }
-  if(t.hasAttribute('data-hotel-field')){
-    state[t.getAttribute('data-hotel-field')]=Math.max(0,+t.value||0);
-    saveState();render();return;
-  }
-  if(t.hasAttribute('data-ticket-field')){
-    var tk=t.getAttribute('data-ticket-field');
-    state[tk]=t.type==='checkbox'?t.checked:Math.max(0,+t.value||0);
-    saveState();render();return;
+    saveState(); render(); return;
   }
   if(t.hasAttribute('data-dining-plan')){
-    var planKey=t.value||'none';
-    state.diningPlan=planKey;
-    var preset=DINING_PLANS[planKey]||DINING_PLANS.none;
-    state.diningPlanAdultRate=preset.adultRate;
-    state.diningPlanChildRate=preset.childRate;
-    saveState();render();return;
+    var dpKey = t.value;
+    state.diningPlan = dpKey;
+    var dpPreset = DINING_PLANS[dpKey];
+    if(dpPreset){
+      state.diningPlanAdultRate = dpPreset.adultRate;
+      state.diningPlanChildRate = dpPreset.childRate;
+    }
+    saveState(); render(); return;
   }
-  if(t.hasAttribute('data-dp-rate')){
-    state[t.getAttribute('data-dp-rate')]=Math.max(0,+t.value||0);
-    saveState();render();return;
+  if(t.hasAttribute('data-mm-check')){
+    state.memoryMaker = !!t.checked;
+    if(state.memoryMaker && (!state.memoryMakerPrice || +state.memoryMakerPrice <= 0)){
+      state.memoryMakerPrice = 185;
+    }
+    saveState(); render(); return;
   }
-  if(t.hasAttribute('data-mm-toggle')){
-    state.memoryMaker=!!t.checked;
-    saveState();render();return;
+  if(t.hasAttribute('data-ll-addon-select')){
+    var llKey = t.value;
+    state.llAddonType = llKey;
+    var llOpt = LL_ADDON_OPTIONS[llKey];
+    if(llOpt){
+      state.llAddonDailyRate = llOpt.dailyRate;
+      if(llKey !== 'none' && (!state.llAddonDays || +state.llAddonDays <= 0)){
+        state.llAddonDays = Math.max(1, +state.ticketDays || 1);
+      }
+    }
+    saveState(); render(); return;
   }
-  if(t.hasAttribute('data-mm-price')){
-    state.memoryMakerPrice=Math.max(0,+t.value||0);
-    saveState();render();return;
+  if(t.hasAttribute('data-state-num')){
+    var nf = t.getAttribute('data-state-num');
+    state[nf] = Math.max(0, +t.value || 0);
+    saveState(); render(); return;
   }
   if(t.hasAttribute('data-day-park')){
-    var d=state.days.find(function(x){return x.id===t.getAttribute('data-day-park');});
-    if(d){d.park=t.value;d.entries=[];saveState();render();}
+    var d = state.days.find(function(x){ return x.id === t.getAttribute('data-day-park'); });
+    if(d){ d.park = t.value; if(state.plans) state.plans[d.id] = []; saveState(); render(); }
     return;
   }
   if(t.hasAttribute('data-day-start')){
-    var ds=state.days.find(function(x){return x.id===t.getAttribute('data-day-start');});
-    if(ds){ds.start=t.value;saveState();render();}
-    return;
-  }
-  if(t.hasAttribute('data-day-ll')){
-    var dl=state.days.find(function(x){return x.id===t.getAttribute('data-day-ll');});
-    if(dl){dl.llMulti=t.value==='1';saveState();render();}
+    var ds = state.days.find(function(x){ return x.id === t.getAttribute('data-day-start'); });
+    if(ds){ ds.start = t.value; saveState(); render(); }
     return;
   }
   if(t.hasAttribute('data-ov-adult') || t.hasAttribute('data-ov-kid')){
-    var isAd=t.hasAttribute('data-ov-adult');
-    var rid=t.getAttribute(isAd?'data-ov-adult':'data-ov-kid');
-    var baseR=allRest().find(function(x){return x.id===rid;});
+    var isAd = t.hasAttribute('data-ov-adult');
+    var rid = t.getAttribute(isAd ? 'data-ov-adult' : 'data-ov-kid');
+    var baseR = allRest().find(function(x){ return x.id === rid; });
     if(baseR){
-      state.edits=state.edits||{};
-      var cur=state.edits[rid]||{adult:baseR.adult,kid:baseR.kid};
-      if(isAd) cur.adult=Math.max(0,+t.value||0);
-      else cur.kid=Math.max(0,+t.value||0);
-      state.edits[rid]=cur;
-      saveState();render();
+      state.edits = state.edits || {};
+      state.edits[rid] = state.edits[rid] || { adult: baseR.adult, kid: baseR.kid };
+      if(isAd) state.edits[rid].adult = Math.max(0, +t.value || 0);
+      else state.edits[rid].kid = Math.max(0, +t.value || 0);
+      saveState(); render();
     }
     return;
   }
-  if(t.hasAttribute('data-ride-thrill-edit')){
-    var rt=t.getAttribute('data-ride-thrill-edit').split(':');
-    var rPark=rt[0],rId=rt[1],newTh=+t.value||2;
-    (RIDES[rPark]||[]).forEach(function(item){if(item.id===rId) item.thrill=newTh;});
-    (state.custom||[]).forEach(function(item){if(item.kind==='ride' && item.id===rId) item.thrill=newTh;});
-    saveState();render();return;
-  }
-  if(t.hasAttribute('data-ride-plan') || t.hasAttribute('data-ll-assign')){
-    var rawAttr=t.getAttribute('data-ride-plan')||t.getAttribute('data-ll-assign');
-    var rp=rawAttr.split(':');
-    state.llPlan[rp[0]]=state.llPlan[rp[0]]||{};
-    state.llPlan[rp[0]][rp[1]]=t.value;
-    saveState();render();return;
-  }
   if(t.hasAttribute('data-entry-time')){
-    var eid=t.getAttribute('data-entry-time');
-    var curDay=state.days[Math.max(0,Math.min(state.days.length-1,ui.planDay||0))];
-    if(curDay && Array.isArray(curDay.entries)){
-      var ev=curDay.entries.find(function(x){return x.id===eid;});
+    var eid = t.getAttribute('data-entry-time');
+    var dObj = currentDayObj();
+    if(dObj && Array.isArray(state.plans && state.plans[dObj.id])){
+      var ev = state.plans[dObj.id].find(function(x){ return x.id === eid; });
       if(ev){
-        ev.time=t.value;
-        curDay.entries.sort(function(a,b){return toMin(a.time)-toMin(b.time);});
-        saveState();render();
+        ev.time = t.value;
+        state.plans[dObj.id].sort(function(a, b){ return toMin(a.time) - toMin(b.time); });
+        saveState(); render();
       }
     }
   }
 });
 
-/* drag & drop across dining, rides, and day plan */
-document.addEventListener('dragstart',function(e){
-  var restCard=e.target.closest('[data-drag-rest]');
-  if(restCard){
-    dragState={type:'rest',id:restCard.getAttribute('data-drag-rest')};
-    restCard.classList.add('dragging');
-    return;
-  }
-  var placedCard=e.target.closest('[data-drag-placed]');
-  if(placedCard){
-    dragState={type:'placed',id:placedCard.getAttribute('data-drag-placed')};
-    return;
-  }
-  var rideItem=e.target.closest('[data-ride-id]');
-  if(rideItem){
-    dragState={type:'ride',id:rideItem.getAttribute('data-ride-id'),extra:rideItem.getAttribute('data-ride-park')};
-    rideItem.classList.add('dragging');
-    return;
-  }
-  var tlItem=e.target.closest('[data-entry-id]');
-  if(tlItem){
-    dragState={type:'entry',id:tlItem.getAttribute('data-entry-id')};
-  }
+/* drag & drop */
+document.addEventListener('dragstart', function(e){
+  var rc = e.target.closest('[data-drag-rest]');
+  if(rc){ dragState = { type: 'rest', id: rc.getAttribute('data-drag-rest') }; rc.classList.add('dragging'); return; }
+  var pc = e.target.closest('[data-drag-placed]');
+  if(pc){ dragState = { type: 'placed', id: pc.getAttribute('data-drag-placed') }; return; }
+  var ri = e.target.closest('[data-ride-id]');
+  if(ri){ dragState = { type: 'ride', id: ri.getAttribute('data-ride-id'), extra: ri.getAttribute('data-ride-park') }; ri.classList.add('dragging'); return; }
+  var pi = e.target.closest('[data-plan-entry]');
+  if(pi){ dragState = { type: 'entry', id: pi.getAttribute('data-plan-entry') }; }
 });
 
-document.addEventListener('dragover',function(e){
-  var dz=e.target.closest('[data-drop-slot],[data-ride-id],[data-ride-end],[data-entry-id],#planTimeline');
-  if(dz){
-    e.preventDefault();
-    dz.classList.add('over');
-  }
+document.addEventListener('dragover', function(e){
+  var dz = e.target.closest('[data-drop-slot],[data-ride-id],[data-ride-end],[data-plan-entry],#dayTimeline');
+  if(dz){ e.preventDefault(); dz.classList.add('over'); }
 });
 
-document.addEventListener('dragleave',function(e){
-  var dz=e.target.closest('[data-drop-slot],[data-ride-id],[data-ride-end],[data-entry-id],#planTimeline');
+document.addEventListener('dragleave', function(e){
+  var dz = e.target.closest('[data-drop-slot],[data-ride-id],[data-ride-end],[data-plan-entry],#dayTimeline');
   if(dz) dz.classList.remove('over');
 });
 
-document.addEventListener('drop',function(e){
-  var dz=e.target.closest('[data-drop-slot],[data-ride-id],[data-ride-end],[data-entry-id],#planTimeline');
+document.addEventListener('drop', function(e){
+  var dz = e.target.closest('[data-drop-slot],[data-ride-id],[data-ride-end],[data-plan-entry],#dayTimeline');
   if(!dz) return;
   e.preventDefault();
   dz.classList.remove('over');
 
-  if(dz.hasAttribute('data-drop-slot') && (dragState.type==='rest' || dragState.type==='placed')){
-    var parts=dz.getAttribute('data-drop-slot').split(':');
-    var targetDay=state.days.find(function(x){return x.id===parts[0];});
-    if(!targetDay) return;
-    targetDay.meals=targetDay.meals||{};
-    if(dragState.type==='rest'){
-      targetDay.meals[parts[1]]=dragState.id;
-    }else if(dragState.type==='placed'){
-      var srcParts=dragState.id.split(':');
-      var srcDay=state.days.find(function(x){return x.id===srcParts[0];});
-      if(srcDay && srcDay.meals){
-        var movedId=srcDay.meals[srcParts[1]];
-        targetDay.meals[parts[1]]=movedId;
-        if(srcDay.id!==targetDay.id || srcParts[1]!==parts[1]) srcDay.meals[srcParts[1]]=null;
+  if(dz.hasAttribute('data-drop-slot') && (dragState.type === 'rest' || dragState.type === 'placed')){
+    var parts = dz.getAttribute('data-drop-slot').split(':');
+    state.meals[parts[0]] = state.meals[parts[0]] || { breakfast: null, lunch: null, dinner: null, snack: null };
+    if(dragState.type === 'rest'){
+      state.meals[parts[0]][parts[1]] = dragState.id;
+    }else if(dragState.type === 'placed'){
+      var sp = dragState.id.split(':');
+      if(state.meals[sp[0]]){
+        var moved = state.meals[sp[0]][sp[1]];
+        state.meals[parts[0]][parts[1]] = moved;
+        if(sp[0] !== parts[0] || sp[1] !== parts[1]) state.meals[sp[0]][sp[1]] = null;
       }
     }
-    dragState={type:null,id:null};
-    saveState();render();return;
+    dragState = { type: null, id: null };
+    saveState(); render(); return;
   }
 
-  if(dragState.type==='ride' && (dz.hasAttribute('data-ride-id') || dz.hasAttribute('data-ride-end'))){
-    var pName=dz.getAttribute('data-ride-park')||dz.getAttribute('data-ride-end');
-    if(pName && pName===dragState.extra){
-      var list=parkRides(pName).map(function(x){return x.id;});
-      var fromIdx=list.indexOf(dragState.id);
-      if(fromIdx>-1){
-        list.splice(fromIdx,1);
-        if(dz.hasAttribute('data-ride-end')){
-          list.push(dragState.id);
-        }else{
-          var toIdx=list.indexOf(dz.getAttribute('data-ride-id'));
-          list.splice(Math.max(0,toIdx),0,dragState.id);
+  if(dragState.type === 'ride' && (dz.hasAttribute('data-ride-id') || dz.hasAttribute('data-ride-end'))){
+    var pName = dz.getAttribute('data-ride-park') || dz.getAttribute('data-ride-end');
+    if(pName && pName === dragState.extra){
+      var list = parkRides(pName).map(function(x){ return x.id; });
+      var fIdx = list.indexOf(dragState.id);
+      if(fIdx > -1){
+        list.splice(fIdx, 1);
+        if(dz.hasAttribute('data-ride-end')) list.push(dragState.id);
+        else{
+          var tIdx = list.indexOf(dz.getAttribute('data-ride-id'));
+          list.splice(Math.max(0, tIdx), 0, dragState.id);
         }
-        state.priorities[pName]=list;
-        saveState();render();
+        state.priorities[pName] = list;
+        saveState(); render();
       }
     }
-    dragState={type:null,id:null};return;
+    dragState = { type: null, id: null }; return;
   }
 
-  if(dragState.type==='entry' && (dz.hasAttribute('data-entry-id') || dz.id==='planTimeline')){
-    var curDay=state.days[Math.max(0,Math.min(state.days.length-1,ui.planDay||0))];
-    if(curDay && Array.isArray(curDay.entries)){
-      var fIdx=curDay.entries.findIndex(function(x){return x.id===dragState.id;});
-      if(fIdx>-1){
-        var item=curDay.entries.splice(fIdx,1)[0];
-        if(dz.hasAttribute('data-entry-id')){
-          var tIdx=curDay.entries.findIndex(function(x){return x.id===dz.getAttribute('data-entry-id');});
-          curDay.entries.splice(Math.max(0,tIdx),0,item);
+  if(dragState.type === 'entry' && (dz.hasAttribute('data-plan-entry') || dz.id === 'dayTimeline')){
+    var dObj = currentDayObj();
+    if(dObj && Array.isArray(state.plans && state.plans[dObj.id])){
+      var arr = state.plans[dObj.id];
+      var efIdx = arr.findIndex(function(x){ return x.id === dragState.id; });
+      if(efIdx > -1){
+        var item = arr.splice(efIdx, 1)[0];
+        if(dz.hasAttribute('data-plan-entry')){
+          var etIdx = arr.findIndex(function(x){ return x.id === dz.getAttribute('data-plan-entry'); });
+          arr.splice(Math.max(0, etIdx), 0, item);
         }else{
-          curDay.entries.push(item);
+          arr.push(item);
         }
-        saveState();render();
+        saveState(); render();
       }
     }
-    dragState={type:null,id:null};
+    dragState = { type: null, id: null };
   }
 });
 
-document.addEventListener('dragend',function(){
-  document.querySelectorAll('.dragging,.over').forEach(function(el){
-    el.classList.remove('dragging','over');
-  });
-  dragState={type:null,id:null};
+document.addEventListener('dragend', function(){
+  document.querySelectorAll('.dragging,.over').forEach(function(el){ el.classList.remove('dragging', 'over'); });
+  dragState = { type: null, id: null };
 });
 
-window.addEventListener('resize',function(){
-  var tb=q('.topbar');
-  if(tb) document.documentElement.style.setProperty('--tb',tb.offsetHeight+'px');
-});
+window.addEventListener('scroll', onScroll, { passive: true });
+window.addEventListener('resize', syncTopBar);
 
 render();
 })();
