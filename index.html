@@ -480,33 +480,18 @@ function seedState(){
   var order={};
   var plans={};
   PARKS.forEach(function(p){
-    order[p]=(RIDES[p]||[]).map(function(r){return r.id;});
+    order[p]=[];
     plans[p]={};
-    (RIDES[p]||[]).forEach(function(r,idx){
-      if(SINGLE_PRICE[r.id]) plans[p][r.id]='single';
-      else if(idx<4) plans[p][r.id]='multi';
-      else plans[p][r.id]='standby';
-    });
   });
   return {
     tab:'trip',
     theme:'auto',
-    trip:'Autumn Magic Getaway',
-    party:[
-      {id:uid(),name:'Alex',age:34},
-      {id:uid(),name:'Sam',age:32},
-      {id:uid(),name:'Leo',age:7},
-      {id:uid(),name:'Maya',age:2}
-    ],
-    budgets:{hotel:1600,tickets:2200,dining:1300,ll:650},
-    hotel:{perNight:320,nights:4,other:0},
-    tickets:{dayPrice:155,days:4,hopper:true},
-    days:[
-      {id:uid(),park:'Magic Kingdom',start:'08:30',llMulti:true,llSingle:['magic-kingdom-seven-dwarfs-mine-train'],meals:{breakfast:'the-crystal-palace',lunch:"casey's-corner",dinner:"be-our-guest",snack:'dole-whip'},entries:[]},
-      {id:uid(),park:'EPCOT',start:'09:00',llMulti:true,llSingle:['epcot-guardians-of-the-galaxy-cosmic-rewind'],meals:{breakfast:null,lunch:'connections-eatery',dinner:'via-napoli',snack:'mickey-pretzel'},entries:[]},
-      {id:uid(),park:'Hollywood Studios',start:'08:30',llMulti:true,llSingle:['hollywood-studios-star-wars-rise-of-the-resistance'],meals:{breakfast:null,lunch:"woody's-lunch-box",dinner:"50's-prime-time-cafe",snack:'churro'},entries:[]},
-      {id:uid(),park:'Animal Kingdom',start:'08:00',llMulti:true,llSingle:['animal-kingdom-avatar-flight-of-passage'],meals:{breakfast:'tusker-house-donalds-dining-safari',lunch:"satu'li-canteen",dinner:null,snack:'popcorn-bucket'},entries:[]}
-    ],
+    trip:'',
+    party:[],
+    budgets:{hotel:0,tickets:0,dining:0,ll:0},
+    hotel:{perNight:0,nights:0,other:0},
+    tickets:{dayPrice:0,days:0,hopper:false},
+    days:[],
     priceOverrides:{},
     custom:[],
     customRides:{},
@@ -535,9 +520,13 @@ function loadState(){
     var parsed=JSON.parse(raw);
     var def=seedState();
     return Object.assign(def,parsed,{
+      party:Array.isArray(parsed.party)?parsed.party:def.party,
+      days:Array.isArray(parsed.days)?parsed.days:def.days,
       budgets:Object.assign(def.budgets,parsed.budgets||{}),
       hotel:Object.assign(def.hotel,parsed.hotel||{}),
-      tickets:Object.assign(def.tickets,parsed.tickets||{})
+      tickets:Object.assign(def.tickets,parsed.tickets||{}),
+      rideOrder:Object.assign(def.rideOrder,parsed.rideOrder||{}),
+      ridePlans:Object.assign(def.ridePlans,parsed.ridePlans||{})
     });
   }catch(e){
     return seedState();
@@ -557,8 +546,8 @@ function ageBand(age){
 }
 
 function partyCounts(){
-  var out={total:state.party.length,free:0,child:0,adult:0};
-  state.party.forEach(function(m){out[ageBand(m.age)]++;});
+  var out={total:(state.party||[]).length,free:0,child:0,adult:0};
+  (state.party||[]).forEach(function(m){out[ageBand(m.age)]++;});
   return out;
 }
 
@@ -594,7 +583,7 @@ function calcTickets(){
 
 function calcDining(){
   var sum=0;
-  state.days.forEach(function(d){
+  (state.days||[]).forEach(function(d){
     MEALS.forEach(function(m){
       sum+=mealCost(d.meals&&d.meals[m]).total;
     });
@@ -606,7 +595,7 @@ function calcLL(){
   var c=partyCounts();
   var paying=c.adult+c.child;
   var total=0;
-  state.days.forEach(function(d){
+  (state.days||[]).forEach(function(d){
     if(d.llMulti){
       total+=paying*(DEF_MULTI[d.park]||28);
     }
@@ -688,7 +677,7 @@ function renderTop(){
     '<div class="foot-btns">'+
       '<button class="btn ghost sm" data-action="cycle-theme">Theme: '+esc(state.theme.charAt(0).toUpperCase()+state.theme.slice(1))+'</button>'+
       '<button class="btn ghost sm" data-action="add-day">+ Add day</button>'+
-      '<button class="btn ghost sm" data-action="reset-demo">Reset sample trip</button>'+
+      '<button class="btn ghost sm" data-action="reset-demo">Clear trip to zero</button>'+
     '</div>'+
     '<p>Estimates are editable starting points for planning. Saved automatically in your browser.</p>';
 
@@ -725,17 +714,17 @@ function renderTrip(){
     '</div>';
   }).join('');
 
-  var partyHtml=state.party.map(function(m){
+  var partyHtml=(state.party||[]).length?state.party.map(function(m){
     var band=ageBand(m.age);
     return '<div class="prow">'+
       '<input type="text" data-member-name="'+m.id+'" value="'+esc(m.name)+'" aria-label="Traveler name">'+
       '<label class="age">Age <input type="number" min="0" max="99" data-member-age="'+m.id+'" value="'+esc(m.age)+'"></label>'+
       '<span class="pill b-'+band+'">'+BAND_LABEL[band]+'</span>'+
-      '<button class="x" data-del-member="'+m.id+'" aria-label="Remove traveler" '+(state.party.length<=1?'disabled':'')+'>&times;</button>'+
+      '<button class="x" data-del-member="'+m.id+'" aria-label="Remove traveler">&times;</button>'+
     '</div>';
-  }).join('');
+  }).join(''):'<p class="hint">No travelers added yet (0 guests).</p>';
 
-  var daysHtml=state.days.map(function(d,i){
+  var daysHtml=(state.days||[]).length?state.days.map(function(d,i){
     return '<div class="drow">'+
       '<div class="dn">Day '+(i+1)+'</div>'+
       '<label>Park / focus <select data-day-park="'+d.id+'">'+
@@ -746,9 +735,9 @@ function renderTrip(){
         '<option value="1"'+(d.llMulti?' selected':'')+'>Yes ($'+(DEF_MULTI[d.park]||28)+'/guest)</option>'+
         '<option value="0"'+(!d.llMulti?' selected':'')+'>No</option>'+
       '</select></label>'+
-      '<button class="x" data-del-day="'+d.id+'" aria-label="Remove day" '+(state.days.length<=1?'disabled':'')+'>&times;</button>'+
+      '<button class="x" data-del-day="'+d.id+'" aria-label="Remove day">&times;</button>'+
     '</div>';
-  }).join('');
+  }).join(''):'<p class="hint">0 trip days added yet. Click "+ Add day" to start building your itinerary.</p>';
 
   return '<div class="card">'+
       '<div class="sec-h"><h2>Budget overview</h2><span class="hint">'+pl(c.total,'traveler')+' ('+c.adult+' adult, '+c.child+' child, '+c.free+' under 3)</span></div>'+
@@ -772,7 +761,7 @@ function renderTrip(){
       '</div>'+
     '</div>'+
     '<div class="card">'+
-      '<div class="sec-h"><h2>Trip days</h2><button class="btn sm" data-action="add-day">+ Add day</button></div>'+
+      '<div class="sec-h"><h2>Trip days ('+(state.days||[]).length+')</h2><button class="btn sm" data-action="add-day">+ Add day</button></div>'+
       daysHtml+
     '</div>';
 }
@@ -831,7 +820,7 @@ function renderDining(){
       '<button class="btn ghost sm" type="button" data-action="clear-picked">Cancel</button>'+
     '</div>':'';
 
-  var dayCards=state.days.map(function(d,idx){
+  var dayCards=(state.days||[]).length?state.days.map(function(d,idx){
     var slotsHtml=MEALS.map(function(m){
       var rid=d.meals&&d.meals[m];
       var mc=mealCost(rid);
@@ -856,7 +845,7 @@ function renderDining(){
       '</div>'+
       '<div class="slots">'+slotsHtml+'</div>'+
     '</div>';
-  }).join('');
+  }).join(''):'<div class="dcard"><p class="hint">0 trip days scheduled yet. Add a day in Trip &amp; budget or the footer to assign meals.</p></div>';
 
   return '<div class="split">'+
     '<div class="card sticky">'+
@@ -886,7 +875,7 @@ function renderDining(){
 function renderRides(){
   var parkCards=PARKS.map(function(p){
     var list=parkRides(p);
-    var itemsHtml=list.map(function(r,idx){
+    var itemsHtml=list.length?list.map(function(r,idx){
       var plan=(state.ridePlans&&state.ridePlans[p]&&state.ridePlans[p][r.id])||'standby';
       return '<li class="ri" draggable="true" data-ride-park="'+esc(p)+'" data-ride-id="'+r.id+'">'+
         '<span class="rno">'+(idx+1)+'</span>'+
@@ -902,7 +891,7 @@ function renderRides(){
           '<button class="x" type="button" data-move-ride="'+esc(p)+':'+r.id+':1" '+(idx===list.length-1?'disabled':'')+' aria-label="Move down">&darr;</button>'+
         '</div>'+
       '</li>';
-    }).join('');
+    }).join(''):'<li class="hint">0 priority rides listed for '+esc(p)+'. Add attractions below to build your queue.</li>';
 
     return '<div class="card">'+
       '<div class="sec-h"><h2>'+esc(p)+'</h2><span class="hint">'+list.length+' attractions</span></div>'+
@@ -973,25 +962,12 @@ function renderLL(){
 /* ---------- tab 5: day plan ---------- */
 function ensureDayEntries(day){
   if(!Array.isArray(day.entries)) day.entries=[];
-  if(day.entries.length===0){
-    var cursor=toMin(day.start||'09:00');
-    var rides=parkRides(day.park).slice(0,3);
-    rides.forEach(function(r){
-      day.entries.push({id:uid(),kind:'ride',time:fromMin(cursor),title:r.name,detail:PLAN_LABEL[(state.ridePlans&&state.ridePlans[day.park]&&state.ridePlans[day.park][r.id])||'standby']});
-      cursor+=55;
-    });
-    MEALS.forEach(function(m){
-      var rid=day.meals&&day.meals[m];
-      var rest=rid?allRest().find(function(x){return x.id===rid;}):null;
-      if(rest){
-        day.entries.push({id:uid(),kind:'meal',time:MEAL_TIME[m],title:rest.name,detail:MEAL_LABEL[m]+' · '+rest.loc});
-      }
-    });
-    day.entries.sort(function(a,b){return toMin(a.time)-toMin(b.time);});
-  }
 }
 
 function renderPlan(){
+  if(!(state.days||[]).length){
+    return '<div class="card"><div class="sec-h"><h2>Day plan</h2><span class="hint">0 days scheduled</span></div><p class="hint">No trip days yet. Add a day in Trip &amp; budget or click "+ Add day" in the footer to build a timeline.</p></div>';
+  }
   var idx=Math.max(0,Math.min(state.days.length-1,ui.planDay||0));
   var day=state.days[idx];
   ensureDayEntries(day);
@@ -1000,7 +976,7 @@ function renderPlan(){
     return '<button class="dtab'+(i===idx?' on':'')+'" data-plan-day="'+i+'">Day '+(i+1)+'<small>'+esc(d.park)+' &middot; '+esc(fmtTime(d.start))+'</small></button>';
   }).join('');
 
-  var tlHtml=day.entries.map(function(ev){
+  var tlHtml=day.entries.length?day.entries.map(function(ev){
     var k=ev.kind||'note';
     var bClass=(k==='ride'||k==='meal'||k==='show')?k:'';
     return '<li class="tl" draggable="true" data-entry-id="'+ev.id+'">'+
@@ -1009,7 +985,7 @@ function renderPlan(){
       '<div class="tl-body"><strong>'+esc(ev.title)+'</strong>'+(ev.detail?'<span>'+esc(ev.detail)+'</span>':'')+'</div>'+
       '<button class="x" type="button" data-del-entry="'+ev.id+'" aria-label="Remove item">&times;</button>'+
     '</li>';
-  }).join('');
+  }).join(''):'<li class="hint">0 timeline items on this day yet. Add a block below.</li>';
 
   var rideOpts=parkRides(day.park).map(function(r){
     return '<option value="'+esc(r.name)+'">'+esc(r.name)+'</option>';
@@ -1051,7 +1027,7 @@ function renderSummary(){
     return '<tr><td>'+esc(r[0])+'</td><td>'+money(r[1])+'</td><td>'+money(r[2])+'</td></tr>';
   }).join('');
 
-  var daysSummary=state.days.map(function(d,i){
+  var daysSummary=(state.days||[]).length?state.days.map(function(d,i){
     var mSum=MEALS.reduce(function(s,m){return s+mealCost(d.meals&&d.meals[m]).total;},0);
     var mealList=MEALS.map(function(m){
       var rid=d.meals&&d.meals[m];
@@ -1064,7 +1040,7 @@ function renderSummary(){
       '<p class="costs hint">Start '+esc(fmtTime(d.start))+' &middot; Dining '+money(mSum)+(d.llMulti?' &middot; Multi Pass':'')+'</p>'+
       (mealList.length?'<ol>'+mealList.map(function(x){return '<li>'+esc(x)+'</li>';}).join('')+'</ol>':'<p class="hint">No meals assigned yet.</p>')+
     '</div>';
-  }).join('');
+  }).join(''):'<p class="hint">0 trip days scheduled yet.</p>';
 
   return '<div class="card no-print">'+
       '<div class="sum-tools">'+
@@ -1074,8 +1050,8 @@ function renderSummary(){
     '</div>'+
     '<div class="card sheet">'+
       '<div>'+
-        '<h1>'+esc(state.trip||'Disney Trip')+'</h1>'+
-        '<p class="hint">'+pl(c.total,'traveler')+' ('+c.adult+' adult, '+c.child+' child, '+c.free+' under 3) &middot; '+pl(state.days.length,'day')+'</p>'+
+        '<h1>'+esc(state.trip||'Untitled Trip')+'</h1>'+
+        '<p class="hint">'+pl(c.total,'traveler')+' ('+c.adult+' adult, '+c.child+' child, '+c.free+' under 3) &middot; '+pl((state.days||[]).length,'day')+'</p>'+
       '</div>'+
       '<div>'+
         '<h2>Budget summary</h2>'+
@@ -1126,7 +1102,7 @@ document.addEventListener('click',function(e){
       saveState();render();
     }else if(act==='add-day'){
       var nextPark=PLACES[state.days.length%PLACES.length];
-      state.days.push({id:uid(),park:nextPark,start:'09:00',llMulti:PARKS.indexOf(nextPark)!==-1,llSingle:[],meals:{breakfast:null,lunch:null,dinner:null,snack:null},entries:[]});
+      state.days.push({id:uid(),park:nextPark,start:'09:00',llMulti:false,llSingle:[],meals:{breakfast:null,lunch:null,dinner:null,snack:null},entries:[]});
       saveState();render();
     }else if(act==='reset-demo'){
       state=seedState();
@@ -1149,6 +1125,7 @@ document.addEventListener('click',function(e){
       if(q('#newRestName')) q('#newRestName').value='';
       saveState();render();
     }else if(act==='add-entry'){
+      if(!(state.days||[]).length) return;
       var idx=Math.max(0,Math.min(state.days.length-1,ui.planDay||0));
       var day=state.days[idx];
       ensureDayEntries(day);
@@ -1167,17 +1144,17 @@ document.addEventListener('click',function(e){
   }
 
   var delMem=t.closest('[data-del-member]');
-  if(delMem && state.party.length>1){
+  if(delMem){
     var mid=delMem.getAttribute('data-del-member');
     state.party=state.party.filter(function(x){return x.id!==mid;});
     saveState();render();return;
   }
 
   var delDay=t.closest('[data-del-day]');
-  if(delDay && state.days.length>1){
+  if(delDay){
     var did=delDay.getAttribute('data-del-day');
     state.days=state.days.filter(function(x){return x.id!==did;});
-    if(ui.planDay>=state.days.length) ui.planDay=state.days.length-1;
+    if(ui.planDay>=state.days.length) ui.planDay=Math.max(0,state.days.length-1);
     saveState();render();return;
   }
 
