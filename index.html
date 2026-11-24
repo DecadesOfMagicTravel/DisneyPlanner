@@ -302,6 +302,23 @@ textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px soli
 .llitem{display:flex;gap:6px;align-items:center;flex-wrap:wrap;background:var(--surface2);border-radius:8px;padding:7px 10px;font-size:.9rem}
 .llitem span.nm{flex:1 1 140px;min-width:0;font-weight:500}
 
+/* crowd calendar (data file kept fresh by a daily GitHub Action) */
+.ccal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px;min-width:700px}
+.ccal-h{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600;text-align:center;padding-bottom:2px}
+.cday{background:var(--surface2);border-radius:10px;padding:6px;min-height:104px;display:grid;gap:3px;align-content:start}
+.cday.blank{background:transparent}
+.cday.today{outline:2px solid var(--brand)}
+.cday .dnum{font-weight:600;font-size:.82rem;color:var(--muted)}
+.cchip{display:flex;justify-content:space-between;gap:4px;font-size:.74rem;font-weight:600;border-radius:6px;padding:1px 6px;font-variant-numeric:tabular-nums}
+.cl-1,.cl-2{background:var(--good-soft);color:var(--good)}
+.cl-3{background:var(--surface);color:var(--ink);box-shadow:inset 0 0 0 1px var(--line)}
+.cl-4{background:var(--accent-soft);color:var(--accent)}
+.cl-5{background:var(--bad-soft);color:var(--bad)}
+.cnav{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:12px 0}
+.cnav strong{font-family:var(--f-display);font-size:1.15rem;min-width:150px;text-align:center}
+.ckey{display:flex;gap:6px 12px;flex-wrap:wrap;font-size:.82rem;color:var(--muted);margin:8px 0}
+.ckey .cchip{display:inline-flex;gap:6px}
+
 @media print{
   :root:root:root{--bg:#fff;--surface:#fff;--surface2:#f1f1f1;--line:#bdbdbd;--ink:#000;--muted:#444;--brand:#000;--on-brand:#fff;--accent:#000;--accent-soft:#eee;--good:#000;--good-soft:#eee;--bad:#000;--bad-soft:#eee;--drop:#eee}
   body{background:#fff;color:#000;padding:0;font-size:11pt}
@@ -377,6 +394,7 @@ var TABS = [
   ['dining', 'Dining'],
   ['rides', 'Ride priorities'],
   ['ll', 'Lightning Lane'],
+  ['crowd', 'Crowd calendar'],
   ['plan', 'Day plan'],
   ['summary', 'Summary']
 ];
@@ -1409,6 +1427,118 @@ function renderLL(){
     '</div>';
 }
 
+/* ---------- tab: crowd calendar (reads crowds.json, refreshed daily by a GitHub Action) ---------- */
+var CROWD_DATA_URL = 'https://raw.githubusercontent.com/DecadesOfMagicTravel/wdw-crowds/main/crowds.json';
+var CROWD_PARKS = [['mk', 'MK', 'Magic Kingdom'], ['ep', 'EP', 'EPCOT'], ['hs', 'HS', 'Hollywood Studios'], ['ak', 'AK', 'Animal Kingdom']];
+var CROWD_LABEL = { 1: 'Light', 2: 'Below average', 3: 'Average', 4: 'Above average', 5: 'Heavy' };
+var MONTH_NAMES = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+function crowdState(){
+  if(!ui.crowd) ui.crowd = { status: 'idle', data: null, month: null, error: '' };
+  return ui.crowd;
+}
+function pad2(n){ return (n < 10 ? '0' : '') + n; }
+function monthKeyOf(d){ return d.getFullYear() + '-' + pad2(d.getMonth() + 1); }
+
+function loadCrowd(force){
+  var c = crowdState();
+  if(c.status === 'loading') return;
+  if(!force && c.status !== 'idle') return;
+  if(/YOUR-GITHUB-USER|YOUR-REPO/.test(CROWD_DATA_URL)){ c.status = 'setup'; return; }
+  c.status = 'loading';
+  fetch(CROWD_DATA_URL + '?t=' + Date.now(), { cache: 'no-store' })
+    .then(function(r){ if(!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+    .then(function(j){
+      if(!j || typeof j.days !== 'object') throw new Error('Unexpected file format');
+      c.data = j; c.status = 'ok'; c.error = '';
+      try{ localStorage.setItem(KEY + '-crowd', JSON.stringify(j)); }catch(e){}
+    })
+    .catch(function(err){
+      c.error = String((err && err.message) || err);
+      var cached = null;
+      try{ cached = JSON.parse(localStorage.getItem(KEY + '-crowd') || 'null'); }catch(e){}
+      if(cached && cached.days){ c.data = cached; c.status = 'cached'; }
+      else c.status = 'error';
+    })
+    .then(function(){ if(state.tab === 'crowd') render(); });
+}
+
+function renderCrowd(){
+  var c = crowdState();
+  if(c.status === 'idle') loadCrowd(false);
+
+  var head = '<div class="sec-h"><h2>Crowd calendar</h2>' +
+    '<span class="hint">Predicted crowd level, 1 (light) to 5 (heavy)</span></div>';
+
+  if(c.status === 'setup'){
+    return '<div class="card">' + head +
+      '<p class="note">One-time setup needed: open the planner file, find <b>CROWD_DATA_URL</b>, and replace <b>YOUR-GITHUB-USER</b> and <b>YOUR-REPO</b> with the GitHub account and repository that hold <b>crowds.json</b>.</p></div>';
+  }
+  if(c.status === 'loading' || c.status === 'idle'){
+    return '<div class="card">' + head + '<p class="hint">Loading crowd predictions&hellip;</p></div>';
+  }
+  if(c.status === 'error'){
+    return '<div class="card">' + head +
+      '<p class="note">Could not load crowd data (' + esc(c.error) + ').</p>' +
+      '<button class="btn sm" type="button" data-action="crowd-refresh">Try again</button></div>';
+  }
+
+  var days = (c.data && c.data.days) || {};
+  var keys = Object.keys(days).sort();
+  var now = new Date();
+  var month = c.month || monthKeyOf(now);
+  if(!c.month && keys.length && !keys.some(function(k){ return k.indexOf(month) === 0; })) month = keys[0].slice(0, 7);
+  c.month = month;
+  var y = +month.slice(0, 4), m = +month.slice(5, 7);
+  var startDow = new Date(y, m - 1, 1).getDay();
+  var dim = new Date(y, m, 0).getDate();
+  var todayKey = now.getFullYear() + '-' + pad2(now.getMonth() + 1) + '-' + pad2(now.getDate());
+
+  var cells = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].map(function(w){ return '<div class="ccal-h">' + w + '</div>'; }).join('');
+  for(var b = 0; b < startDow; b++) cells += '<div class="cday blank"></div>';
+  var anyInMonth = false;
+  for(var d = 1; d <= dim; d++){
+    var key = month + '-' + pad2(d);
+    var rec = days[key];
+    var chips = '';
+    if(rec){
+      CROWD_PARKS.forEach(function(p){
+        var lv = +rec[p[0]];
+        if(lv >= 1 && lv <= 5){
+          anyInMonth = true;
+          chips += '<div class="cchip cl-' + lv + '" title="' + esc(p[2] + ': ' + CROWD_LABEL[lv]) + '"><span>' + p[1] + '</span><span>' + lv + '</span></div>';
+        }
+      });
+    }
+    cells += '<div class="cday' + (key === todayKey ? ' today' : '') + '"><span class="dnum">' + d + '</span>' + chips + '</div>';
+  }
+
+  var upd = '';
+  if(c.data && c.data.updated){
+    var ud = new Date(c.data.updated);
+    if(!isNaN(ud.getTime())) upd = 'Data last updated ' + ud.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + '. ';
+  }
+  var src = (c.data && c.data.source) ? 'Source: ' + esc(c.data.source) + '. ' : '';
+
+  var key2 = CROWD_PARKS.map(function(p){ return '<span><b>' + p[1] + '</b> ' + esc(p[2]) + '</span>'; }).join('') +
+    [1, 2, 3, 4, 5].map(function(n){ return '<span class="cchip cl-' + n + '"><b>' + n + '</b> ' + CROWD_LABEL[n] + '</span>'; }).join('');
+
+  return '<div class="card">' + head +
+    (c.status === 'cached' ? '<p class="note">Could not reach the latest data (' + esc(c.error) + '). Showing the last saved copy.</p>' : '') +
+    (keys.length ? '' : '<p class="note">No predictions have been loaded yet. The daily update has not produced data.</p>') +
+    '<div class="cnav">' +
+      '<button class="btn ghost sm" type="button" data-action="crowd-prev" aria-label="Previous month">&larr;</button>' +
+      '<strong>' + MONTH_NAMES[m - 1] + ' ' + y + '</strong>' +
+      '<button class="btn ghost sm" type="button" data-action="crowd-next" aria-label="Next month">&rarr;</button>' +
+      '<button class="btn ghost sm" type="button" data-action="crowd-refresh">Refresh</button>' +
+    '</div>' +
+    (keys.length && !anyInMonth ? '<p class="hint">No predictions for this month.</p>' : '') +
+    '<div class="scroll"><div class="ccal">' + cells + '</div></div>' +
+    '<div class="ckey">' + key2 + '</div>' +
+    '<p class="hint">' + src + upd + 'Predictions are estimates and can change.</p>' +
+  '</div>';
+}
+
 /* ---------- tab 5: day plan ---------- */
 function currentDayObj(){
   if(!(state.days || []).length) return null;
@@ -1617,6 +1747,7 @@ function render(){
   else if(state.tab === 'dining') view.innerHTML = renderDining();
   else if(state.tab === 'rides') view.innerHTML = renderRides();
   else if(state.tab === 'll') view.innerHTML = renderLL();
+  else if(state.tab === 'crowd') view.innerHTML = renderCrowd();
   else if(state.tab === 'plan') view.innerHTML = renderPlan();
   else view.innerHTML = renderSummary();
   syncTopBar();
@@ -1703,6 +1834,15 @@ document.addEventListener('click', function(e){
       ui.copied = true;
       render();
       setTimeout(function(){ ui.copied = false; if(state.tab === 'summary') render(); }, 1800);
+    }else if(act === 'crowd-prev' || act === 'crowd-next'){
+      var cs = crowdState();
+      var cy = +(cs.month || monthKeyOf(new Date())).slice(0, 4), cm = +(cs.month || monthKeyOf(new Date())).slice(5, 7);
+      cm += act === 'crowd-next' ? 1 : -1;
+      if(cm < 1){ cm = 12; cy--; } else if(cm > 12){ cm = 1; cy++; }
+      cs.month = cy + '-' + pad2(cm);
+      render();
+    }else if(act === 'crowd-refresh'){
+      loadCrowd(true); render();
     }else if(act === 'print-summary'){
       window.print();
     }
